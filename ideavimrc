@@ -1,0 +1,8 @@
+set nu rnu
+set ignorecase
+set smartcase
+
+nmap <C-h> <C-w><C-h>
+nmap <C-j> <C-w><C-j>
+nmap <C-k> <C-w><C-k>
+nmap <C-l> <C-w><C-l>
