@@ -95,7 +95,7 @@ if ${use_color} ; then
 	fi
 
         alias l='ls -FC --color=auto'
-        alias ll='ls -l --color=auto'
+        alias ll='lsd -l --color=auto'
         alias la='ls -aFC --color=auto'
         alias li='ls -iFC --color=auto'
         alias ..='cd ..'

@@ -27,6 +27,7 @@ Plug 'udalov/kotlin-vim'
 Plug 'PotatoesMaster/i3-vim-syntax'
 Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-startify'
+Plug 'kevinhwang91/rnvimr', {'do': 'make sync'}
 call plug#end()
 
 "basics
@@ -71,7 +72,7 @@ let g:winresizer_start_key = '<C-S>'
 let g:python3_host_prog = '/bin/python3'
 
 "Aesthetics
-colorscheme PaperColor
+colorscheme onedark
 hi Normal guibg=NONE ctermbg=NONE
 
 "StatusLine

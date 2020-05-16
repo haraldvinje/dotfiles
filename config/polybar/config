@@ -54,7 +54,7 @@ font-2 = sm4tik:pixelsize=10;1
 
 
 modules-left = i3  spotify
-modules-center =  date weather 
+modules-center =  date weather
 modules-right =  filesystem memory wireless-network alsa battery powermenu
 
 tray-position = hidden
@@ -76,6 +76,7 @@ wm-restack = i3
 
 ;scroll-up = i3wm-wsnext
 ;scroll-down = i3wm-wsprev
+
 
 
 [module/weather]
