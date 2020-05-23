@@ -72,7 +72,7 @@ let g:winresizer_start_key = '<C-S>'
 let g:python3_host_prog = '/bin/python3'
 
 "Aesthetics
-colorscheme onedark
+colorscheme gruvbox
 hi Normal guibg=NONE ctermbg=NONE
 
 "StatusLine

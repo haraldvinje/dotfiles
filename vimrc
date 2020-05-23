@@ -11,6 +11,7 @@ augroup numbertoggle
 augroup END
 
 syntax enable
+set background=dark
 set expandtab
 set softtabstop=4
 set shiftwidth=4
