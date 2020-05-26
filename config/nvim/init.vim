@@ -5,6 +5,7 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'tpope/vim-surround'
 "Plugin for moving, deleting files in vim and on disk 
 Plug 'tpope/vim-eunuch'
+Plug 'jremmen/vim-ripgrep'
 "
 Plug 'vimwiki/vimwiki'
 Plug 'junegunn/goyo.vim'
@@ -66,9 +67,34 @@ nnoremap <C-Right>  <C-W><C-l>
 set splitbelow
 set splitright
 
+"autoclosing brackets and strings
+inoremap " ""<left>
+inoremap ' ''<left>
+inoremap ( ()<left>
+inoremap [ []<left>
+inoremap { {}<left>
+inoremap {<CR> {<CR>}<ESC>O
+inoremap {;<CR> {<CR>};<ESC>O
+
+inoremap <expr> <bs> <SID>delpair()
+
+function! s:delpair()
+	let l:lst = ['""',"''",'{}','[]','()']
+	let l:col = col('.')
+	let l:line = getline('.')
+	let l:chr = l:line[l:col-2 : l:col-1]
+	if index(l:lst, l:chr) > -1
+		return "\<bs>\<del>"
+	else
+		let l:chr = l:line[l:col-3:l:col-2]
+		if (index(l:lst, l:chr)) > - 1
+			return "\<bs>\<bs>"
+		endif
+		return "\<bs>"
+endf
+
 "resize windows
 let g:winresizer_start_key = '<C-S>'
-
 let g:python3_host_prog = '/bin/python3'
 
 "Aesthetics
@@ -78,7 +104,7 @@ hi Normal guibg=NONE ctermbg=NONE
 "StatusLine
 set laststatus=2
 let g:airline_powerline_fonts = 1
-let g:airline_theme='dark'
+let g:airline_theme='gruvbox'
 
 "NerdTree
 map <C-n> :NERDTreeToggle<CR>
@@ -98,7 +124,7 @@ let g:NERDTreePatternMatchHighlightFullName = 1
 let g:NERDTreeSyntaxEnabledExtensions = ['jsx', 'tsx']
 
 "LeaderButtons
-let mapleader = "\<Space>"
+let mapleader = " "
 let maplocalleader = "\\"
 
 "indeting
@@ -124,7 +150,7 @@ autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
 nmap <silent> gd <Plug>(coc-definition)
 "nmap <leader> ac <Plug>(coc-codeaction)
-nmap <leader> ac <Plug>(coc-implementation)
+nmap <silent> ac <Plug>(coc-implementation)
 
 "fzf
 let g:ctrlp_map = '<c-t>'
@@ -136,3 +162,6 @@ let g:vimtex_compiler_latexmk = {
             \ 'build_dir' : 'build',
             \}
 let g:vimtex_view_method = 'mupdf'
+
+"Ripgrep
+nnoremap <Leader>ps :Rg<SPACE>

@@ -15,5 +15,6 @@
     "typescript": ["javascript", "javascript-jasmine-arrow"]
   },
   "prettier.singleQuote": true,
-  "prettier.semi": false
+  "prettier.semi": false,
+  "python.jediEnabled": false
 }
