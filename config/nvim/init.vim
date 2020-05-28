@@ -100,6 +100,7 @@ let g:python3_host_prog = '/bin/python3'
 "Aesthetics
 colorscheme gruvbox
 hi Normal guibg=NONE ctermbg=NONE
+set termguicolors
 
 "StatusLine
 set laststatus=2
@@ -161,7 +162,7 @@ nnoremap <c-p> :Files<Cr>
 let g:vimtex_compiler_latexmk = {
             \ 'build_dir' : 'build',
             \}
-let g:vimtex_view_method = 'mupdf'
+let g:vimtex_view_method = 'zathura'
 
 "Ripgrep
 nnoremap <Leader>ps :Rg<SPACE>
