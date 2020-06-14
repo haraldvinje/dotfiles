@@ -67,31 +67,6 @@ nnoremap <C-Right>  <C-W><C-l>
 set splitbelow
 set splitright
 
-"autoclosing brackets and strings
-inoremap " ""<left>
-inoremap ' ''<left>
-inoremap ( ()<left>
-inoremap [ []<left>
-inoremap { {}<left>
-inoremap {<CR> {<CR>}<ESC>O
-inoremap {;<CR> {<CR>};<ESC>O
-
-inoremap <expr> <bs> <SID>delpair()
-
-function! s:delpair()
-	let l:lst = ['""',"''",'{}','[]','()']
-	let l:col = col('.')
-	let l:line = getline('.')
-	let l:chr = l:line[l:col-2 : l:col-1]
-	if index(l:lst, l:chr) > -1
-		return "\<bs>\<del>"
-	else
-		let l:chr = l:line[l:col-3:l:col-2]
-		if (index(l:lst, l:chr)) > - 1
-			return "\<bs>\<bs>"
-		endif
-		return "\<bs>"
-endf
 
 "resize windows
 let g:winresizer_start_key = '<C-S>'

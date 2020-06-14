@@ -117,6 +117,7 @@ alias free='free -m'                      # show sizes in MB
 alias np='nano -w PKGBUILD'
 alias more=less
 alias r='ranger --choosedir=$HOME/.rangerdir; LASTDIR=`cat $HOME/.rangerdir`; cd "$LASTDIR"'
+alias cal='cal -m'
 
 
 
@@ -178,3 +179,5 @@ if [ -f '/home/haraldv/.config/google-cloud-sdk/path.bash.inc' ]; then . '/home/
 # The next line enables shell command completion for gcloud.
 if [ -f '/home/haraldv/.config/google-cloud-sdk/completion.bash.inc' ]; then . '/home/haraldv/.config/google-cloud-sdk/completion.bash.inc'; fi
 lsd
+
+eval "$(thefuck --alias)"
