@@ -55,7 +55,7 @@ font-2 = sm4tik:pixelsize=10;1
 
 modules-left = i3  spotify
 modules-center =  date weather
-modules-right =  filesystem memory wireless-network alsa battery powermenu
+modules-right =  filesystem memory cpu wireless-network alsa battery powermenu
 
 tray-position = hidden
 tray-padding = 11
@@ -444,11 +444,11 @@ label-unmounted-foreground = ${colors.foreground-alt}
 [module/cpu]
 type = internal/cpu
 interval = 2
-format-prefix = " "
-format-prefix-foreground = ${colors.foreground-alt}
-format-prefix-background = ${colors.foreground-mod}
-format-underline = #f90000
-label = %percentage%%
+;format-prefix = " "
+;format-prefix-foreground = ${colors.foreground-alt}
+;format-prefix-background = ${colors.foreground-mod}
+;format-underline = #f90000
+label = CPU usage: %percentage%%
 
 [module/memory]
 type = internal/memory
