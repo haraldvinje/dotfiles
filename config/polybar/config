@@ -55,7 +55,7 @@ font-2 = sm4tik:pixelsize=10;1
 
 modules-left = i3  spotify
 modules-center =  date weather
-modules-right =  filesystem memory cpu wireless-network alsa battery powermenu
+modules-right = memory cpu filesystem wireless-network alsa battery powermenu
 
 tray-position = hidden
 tray-padding = 11
@@ -241,7 +241,7 @@ label = %date% %time%
 ;lable = %time%
 
 [module/alsa]
-type = internal/alsa
+type = internal/pulseaudio
 
 ; Soundcard to be used
 ; Usually in the format hw:# where # is the card number
@@ -413,7 +413,7 @@ interval = 25
 
 mount-0 = /
 
-label-mounted = Disk space used %{F#0a81f5}%mountpoint%%{F-}: %percentage_used%%
+label-mounted =  %{F#0a81f5}%mountpoint%%{F-}: %percentage_used%%
 label-unmounted = %mountpoint% not mounted
 label-unmounted-foreground = ${colors.foreground-alt}
 ; 

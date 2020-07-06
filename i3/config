@@ -431,7 +431,7 @@ mode "$mode_gaps_outer" {
         bindsym Escape mode "default"
 }
 
-bindsym $mod+b exec firefox-developer-edition
+bindsym $mod+b exec chromium
 
 exec_always --no-startup-id wal -i ~/Pictures/Wallpapers/
 exec_always --no-startup-id "bash $HOME/.config/polybar/launch.sh"
