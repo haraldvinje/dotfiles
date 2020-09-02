@@ -4,6 +4,7 @@
 [alias]
 	co = checkout
 	st = status
+    br = branch
     lg = lg1
     lg1 = lg1-specific --all
     lg2 = lg2-specific --all

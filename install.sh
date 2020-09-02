@@ -23,3 +23,5 @@ if pacman -Qs $package > /dev/null ; then
 else
     echo "neovim not installed"
 fi
+
+yay -S rcm && rcup
