@@ -81,7 +81,6 @@ set termguicolors
 set laststatus=2
 let g:airline_powerline_fonts = 1
 let g:airline_theme='gruvbox'
-
 "NerdTree
 map <C-n> :NERDTreeToggle<CR>
 let g:NERDTreeChDirMode=2

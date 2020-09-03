@@ -164,7 +164,7 @@ ex ()
 }
 
 neofetch
-source ~/.bash-powerline.sh
+source ~/.scripts/bash-powerline.sh
 #function _update_ps1() {
 #        PS1=$(powerline-shell $?)
 #    }
