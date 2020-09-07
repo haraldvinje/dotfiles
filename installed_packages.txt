@@ -32,6 +32,7 @@ cpupower
 crda
 cronie
 cryptsetup
+deepin-screenshot
 deluge
 device-mapper
 dfc
@@ -41,6 +42,9 @@ diffutils
 dmidecode
 dmraid
 dnsmasq
+docker
+docker-compose
+docker-credential-pass
 dosfstools
 downgrade
 e2fsprogs
@@ -146,6 +150,7 @@ moc
 modemmanager
 morc_menu
 mousepad
+msmtp-mta
 nano
 ncdu
 neofetch
@@ -170,6 +175,7 @@ nvidia-prime
 oblogout
 openresolv
 openssh
+optimus-manager
 os-prober
 p7zip
 pacman
@@ -185,6 +191,7 @@ pkgconf
 polkit-gnome
 polybar
 poppler-data
+postman
 powertop
 procps-ng
 psmisc
@@ -211,6 +218,7 @@ speedtest-cli
 spotify
 subversion
 sudo
+sxiv
 sysfsutils
 syslog-ng
 systemd
@@ -234,6 +242,7 @@ texlive-publishers
 texlive-science
 thefuck
 tlp
+tmux
 tree
 ttf-bitstream-vera
 ttf-dejavu
