@@ -22,7 +22,6 @@ bmenu
 btrfs-progs
 bzip2
 cantarell-fonts
-chromium
 clipit
 cmatrix
 code
@@ -59,6 +58,7 @@ ffmpegthumbnailer
 file
 filesystem
 findutils
+firefox
 flac
 flex
 fortune-mod
@@ -71,6 +71,7 @@ gimp
 git
 glibc
 gnome-keyring
+google-chrome
 gparted
 grep
 grub
@@ -100,6 +101,7 @@ iproute2
 iputils
 jdk-openjdk
 jfsutils
+kdenlive
 kvantum-manjaro
 less
 lib32-flex
@@ -205,6 +207,7 @@ rcm
 reiserfsprogs
 rofi
 rofimoji
+rpi-imager
 rsync
 s-nail
 sbxkb
@@ -294,3 +297,4 @@ yay
 zathura
 zathura-pdf-mupdf
 zensu
+zip
