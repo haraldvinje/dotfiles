@@ -10,6 +10,7 @@ artwork-i3
 autoconf
 automake
 avahi
+aws-cli-v2
 b43-fwcutter
 bash
 bauh
@@ -49,6 +50,7 @@ downgrade
 e2fsprogs
 ecryptfs-utils
 efibootmgr
+emacs
 epdfview
 exfat-utils
 f2fs-tools
@@ -83,6 +85,7 @@ gst-plugins-good
 gst-plugins-ugly
 gstreamer
 gtksourceview-pkgbuild
+gtop
 gufw
 gvfs
 gvfs-afc
@@ -100,8 +103,10 @@ inxi
 iproute2
 iputils
 jdk-openjdk
+jdk11-openjdk
 jfsutils
 kdenlive
+kotlin
 kvantum-manjaro
 less
 lib32-flex
@@ -166,6 +171,7 @@ networkmanager-openvpn
 networkmanager-pptp
 networkmanager-vpnc
 nfs-utils
+nnn
 nodejs
 nordvpn-bin
 npm
@@ -199,6 +205,7 @@ procps-ng
 psmisc
 pulseaudio
 pulseaudio-bluetooth
+python-pipenv
 python-pywal
 qt5-styleplugins
 qt5ct
@@ -244,6 +251,7 @@ texlive-pstricks
 texlive-publishers
 texlive-science
 thefuck
+tk
 tlp
 tmux
 tree
@@ -254,6 +262,7 @@ ttf-inconsolata
 ttf-indic-otf
 ttf-liberation
 tty-clock
+typescript
 unzip
 upower
 usbutils
@@ -265,6 +274,7 @@ viewnior
 vim
 vlc
 volumeicon
+vue-cli
 w3m
 wallpapers-juhraya
 wget

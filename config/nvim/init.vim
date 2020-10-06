@@ -3,6 +3,8 @@
 call plug#begin()
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'tpope/vim-surround'
+Plug 'iberianpig/ranger-explorer.vim'
+Plug 'jiangmiao/auto-pairs'
 "Plugin for moving, deleting files in vim and on disk 
 Plug 'tpope/vim-eunuch'
 Plug 'jremmen/vim-ripgrep'
@@ -34,6 +36,8 @@ call plug#end()
 "basics
 filetype plugin indent on
 syntax on 
+set hidden
+set autochdir
 
 "Yanking
 nnoremap Y y$
@@ -130,7 +134,7 @@ nmap <silent> ac <Plug>(coc-implementation)
 "fzf
 let g:ctrlp_map = '<c-t>'
 nnoremap <c-b> :CtrlPBuffer<Cr>
-nnoremap <c-p> :Files<Cr>
+nnoremap <c-p> :GFiles<Cr>
 
 "vimtex
 let g:vimtex_compiler_latexmk = {
