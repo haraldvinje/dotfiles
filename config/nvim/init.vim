@@ -134,7 +134,7 @@ nmap <silent> ac <Plug>(coc-implementation)
 "fzf
 let g:ctrlp_map = '<c-t>'
 nnoremap <c-b> :CtrlPBuffer<Cr>
-nnoremap <c-p> :GFiles<Cr>
+nnoremap <c-p> :Files<Cr>
 
 "vimtex
 let g:vimtex_compiler_latexmk = {
@@ -145,3 +145,15 @@ let g:tex_flavor = 'latex'
 
 "Ripgrep
 nnoremap <Leader>ps :Rg<SPACE>
+
+"Startify
+
+let g:startify_custom_header = [
+\   '                       _           ',
+\   '                      (_)          ', 
+\   ' _ __   ___  _____   ___ ____ ___  ', 
+\   '| _  \ / _ \/ _ \ \ / / |  _   _ \ ', 
+\   '| | | |  __/ (_) \ V /| | | | | | |',
+\   '|_| |_|\___|\___/ \_/ |_|_| |_| |_|',
+\   '                                   '
+\]

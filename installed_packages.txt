@@ -1,6 +1,7 @@
 accountsservice
 acpi
 acpid
+alacritty
 alsa-firmware
 alsa-plugins
 alsa-utils
@@ -13,6 +14,7 @@ avahi
 aws-cli-v2
 b43-fwcutter
 bash
+bash-pipes
 bauh
 biber
 binutils
@@ -22,10 +24,10 @@ bluez-utils
 bmenu
 btrfs-progs
 bzip2
+calc
 cantarell-fonts
 clipit
 cmatrix
-code
 coreutils
 cowsay
 cpupower
@@ -61,6 +63,7 @@ file
 filesystem
 findutils
 firefox
+fish
 flac
 flex
 fortune-mod
@@ -102,6 +105,7 @@ intellij-idea-ultimate-edition
 inxi
 iproute2
 iputils
+j4-dmenu-desktop-git
 jdk-openjdk
 jdk11-openjdk
 jfsutils
@@ -121,6 +125,7 @@ lightdm-slick-greeter
 linux-latest
 linux-latest-nvidia-440xx
 logrotate
+lolcat
 lsd
 lvm2
 lxappearance
@@ -161,7 +166,7 @@ msmtp-mta
 nano
 ncdu
 neofetch
-neovim
+neovim-nightly
 nerd-fonts-dejavu-complete
 netctl
 network-manager-applet
@@ -205,8 +210,8 @@ procps-ng
 psmisc
 pulseaudio
 pulseaudio-bluetooth
-python-pipenv
 python-pywal
+python37
 qt5-styleplugins
 qt5ct
 ranger
@@ -274,6 +279,8 @@ viewnior
 vim
 vlc
 volumeicon
+vscodium-bin
+vtop
 vue-cli
 w3m
 wallpapers-juhraya
@@ -303,8 +310,10 @@ xorg-xkill
 xorg-xprop
 xterm
 xz
+yarn
 yay
 zathura
 zathura-pdf-mupdf
 zensu
 zip
+zsh-theme-powerlevel10k-git
