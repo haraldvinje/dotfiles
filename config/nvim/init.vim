@@ -20,6 +20,7 @@ Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'chriskempson/base16-vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'rafi/awesome-vim-colorschemes'
@@ -77,14 +78,14 @@ let g:winresizer_start_key = '<C-S>'
 let g:python3_host_prog = '/bin/python3'
 
 "Aesthetics
-colorscheme gruvbox
+colorscheme materialbox
 hi Normal guibg=NONE ctermbg=NONE
 set termguicolors
 
 "StatusLine
 set laststatus=2
 let g:airline_powerline_fonts = 1
-let g:airline_theme='gruvbox'
+let g:airline_theme='base16_vim'
 "NerdTree
 map <C-n> :NERDTreeToggle<CR>
 let g:NERDTreeChDirMode=2
@@ -126,7 +127,7 @@ autocmd BufNewFile,BufRead *.jsx set filetype=javascript.jsx
 autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
 
 "coc
-command! -nargs=0 Prettier :CocCommand prettier.formatFile
+"command! -nargs=0 Prettier :CocCommand prettier.formatFile
 nmap <silent> gd <Plug>(coc-definition)
 "nmap <leader> ac <Plug>(coc-codeaction)
 nmap <silent> ac <Plug>(coc-implementation)

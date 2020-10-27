@@ -204,7 +204,6 @@ pkgconf
 polkit-gnome
 polybar
 poppler-data
-postman
 powertop
 procps-ng
 psmisc
