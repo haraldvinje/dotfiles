@@ -16,7 +16,7 @@ fzf_then_open_in_editor() {
 bind -x '"\C-t": fzf_then_open_in_editor'
 
 export PATH=$PATH:~/.scripts/
-export BROWSER=/usr/bin/chromium
+export BROWSER=/usr/bin/google-chrome-stable
 export EDITOR='vim'
 export MONITOR='ePD1'
 export TERM='terminator'
@@ -163,7 +163,6 @@ ex ()
   fi
 }
 
-neofetch
 source ~/.bash-powerline.sh
 #function _update_ps1() {
 #        PS1=$(powerline-shell $?)
@@ -178,6 +177,5 @@ if [ -f '/home/haraldv/.config/google-cloud-sdk/path.bash.inc' ]; then . '/home/
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/home/haraldv/.config/google-cloud-sdk/completion.bash.inc' ]; then . '/home/haraldv/.config/google-cloud-sdk/completion.bash.inc'; fi
-lsd
 
 eval "$(thefuck --alias)"
