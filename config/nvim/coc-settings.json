@@ -8,7 +8,8 @@
     "javascriptreact",
     "typescript.tsx",
     "graphql",
-    "python"
+    "python",
+    "vue"
   ],
   "snippets.extends": {
     "javascriptreact": ["javascript"],

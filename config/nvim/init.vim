@@ -3,6 +3,8 @@
 call plug#begin()
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'tpope/vim-surround'
+Plug 'iberianpig/ranger-explorer.vim'
+Plug 'jiangmiao/auto-pairs'
 "Plugin for moving, deleting files in vim and on disk 
 Plug 'tpope/vim-eunuch'
 Plug 'jremmen/vim-ripgrep'
@@ -18,6 +20,7 @@ Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'chriskempson/base16-vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'rafi/awesome-vim-colorschemes'
@@ -35,6 +38,8 @@ call plug#end()
 "basics
 filetype plugin indent on
 syntax on 
+set hidden
+set autochdir
 
 "Yanking
 nnoremap Y y$
@@ -74,15 +79,14 @@ let g:winresizer_start_key = '<C-S>'
 let g:python3_host_prog = '/bin/python3'
 
 "Aesthetics
-colorscheme gruvbox
+colorscheme materialbox
 hi Normal guibg=NONE ctermbg=NONE
 set termguicolors
 
 "StatusLine
 set laststatus=2
 let g:airline_powerline_fonts = 1
-let g:airline_theme='gruvbox'
-
+let g:airline_theme='base16_vim'
 "NerdTree
 map <C-n> :NERDTreeToggle<CR>
 let g:NERDTreeChDirMode=2
@@ -124,7 +128,7 @@ autocmd BufNewFile,BufRead *.jsx set filetype=javascript.jsx
 autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
 
 "coc
-command! -nargs=0 Prettier :CocCommand prettier.formatFile
+"command! -nargs=0 Prettier :CocCommand prettier.formatFile
 nmap <silent> gd <Plug>(coc-definition)
 "nmap <leader> ac <Plug>(coc-codeaction)
 nmap <silent> ac <Plug>(coc-implementation)
@@ -139,6 +143,19 @@ let g:vimtex_compiler_latexmk = {
             \ 'build_dir' : 'build',
             \}
 let g:vimtex_view_method = 'zathura'
+let g:tex_flavor = 'latex'
 
 "Ripgrep
 nnoremap <Leader>ps :Rg<SPACE>
+
+"Startify
+
+let g:startify_custom_header = [
+\   '                       _           ',
+\   '                      (_)          ', 
+\   ' _ __   ___  _____   ___ ____ ___  ', 
+\   '| _  \ / _ \/ _ \ \ / / |  _   _ \ ', 
+\   '| | | |  __/ (_) \ V /| | | | | | |',
+\   '|_| |_|\___|\___/ \_/ |_|_| |_| |_|',
+\   '                                   '
+\]

@@ -164,18 +164,4 @@ ex ()
 }
 
 source ~/.bash-powerline.sh
-#function _update_ps1() {
-#        PS1=$(powerline-shell $?)
-#    }
-
-#if [[ $TERM != linux && ! $PROMPT_COMMAND =~ _update_ps1 ]]; then
-#        PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
-#fi
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/haraldv/.config/google-cloud-sdk/path.bash.inc' ]; then . '/home/haraldv/.config/google-cloud-sdk/path.bash.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/home/haraldv/.config/google-cloud-sdk/completion.bash.inc' ]; then . '/home/haraldv/.config/google-cloud-sdk/completion.bash.inc'; fi
-
 eval "$(thefuck --alias)"

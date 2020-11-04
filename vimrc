@@ -1,7 +1,3 @@
-au InsertEnter * silent execute "!echo -en \<esc>[5 q"
-au InsertLeave * silent execute "!echo -en \<esc>[2 q"
-
-
 set nu rnu
 
 augroup numbertoggle
@@ -11,7 +7,7 @@ augroup numbertoggle
 augroup END
 
 syntax enable
-set background=dark
+"set background=dark
 set expandtab
 set softtabstop=4
 set shiftwidth=4
