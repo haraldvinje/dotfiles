@@ -41,6 +41,7 @@ dfc
 dhclient
 dhcpcd
 diffutils
+discord
 dmidecode
 dmraid
 dnsmasq

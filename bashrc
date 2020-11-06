@@ -172,3 +172,5 @@ source ~/.scripts/bash-powerline.sh
 #        PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
 #fi
 eval "$(thefuck --alias)"
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
