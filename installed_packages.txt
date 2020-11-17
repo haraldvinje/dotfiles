@@ -187,6 +187,7 @@ ntp
 nvidia-440xx-utils
 nvidia-prime
 oblogout
+obs-studio
 openresolv
 openssh
 optimus-manager
