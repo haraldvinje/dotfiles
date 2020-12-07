@@ -1,5 +1,5 @@
 export PATH=$PATH:~/.scripts/
-export BROWSER=/usr/bin/google-chrome-stable
+export BROWSER=/usr/bin/firefox
 export EDITOR='vim'
 export MONITOR='ePD1'
 export TERM='terminator'

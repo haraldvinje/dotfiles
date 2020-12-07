@@ -11,7 +11,6 @@ artwork-i3
 autoconf
 automake
 avahi
-aws-cli-v2
 b43-fwcutter
 bash
 bash-pipes
@@ -26,6 +25,7 @@ btrfs-progs
 bzip2
 calc
 cantarell-fonts
+chromium
 clipit
 cmatrix
 coreutils
@@ -34,6 +34,7 @@ cpupower
 crda
 cronie
 cryptsetup
+cuda
 deepin-screenshot
 deluge
 device-mapper
@@ -70,6 +71,7 @@ flex
 fortune-mod
 gawk
 gcc
+gcc-fortran
 gcc-libs
 gcolor2
 gettext
@@ -110,13 +112,13 @@ j4-dmenu-desktop-git
 jdk-openjdk
 jdk11-openjdk
 jfsutils
+jhead
 kdenlive
 kotlin
 kvantum-manjaro
 less
 lib32-flex
 lib32-mesa-demos
-lib32-nvidia-440xx-utils
 libdvdcss
 libgpod
 libtool
@@ -124,7 +126,8 @@ licenses
 lightdm-settings
 lightdm-slick-greeter
 linux-latest
-linux-latest-nvidia-440xx
+linux-lts
+linux57-nvidia-440xx
 logrotate
 lolcat
 lsd
@@ -185,9 +188,9 @@ nss-mdns
 ntfs-3g
 ntp
 nvidia-440xx-utils
-nvidia-prime
 oblogout
 obs-studio
+opencl-nvidia-440xx
 openresolv
 openssh
 optimus-manager
@@ -211,6 +214,7 @@ procps-ng
 psmisc
 pulseaudio
 pulseaudio-bluetooth
+pyside2
 python-pywal
 python37
 qt5-styleplugins

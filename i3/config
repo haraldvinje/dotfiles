@@ -431,7 +431,8 @@ mode "$mode_gaps_outer" {
         bindsym Escape mode "default"
 }
 
-bindsym $mod+b exec google-chrome-stable
+bindsym $mod+b exec firefox
 
 exec_always --no-startup-id wal -i ~/Pictures/Wallpapers/
 exec_always --no-startup-id "bash $HOME/.config/polybar/launch.sh"
+exec_always --no-startup-id "sh ~/.screenlayout/hjemmekontor.sh"

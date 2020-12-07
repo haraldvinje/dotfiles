@@ -35,6 +35,7 @@ Plug 'kevinhwang91/rnvimr', {'do': 'make sync'}
 call plug#end()
 
 "basics
+set mouse=a
 filetype plugin indent on
 syntax on 
 set hidden
