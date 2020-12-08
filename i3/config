@@ -436,3 +436,6 @@ bindsym $mod+b exec firefox
 exec_always --no-startup-id wal -i ~/Pictures/Wallpapers/
 exec_always --no-startup-id "bash $HOME/.config/polybar/launch.sh"
 exec_always --no-startup-id "sh ~/.screenlayout/hjemmekontor.sh"
+workspace 2 output HDMI-0
+workspace 1 output eDP-1-1
+workspace 1 output primary
