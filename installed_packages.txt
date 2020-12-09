@@ -205,6 +205,7 @@ pciutils
 pcmanfm
 perl
 perl-file-mimeinfo
+picom-jonaburg-git
 pkgconf
 polkit-gnome
 polybar
