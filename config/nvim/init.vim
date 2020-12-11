@@ -79,8 +79,8 @@ let g:winresizer_start_key = '<C-S>'
 let g:python3_host_prog = '/bin/python3'
 
 "Aesthetics
-colorscheme materialbox
-hi Normal guibg=NONE ctermbg=NONE
+colorscheme base16-gruvbox-dark-hard
+"hi Normal guibg=NONE ctermbg=NONE
 set termguicolors
 
 "StatusLine
