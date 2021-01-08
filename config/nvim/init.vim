@@ -128,7 +128,7 @@ autocmd BufNewFile,BufRead *.jsx set filetype=javascript.jsx
 autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
 
 "coc
-"command! -nargs=0 Prettier :CocCommand prettier.formatFile
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
 nmap <silent> gd <Plug>(coc-definition)
 "nmap <leader> ac <Plug>(coc-codeaction)
 nmap <silent> ac <Plug>(coc-implementation)

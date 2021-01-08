@@ -57,7 +57,7 @@ modules-left = i3  spotify
 modules-center =  date weather
 modules-right = cpu filesystem memory wireless-network alsa battery powermenu
 
-tray-position = hidden
+;tray-position = hidden
 tray-padding = 11
 tray-transparent = true
 tray-offset-y = 22

@@ -20,5 +20,4 @@
   "prettier.semi": false,
   "python.jediEnabled": false,
   "python.setInterpreter": "/home/haraldv/.local/lib/python3.8"
-
 }

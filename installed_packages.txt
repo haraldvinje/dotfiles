@@ -53,6 +53,7 @@ dosfstools
 downgrade
 e2fsprogs
 ecryptfs-utils
+edex-ui-bin
 efibootmgr
 emacs
 epdfview
@@ -65,6 +66,7 @@ file
 filesystem
 findutils
 firefox
+firefox-developer-edition
 fish
 flac
 flex
@@ -79,6 +81,7 @@ gimp
 git
 glibc
 gnome-keyring
+go
 google-chrome
 gparted
 grep
@@ -114,20 +117,23 @@ jdk11-openjdk
 jfsutils
 jhead
 kdenlive
+kitty
 kotlin
 kvantum-manjaro
 less
+lf
 lib32-flex
 lib32-mesa-demos
 libdvdcss
 libgpod
+libreoffice-still
 libtool
 licenses
 lightdm-settings
 lightdm-slick-greeter
 linux-latest
 linux-lts
-linux57-nvidia-440xx
+linux59-nvidia
 logrotate
 lolcat
 lsd
@@ -173,6 +179,7 @@ neofetch
 neovim-nightly
 nerd-fonts-dejavu-complete
 netctl
+netlify
 network-manager-applet
 networkmanager
 networkmanager-openconnect
@@ -187,10 +194,9 @@ npm
 nss-mdns
 ntfs-3g
 ntp
-nvidia-440xx-utils
 oblogout
 obs-studio
-opencl-nvidia-440xx
+opencl-nvidia
 openresolv
 openssh
 optimus-manager
@@ -220,6 +226,7 @@ python-pywal
 python37
 qt5-styleplugins
 qt5ct
+qutebrowser
 ranger
 rcm
 reiserfsprogs
@@ -237,6 +244,7 @@ snapd
 spectre-meltdown-checker
 speedtest-cli
 spotify
+spotify-tui
 subversion
 sudo
 sxiv
@@ -246,8 +254,10 @@ systemd
 systemd-fsck-silent
 systemd-sysvcompat
 tar
+teams
 terminator
 terminus-font
+terraform
 texinfo
 texlive-bibtexextra
 texlive-core
@@ -314,6 +324,7 @@ xorg-xhost
 xorg-xinit
 xorg-xkill
 xorg-xprop
+xournalpp
 xterm
 xz
 yarn

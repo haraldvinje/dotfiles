@@ -1,3 +1,7 @@
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 export PATH=$PATH:~/.scripts/
 export BROWSER=/usr/bin/firefox
 export EDITOR='vim'
@@ -117,6 +121,7 @@ fi
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias l='ls -FC --color=auto'
 alias r='ranger --choosedir=$HOME/.rangerdir; LASTDIR=`cat $HOME/.rangerdir`; cd "$LASTDIR"'
+alias ll='lsd -l'
 alias lla='lsd -la'
 
 
