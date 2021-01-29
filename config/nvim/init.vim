@@ -32,6 +32,7 @@ Plug 'PotatoesMaster/i3-vim-syntax'
 Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-startify'
 Plug 'kevinhwang91/rnvimr', {'do': 'make sync'}
+Plug 'hashivim/vim-terraform'
 call plug#end()
 
 "basics
@@ -128,10 +129,25 @@ autocmd BufNewFile,BufRead *.jsx set filetype=javascript.jsx
 autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
 
 "coc
+let g:coc_global_extensions = [
+  \ 'coc-tsserver'
+  \ ]
+
+if isdirectory('./node_modules') && isdirectory('./node_modules/prettier')
+  let g:coc_global_extensions += ['coc-prettier']
+endif
+
+if isdirectory('./node_modules') && isdirectory('./node_modules/eslint')
+  let g:coc_global_extensions += ['coc-eslint']
+endif
+
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
 nmap <silent> gd <Plug>(coc-definition)
-"nmap <leader> ac <Plug>(coc-codeaction)
-nmap <silent> ac <Plug>(coc-implementation)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gr <Plug>(coc-references)
+nmap <leader>rn <Plug>(coc-rename)
+nnoremap <silent> K :call CocAction('doHover')<CR>
+
 
 "fzf
 let g:ctrlp_map = '<c-t>'

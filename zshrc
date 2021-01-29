@@ -3,7 +3,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 export PATH=$PATH:~/.scripts/
-export BROWSER=/usr/bin/firefox
+export BROWSER=/usr/bin/chromium
 export EDITOR='vim'
 export MONITOR='ePD1'
 export TERM='terminator'

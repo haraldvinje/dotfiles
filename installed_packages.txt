@@ -11,9 +11,11 @@ artwork-i3
 autoconf
 automake
 avahi
+aws-cli-v2-bin
 b43-fwcutter
 bash
 bash-pipes
+bat
 bauh
 biber
 binutils
@@ -21,6 +23,7 @@ bison
 blueman
 bluez-utils
 bmenu
+brave
 btrfs-progs
 bzip2
 calc
@@ -57,6 +60,7 @@ edex-ui-bin
 efibootmgr
 emacs
 epdfview
+exa
 exfat-utils
 f2fs-tools
 fakeroot
@@ -65,8 +69,6 @@ ffmpegthumbnailer
 file
 filesystem
 findutils
-firefox
-firefox-developer-edition
 fish
 flac
 flex
@@ -127,6 +129,7 @@ lib32-mesa-demos
 libdvdcss
 libgpod
 libreoffice-still
+librewolf
 libtool
 licenses
 lightdm-settings
@@ -199,6 +202,7 @@ obs-studio
 opencl-nvidia
 openresolv
 openssh
+opera
 optimus-manager
 os-prober
 p7zip
