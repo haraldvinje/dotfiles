@@ -18,5 +18,14 @@
   },
   "prettier.singleQuote": true,
   "prettier.semi": false,
-  "python.jediEnabled": false
+  "prettier.disableSuccessMessage": true,
+  "python.jediEnabled": true,
+  "python.setInterpreter": "/home/haraldv/.local/lib/python3.9",
+  "eslint.autoFixOnSave": true,
+  "eslint.filetypes": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ]
 }

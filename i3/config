@@ -288,7 +288,7 @@ exec --no-startup-id clipit
 # exec_always --no-startup-id sbxkb
 # exec --no-startup-id start_conky_maia
 # exec --no-startup-id start_conky_green
-exec --no-startup-id xautolock -time 3000 -locker blurlock
+exec --no-startup-id xautolock -time 12000 -locker blurlock
 exec_always --no-startup-id ff-theme-util
 exec_always --no-startup-id fix_xcursor
 
@@ -431,7 +431,8 @@ mode "$mode_gaps_outer" {
         bindsym Escape mode "default"
 }
 
-bindsym $mod+b exec google-chrome-stable
+bindsym $mod+b exec chromium
 
 exec_always --no-startup-id wal -i ~/Pictures/Wallpapers/
-exec_always --no-startup-id "bash $HOME/.config/polybar/launch.sh"
+exec_always --no-startup-id $HOME/.screenlayout/hjemmekontor.sh
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh

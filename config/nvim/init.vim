@@ -13,11 +13,11 @@ Plug 'vimwiki/vimwiki'
 Plug 'junegunn/goyo.vim'
 Plug 'mattn/emmet-vim'
 Plug 'ctrlpvim/ctrlp.vim'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'simeji/winresizer'
 Plug 'scrooloose/nerdtree'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'chriskempson/base16-vim'
@@ -33,9 +33,11 @@ Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-startify'
 Plug 'kevinhwang91/rnvimr', {'do': 'make sync'}
 Plug 'gcmt/taboo.vim'
+Plug 'hashivim/vim-terraform'
 call plug#end()
 
 "basics
+set mouse=a
 filetype plugin indent on
 syntax on 
 set hidden
@@ -79,8 +81,8 @@ let g:winresizer_start_key = '<C-S>'
 let g:python3_host_prog = '/bin/python3'
 
 "Aesthetics
-colorscheme materialbox
-hi Normal guibg=NONE ctermbg=NONE
+colorscheme base16-gruvbox-dark-hard
+"hi Normal guibg=NONE ctermbg=NONE
 set termguicolors
 
 "StatusLine
@@ -128,10 +130,25 @@ autocmd BufNewFile,BufRead *.jsx set filetype=javascript.jsx
 autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
 
 "coc
-"command! -nargs=0 Prettier :CocCommand prettier.formatFile
+let g:coc_global_extensions = [
+  \ 'coc-tsserver'
+  \ ]
+
+if isdirectory('./node_modules') && isdirectory('./node_modules/prettier')
+  let g:coc_global_extensions += ['coc-prettier']
+endif
+
+if isdirectory('./node_modules') && isdirectory('./node_modules/eslint')
+  let g:coc_global_extensions += ['coc-eslint']
+endif
+
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
 nmap <silent> gd <Plug>(coc-definition)
-"nmap <leader> ac <Plug>(coc-codeaction)
-nmap <silent> ac <Plug>(coc-implementation)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gr <Plug>(coc-references)
+nmap <leader>rn <Plug>(coc-rename)
+nnoremap <silent> K :call CocAction('doHover')<CR>
+
 
 "fzf
 let g:ctrlp_map = '<c-t>'

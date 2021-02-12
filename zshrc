@@ -1,5 +1,9 @@
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 export PATH=$PATH:~/.scripts/
-export BROWSER=/usr/bin/google-chrome-stable
+export BROWSER=/usr/bin/chromium
 export EDITOR='vim'
 export MONITOR='ePD1'
 export TERM='terminator'
@@ -117,6 +121,7 @@ fi
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias l='ls -FC --color=auto'
 alias r='ranger --choosedir=$HOME/.rangerdir; LASTDIR=`cat $HOME/.rangerdir`; cd "$LASTDIR"'
+alias ll='lsd -l'
 alias lla='lsd -la'
 
 
@@ -127,3 +132,7 @@ source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+eval $(thefuck --alias)
