@@ -16,7 +16,7 @@ fzf_then_open_in_editor() {
 bind -x '"\C-t": fzf_then_open_in_editor'
 
 export PATH=$PATH:~/.scripts/
-export BROWSER=/usr/bin/chromium
+export BROWSER=/usr/bin/google-chrome-stable
 export EDITOR='vim'
 export MONITOR='ePD1'
 export TERM='terminator'

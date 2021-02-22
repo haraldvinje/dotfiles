@@ -31,6 +31,7 @@ cantarell-fonts
 chromium
 clipit
 cmatrix
+code
 coreutils
 cowsay
 cpupower
@@ -129,13 +130,13 @@ lib32-mesa-demos
 libdvdcss
 libgpod
 libreoffice-still
-librewolf
 libtool
 licenses
 lightdm-settings
 lightdm-slick-greeter
 linux-latest
 linux-lts
+linux510-nvidia
 linux59-nvidia
 logrotate
 lolcat
@@ -228,6 +229,7 @@ pulseaudio-bluetooth
 pyside2
 python-pywal
 python37
+python38
 qt5-styleplugins
 qt5ct
 qutebrowser

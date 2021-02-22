@@ -3,7 +3,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 export PATH=$PATH:~/.scripts/
-export BROWSER=/usr/bin/chromium
+export BROWSER=/usr/bin/google-chrome-stable
 export EDITOR='vim'
 export MONITOR='ePD1'
 export TERM='terminator'
@@ -97,6 +97,7 @@ source $ZSH/oh-my-zsh.sh
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
