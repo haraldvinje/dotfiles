@@ -12,6 +12,7 @@ autoconf
 automake
 avahi
 aws-cli-v2-bin
+aws-ecs-cli
 b43-fwcutter
 bash
 bash-pipes
@@ -28,6 +29,7 @@ btrfs-progs
 bzip2
 calc
 cantarell-fonts
+cheese
 chromium
 clipit
 cmatrix
@@ -59,6 +61,7 @@ e2fsprogs
 ecryptfs-utils
 edex-ui-bin
 efibootmgr
+elementary-wallpapers
 emacs
 epdfview
 exa
@@ -83,6 +86,7 @@ gettext
 gimp
 git
 glibc
+gnome-backgrounds
 gnome-keyring
 go
 google-chrome
@@ -106,6 +110,7 @@ gvfs-mtp
 gvfs-smb
 gzip
 hardcode-fixer
+heroku-cli
 hexchat
 htop-vim-git
 inetutils
@@ -141,6 +146,7 @@ linux59-nvidia
 logrotate
 lolcat
 lsd
+lsof
 lvm2
 lxappearance
 lxinput
@@ -164,6 +170,7 @@ manjaro-system
 manjaro-zsh-config
 markdown_previewer
 matcha-gtk-theme
+mate-backgrounds
 mdadm
 memtest86+
 mesa-demos
@@ -218,6 +225,7 @@ perl
 perl-file-mimeinfo
 picom-jonaburg-git
 pkgconf
+plasma-workspace-wallpapers
 polkit-gnome
 polybar
 poppler-data
@@ -235,6 +243,7 @@ qt5ct
 qutebrowser
 ranger
 rcm
+redis
 reiserfsprogs
 rofi
 rofimoji
@@ -242,6 +251,7 @@ rpi-imager
 rsync
 s-nail
 sbxkb
+scim-tables
 screenfetch
 sed
 shadow
