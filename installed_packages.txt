@@ -29,6 +29,7 @@ btrfs-progs
 bzip2
 calc
 cantarell-fonts
+cava
 cheese
 chromium
 clipit
@@ -124,6 +125,7 @@ jdk-openjdk
 jdk11-openjdk
 jfsutils
 jhead
+jq
 kdenlive
 kitty
 kotlin
@@ -171,6 +173,7 @@ manjaro-zsh-config
 markdown_previewer
 matcha-gtk-theme
 mate-backgrounds
+maven
 mdadm
 memtest86+
 mesa-demos
@@ -243,6 +246,7 @@ qt5ct
 qutebrowser
 ranger
 rcm
+recordmydesktop
 redis
 reiserfsprogs
 rofi
@@ -308,6 +312,7 @@ vertex-maia-themes
 vi
 vibrancy-icons-teal
 viewnior
+vifm
 vim
 vlc
 volumeicon
