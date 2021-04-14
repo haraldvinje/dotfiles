@@ -2,6 +2,7 @@ set nu rnu
 set ignorecase
 set smartcase
 set commentary
+set surround
 
 nmap <C-h> <C-w><C-h>
 nmap <C-j> <C-w><C-j>

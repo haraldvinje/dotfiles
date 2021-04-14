@@ -179,6 +179,7 @@ memtest86+
 mesa-demos
 mhwd
 mhwd-db
+micronaut
 mkinitcpio-openswap
 mlocate
 mobile-broadband-provider-info
@@ -208,7 +209,6 @@ npm
 nss-mdns
 ntfs-3g
 ntp
-oblogout
 obs-studio
 opencl-nvidia
 openresolv
