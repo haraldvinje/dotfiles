@@ -3,6 +3,7 @@ set ignorecase
 set smartcase
 set commentary
 set surround
+set clipboard+=unnamed
 
 nmap <C-h> <C-w><C-h>
 nmap <C-j> <C-w><C-j>

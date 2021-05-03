@@ -20,6 +20,7 @@ export BROWSER=/usr/bin/google-chrome-stable
 export EDITOR='vim'
 export MONITOR='ePD1'
 export TERM='terminator'
+export USER_HOME=$HOME
 
 [[ $- != *i* ]] && return
 
@@ -175,3 +176,8 @@ eval "$(thefuck --alias)"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
+[ -f ~/.profile ] && source ~/.profile
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/home/haraldv/.sdkman"
+[[ -s "/home/haraldv/.sdkman/bin/sdkman-init.sh" ]] && source "/home/haraldv/.sdkman/bin/sdkman-init.sh"

@@ -5,6 +5,7 @@ alacritty
 alsa-firmware
 alsa-plugins
 alsa-utils
+amfora
 apparmor
 arandr
 artwork-i3
@@ -74,6 +75,8 @@ ffmpegthumbnailer
 file
 filesystem
 findutils
+firebase-tools
+firefox
 fish
 flac
 flex
@@ -133,6 +136,7 @@ kvantum-manjaro
 less
 lf
 lib32-flex
+lib32-libstdc++5
 lib32-mesa-demos
 libdvdcss
 libgpod
@@ -211,6 +215,7 @@ ntfs-3g
 ntp
 obs-studio
 opencl-nvidia
+openjdk-doc
 openresolv
 openssh
 opera
@@ -277,7 +282,6 @@ tar
 teams
 terminator
 terminus-font
-terraform
 texinfo
 texlive-bibtexextra
 texlive-core
@@ -291,6 +295,7 @@ texlive-pictures
 texlive-pstricks
 texlive-publishers
 texlive-science
+tfenv
 thefuck
 tk
 tlp
@@ -323,6 +328,7 @@ w3m
 wallpapers-juhraya
 wget
 which
+wmctrl
 wmutils
 wpa_supplicant
 xarchiver
