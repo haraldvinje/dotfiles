@@ -5,6 +5,7 @@ alacritty
 alsa-firmware
 alsa-plugins
 alsa-utils
+amfora
 apparmor
 arandr
 artwork-i3
@@ -12,6 +13,7 @@ autoconf
 automake
 avahi
 aws-cli-v2-bin
+aws-ecs-cli
 b43-fwcutter
 bash
 bash-pipes
@@ -28,9 +30,12 @@ btrfs-progs
 bzip2
 calc
 cantarell-fonts
+cava
+cheese
 chromium
 clipit
 cmatrix
+code
 coreutils
 cowsay
 cpupower
@@ -58,6 +63,7 @@ e2fsprogs
 ecryptfs-utils
 edex-ui-bin
 efibootmgr
+elementary-wallpapers
 emacs
 epdfview
 exa
@@ -69,6 +75,8 @@ ffmpegthumbnailer
 file
 filesystem
 findutils
+firebase-tools
+firefox
 fish
 flac
 flex
@@ -82,6 +90,7 @@ gettext
 gimp
 git
 glibc
+gnome-backgrounds
 gnome-keyring
 go
 google-chrome
@@ -105,6 +114,7 @@ gvfs-mtp
 gvfs-smb
 gzip
 hardcode-fixer
+heroku-cli
 hexchat
 htop-vim-git
 inetutils
@@ -118,6 +128,7 @@ jdk-openjdk
 jdk11-openjdk
 jfsutils
 jhead
+jq
 kdenlive
 kitty
 kotlin
@@ -125,21 +136,23 @@ kvantum-manjaro
 less
 lf
 lib32-flex
+lib32-libstdc++5
 lib32-mesa-demos
 libdvdcss
 libgpod
 libreoffice-still
-librewolf
 libtool
 licenses
 lightdm-settings
 lightdm-slick-greeter
 linux-latest
 linux-lts
+linux510-nvidia
 linux59-nvidia
 logrotate
 lolcat
 lsd
+lsof
 lvm2
 lxappearance
 lxinput
@@ -163,11 +176,14 @@ manjaro-system
 manjaro-zsh-config
 markdown_previewer
 matcha-gtk-theme
+mate-backgrounds
+maven
 mdadm
 memtest86+
 mesa-demos
 mhwd
 mhwd-db
+micronaut
 mkinitcpio-openswap
 mlocate
 mobile-broadband-provider-info
@@ -197,9 +213,9 @@ npm
 nss-mdns
 ntfs-3g
 ntp
-oblogout
 obs-studio
 opencl-nvidia
+openjdk-doc
 openresolv
 openssh
 opera
@@ -217,6 +233,7 @@ perl
 perl-file-mimeinfo
 picom-jonaburg-git
 pkgconf
+plasma-workspace-wallpapers
 polkit-gnome
 polybar
 poppler-data
@@ -228,11 +245,14 @@ pulseaudio-bluetooth
 pyside2
 python-pywal
 python37
+python38
 qt5-styleplugins
 qt5ct
 qutebrowser
 ranger
 rcm
+recordmydesktop
+redis
 reiserfsprogs
 rofi
 rofimoji
@@ -240,6 +260,7 @@ rpi-imager
 rsync
 s-nail
 sbxkb
+scim-tables
 screenfetch
 sed
 shadow
@@ -261,7 +282,6 @@ tar
 teams
 terminator
 terminus-font
-terraform
 texinfo
 texlive-bibtexextra
 texlive-core
@@ -275,6 +295,7 @@ texlive-pictures
 texlive-pstricks
 texlive-publishers
 texlive-science
+tfenv
 thefuck
 tk
 tlp
@@ -296,6 +317,7 @@ vertex-maia-themes
 vi
 vibrancy-icons-teal
 viewnior
+vifm
 vim
 vlc
 volumeicon
@@ -306,6 +328,7 @@ w3m
 wallpapers-juhraya
 wget
 which
+wmctrl
 wmutils
 wpa_supplicant
 xarchiver
