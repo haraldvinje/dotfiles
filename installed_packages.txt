@@ -89,6 +89,8 @@ gcolor2
 gettext
 gimp
 git
+git-secret
+github-cli
 glibc
 gnome-backgrounds
 gnome-keyring
@@ -345,6 +347,9 @@ xf86-input-void
 xfburn
 xfce4-power-manager
 xfsprogs
+xmobar
+xmonad
+xmonad-contrib
 xorg-server
 xorg-twm
 xorg-xhost
