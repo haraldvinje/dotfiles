@@ -182,8 +182,8 @@ label-urgent-padding = 4
 
 [module/wireless-network]
 type = internal/network
-;interface = wlp82s0
-interface = wlp2s0
+interface = wlp82s0
+;interface = wlp2s0
 interval = 3.0
 
 format-connected-prefix = " "
