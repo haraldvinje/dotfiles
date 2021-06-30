@@ -32,6 +32,7 @@ Plug 'PotatoesMaster/i3-vim-syntax'
 Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-startify'
 Plug 'kevinhwang91/rnvimr', {'do': 'make sync'}
+Plug 'gcmt/taboo.vim'
 Plug 'hashivim/vim-terraform'
 call plug#end()
 
