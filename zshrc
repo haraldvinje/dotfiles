@@ -136,6 +136,7 @@ source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 
 
 eval $(thefuck --alias)
+source ~/.scripts/vy/vy-aws-login.sh
 
 export PATH=$PATH:~/.scripts/
 export BROWSER=/usr/bin/google-chrome-stable
@@ -148,4 +149,5 @@ export USER_HOME=$HOME
 export SDKMAN_DIR="/home/haraldv/.sdkman"
 [[ -s "/home/haraldv/.sdkman/bin/sdkman-init.sh" ]] && source "/home/haraldv/.sdkman/bin/sdkman-init.sh"
 
-
+# To customize prompt, run `p10k configure` or edit ~/.dotfiles/p10k.zsh.
+[[ ! -f ~/.dotfiles/p10k.zsh ]] || source ~/.dotfiles/p10k.zsh

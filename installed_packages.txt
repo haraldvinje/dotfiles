@@ -9,11 +9,13 @@ amfora
 apparmor
 arandr
 artwork-i3
+audio-recorder
 autoconf
 automake
 avahi
 aws-cli-v2-bin
 aws-ecs-cli
+aws-session-manager-plugin
 b43-fwcutter
 bash
 bash-pipes
@@ -42,6 +44,7 @@ cpupower
 crda
 cronie
 cryptsetup
+ctop
 cuda
 deepin-screenshot
 deluge
@@ -150,7 +153,6 @@ lightdm-slick-greeter
 linux-latest
 linux-lts
 linux510-nvidia
-linux59-nvidia
 logrotate
 lolcat
 lsd
@@ -185,7 +187,6 @@ memtest86+
 mesa-demos
 mhwd
 mhwd-db
-micronaut
 mkinitcpio-openswap
 mlocate
 mobile-broadband-provider-info
@@ -233,12 +234,16 @@ pciutils
 pcmanfm
 perl
 perl-file-mimeinfo
+pgadmin4
 picom-jonaburg-git
+pinta
 pkgconf
 plasma-workspace-wallpapers
 polkit-gnome
 polybar
 poppler-data
+postgresql
+postman-bin
 powertop
 procps-ng
 psmisc
@@ -302,6 +307,7 @@ thefuck
 tk
 tlp
 tmux
+tomcat8
 tree
 ttf-bitstream-vera
 ttf-dejavu
