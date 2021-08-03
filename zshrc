@@ -121,6 +121,7 @@ alias ll='lsd -l'
 alias lla='lsd -la'
 
 
+source /home/haraldv/.fzf-tab-completion/fzf-zsh-completion.sh
 source /usr/share/fzf/completion.zsh
 source /usr/share/fzf/key-bindings.zsh
 source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme

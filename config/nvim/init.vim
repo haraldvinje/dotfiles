@@ -75,7 +75,6 @@ nnoremap <C-Right>  <C-W><C-l>
 set splitbelow
 set splitright
 
-
 "resize windows
 let g:winresizer_start_key = '<C-S>'
 let g:python3_host_prog = '/bin/python3'
@@ -99,6 +98,8 @@ let g:nerdtree_tabs_focus_on_files=1
 let g:NERDTreeMapOpenInTabSilent = '<RightMouse>'
 let g:NERDTreeShowHidden=1
 let g:NERDTreeIgnore=['.git']
+let NERDTreeMapCustomOpen='l'
+let NERDTreeMapCloseDir ='h'
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.db,*.sqlite
 
 "NerdTree Syntax Highligt
@@ -118,7 +119,6 @@ vnoremap > >gv
 "spacing and tabs
 set incsearch
 set ignorecase
-set smartcase
 set nohlsearch
 set tabstop=4
 set softtabstop=4

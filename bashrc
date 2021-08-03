@@ -164,7 +164,6 @@ ex ()
   fi
 }
 
-source ~/.bash-powerline.sh
 eval "$(thefuck --alias)"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash

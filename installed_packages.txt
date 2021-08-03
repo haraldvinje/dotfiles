@@ -27,7 +27,7 @@ bison
 blueman
 bluez-utils
 bmenu
-brave
+brave-browser
 btrfs-progs
 bzip2
 calc
@@ -35,6 +35,7 @@ cantarell-fonts
 cava
 cheese
 chromium
+circleci-cli-bin
 clipit
 cmatrix
 code
@@ -64,6 +65,7 @@ dosfstools
 downgrade
 e2fsprogs
 ecryptfs-utils
+ed
 edex-ui-bin
 efibootmgr
 elementary-wallpapers
