@@ -38,7 +38,6 @@ chromium
 circleci-cli-bin
 clipit
 cmatrix
-code
 coreutils
 cowsay
 cpupower
@@ -61,6 +60,7 @@ dnsmasq
 docker
 docker-compose
 docker-credential-pass
+dos2unix
 dosfstools
 downgrade
 e2fsprogs
@@ -331,7 +331,7 @@ vifm
 vim
 vlc
 volumeicon
-vscodium-bin
+vscodium-git
 vtop
 vue-cli
 w3m

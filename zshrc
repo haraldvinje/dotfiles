@@ -86,7 +86,7 @@ export ZSH="/home/haraldv/.oh-my-zsh"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git vi-mode zsh-syntax-highlighting aws colorize)
+plugins=(git vi-mode zsh-syntax-highlighting aws colorize terraform)
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
@@ -152,3 +152,4 @@ export SDKMAN_DIR="/home/haraldv/.sdkman"
 
 # To customize prompt, run `p10k configure` or edit ~/.dotfiles/p10k.zsh.
 [[ ! -f ~/.dotfiles/p10k.zsh ]] || source ~/.dotfiles/p10k.zsh
+PROMPT=$'%{$fg[white]%}$(tf_prompt_info)%{$reset_color%} '

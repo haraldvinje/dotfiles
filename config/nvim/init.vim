@@ -80,14 +80,14 @@ let g:winresizer_start_key = '<C-S>'
 let g:python3_host_prog = '/bin/python3'
 
 "Aesthetics
-colorscheme base16-gruvbox-dark-hard
-"hi Normal guibg=NONE ctermbg=NONE
+colorscheme gruvbox
+hi Normal guibg=NONE ctermbg=NONE
 set termguicolors
 
 "StatusLine
 set laststatus=2
 let g:airline_powerline_fonts = 1
-let g:airline_theme='base16_vim'
+let g:airline_theme='dark'
 
 "NerdTree
 map <C-n> :NERDTreeToggle<CR>
