@@ -146,6 +146,9 @@ export MONITOR='ePD1'
 export TERM='terminator'
 export USER_HOME=$HOME
 
+eval "$(fasd --init auto)"
+alias j='fasd_cd -d'
+
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/home/haraldv/.sdkman"
 [[ -s "/home/haraldv/.sdkman/bin/sdkman-init.sh" ]] && source "/home/haraldv/.sdkman/bin/sdkman-init.sh"
@@ -153,3 +156,4 @@ export SDKMAN_DIR="/home/haraldv/.sdkman"
 # To customize prompt, run `p10k configure` or edit ~/.dotfiles/p10k.zsh.
 [[ ! -f ~/.dotfiles/p10k.zsh ]] || source ~/.dotfiles/p10k.zsh
 PROMPT=$'%{$fg[white]%}$(tf_prompt_info)%{$reset_color%} '
+

@@ -19,8 +19,8 @@
   "prettier.singleQuote": true,
   "prettier.semi": false,
   "prettier.disableSuccessMessage": true,
-  "python.jediEnabled": true,
-  "python.setInterpreter": "/home/haraldv/.local/lib/python3.9",
+  "python.setInterpreter": "/usr/bin/python",
+  "pyright.enable": true,
   "eslint.autoFixOnSave": true,
   "eslint.filetypes": [
     "javascript",
