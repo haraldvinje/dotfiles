@@ -46,6 +46,7 @@ cronie
 cryptsetup
 ctop
 cuda
+dbeaver
 deepin-screenshot
 deluge
 device-mapper
@@ -128,6 +129,7 @@ hexchat
 htop-vim-git
 inetutils
 intel-ucode
+intellij-idea-community-edition
 intellij-idea-ultimate-edition
 inxi
 iproute2
