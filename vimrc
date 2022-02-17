@@ -16,3 +16,8 @@ filetype plugin indent on
 set statusline+=%F
 set laststatus=1
 let $PAGER=''
+
+nnoremap <C-H> <C-W><C-h>
+nnoremap <C-J> <C-W><C-j>
+nnoremap <C-K> <C-W><C-k>
+nnoremap <C-L> <C-W><C-l>

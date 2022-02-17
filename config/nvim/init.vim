@@ -7,7 +7,6 @@ Plug 'iberianpig/ranger-explorer.vim'
 Plug 'jiangmiao/auto-pairs'
 "Plugin for moving, deleting files in vim and on disk 
 Plug 'tpope/vim-eunuch'
-Plug 'jremmen/vim-ripgrep'
 "
 Plug 'vimwiki/vimwiki'
 Plug 'junegunn/goyo.vim'
@@ -18,7 +17,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'simeji/winresizer'
 Plug 'scrooloose/nerdtree'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-Plug 'peitalin/vim-jsx-typescript'
+Plug 'MaxMEllon/vim-jsx-pretty'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'chriskempson/base16-vim'
 Plug 'vim-airline/vim-airline'
@@ -42,6 +41,8 @@ filetype plugin indent on
 syntax on 
 set hidden
 set autochdir
+vnoremap < <gv
+vnoremap > >gv
 
 "Yanking
 nnoremap Y y$
@@ -99,7 +100,7 @@ let g:NERDTreeMapOpenInTabSilent = '<RightMouse>'
 let g:NERDTreeShowHidden=1
 let g:NERDTreeIgnore=['.git']
 let NERDTreeMapCustomOpen='l'
-let NERDTreeMapCloseDir ='h'
+let NERDTreeMapCloseChildren ='h'
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.db,*.sqlite
 
 "NerdTree Syntax Highligt
