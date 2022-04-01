@@ -1,0 +1,127 @@
+{
+  "vim.neovimPath": "/usr/bin/nvim",
+  "vim.enableNeovim": true,
+  "vim.vimrc.enable": true,
+  "editor.mouseWheelZoom": true,
+  "keyboard.dispatch": "keyCode",
+  "vim.handleKeys": {
+    "<C-w>": false,
+    "<C-k>": false,
+    "<C-shift+`>": false,
+    "<C-b>": false,
+    "<C-f>": false,
+    "<C-n>": false
+  },
+  "editor.lineNumbers": "relative",
+  "terminal.integrated.profiles.linux": {
+    "bash": {
+      "path": "/bin/bash",
+      "icon": "terminal-bash"
+    },
+    "zsh": {
+      "path": "/bin/zsh"
+    },
+    "fish": {
+      "path": "/bin/fish"
+    },
+    "tmux": {
+      "path": "tmux",
+      "icon": "terminal-tmux"
+    },
+    "pwsh": {
+      "path": "pwsh",
+      "icon": "terminal-powershell"
+    }
+  },
+  "terminal.external.linuxExec": "truecolor",
+  "terminal.integrated.fontFamily": "'Hack Nerd Font'",
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.productIconTheme": "material-product-icons",
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[terraform]": {
+    "editor.defaultFormatter": "hashicorp.terraform"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "json.schemas": [],
+  "editor.formatOnSave": false,
+  "editor.minimap.enabled": false,
+  "gitlens.hovers.currentLine.over": "line",
+  "bracket-pair-colorizer-2.depreciation-notice": false,
+  "cloudcode.autoDependencies": "off",
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[php]": {
+    "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+  },
+  "php-cs-fixer.executablePath": "${extensionPath}/php-cs-fixer.phar",
+  "diffEditor.ignoreTrimWhitespace": false,
+  "editor.linkedEditing": true,
+  "liveServer.settings.donotShowInfoMsg": true,
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+  "material-icon-theme.activeIconPack": "react",
+  "workbench.colorTheme": "Gruvbox DrakenLords Dark Draken",
+  "aws.sam.enableCodeLenses": false,
+  "yaml.schemas": {
+    "file:///home/haraldv/.vscode/extensions/atlassian.atlascode-2.10.11/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
+  },
+  "atlascode.jira.jqlList": [
+    {
+      "id": "3f3a54f6-3949-4d1a-a7bf-1416857f92fa",
+      "enabled": true,
+      "name": "My xperitech Issues",
+      "query": "assignee = currentUser() AND resolution = Unresolved ORDER BY lastViewed DESC",
+      "siteId": "31b340be-bbd7-4f67-aedb-a351c0966496",
+      "monitor": true
+    }
+  ],
+  "yaml.customTags": [
+    "!And",
+    "!And sequence",
+    "!If",
+    "!If sequence",
+    "!Not",
+    "!Not sequence",
+    "!Equals",
+    "!Equals sequence",
+    "!Or",
+    "!Or sequence",
+    "!FindInMap",
+    "!FindInMap sequence",
+    "!Base64",
+    "!Join",
+    "!Join sequence",
+    "!Cidr",
+    "!Ref",
+    "!Sub",
+    "!Sub sequence",
+    "!GetAtt",
+    "!GetAZs",
+    "!ImportValue",
+    "!ImportValue sequence",
+    "!Select",
+    "!Select sequence",
+    "!Split",
+    "!Split sequence"
+  ],
+  "redhat.telemetry.enabled": false,
+  "atlascode.jira.lastCreateSiteAndProject": {
+    "siteId": "31b340be-bbd7-4f67-aedb-a351c0966496",
+    "projectKey": "CAM"
+  },
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "editor.fontFamily": "'monospace'",
+  "aws.profile": "profile:default",
+}

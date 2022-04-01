@@ -15,7 +15,6 @@ while pgrep -u $UID -x polybar > /dev/null; do sleep 1; done
 desktop=$(echo $DESKTOP_SESSION)
 count=$(xrandr --query | grep " connected" | cut -d" " -f1 | wc -l)
 
-
 case $desktop in
 
     i3|/usr/share/xsessions/i3)
