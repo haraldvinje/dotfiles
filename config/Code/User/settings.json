@@ -72,10 +72,10 @@
     "editor.defaultFormatter": "vscode.html-language-features"
   },
   "material-icon-theme.activeIconPack": "react",
-  "workbench.colorTheme": "Gruvbox DrakenLords Dark Draken",
+  "workbench.colorTheme": "Gruvbox DrakenLords Dark",
   "aws.sam.enableCodeLenses": false,
   "yaml.schemas": {
-    "file:///home/haraldv/.vscode/extensions/atlassian.atlascode-2.10.11/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
+    "file:///home/haraldv/.vscode/extensions/atlassian.atlascode-2.10.12/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
   },
   "atlascode.jira.jqlList": [
     {
@@ -122,6 +122,16 @@
     "projectKey": "CAM"
   },
   "typescript.updateImportsOnFileMove.enabled": "always",
-  "editor.fontFamily": "'monospace'",
+  "editor.fontFamily": "'DejaVu Sans Mono', 'DejaVuSansMono', 'FontAwesome', 'DejaVu Sans', 'Droid Sans', 'FiraCode Nerd Font', 'Hack Nerd Font'",
   "aws.profile": "profile:default",
+  "editor.inlineSuggest.enabled": true,
+  "svelte.enable-ts-plugin": true,
+  "github.copilot.enable": {
+    "*": true,
+    "yaml": false,
+    "plaintext": false,
+    "markdown": true
+  },
+  "aws.samcli.enableCodeLenses": false,
+  "diffEditor.renderSideBySide": false,
 }
