@@ -134,4 +134,10 @@
   },
   "aws.samcli.enableCodeLenses": false,
   "diffEditor.renderSideBySide": false,
+  "editor.suggest.showMethods": true,
+  "editor.suggest.preview": true,
+  "editor.acceptSuggestionOnEnter": "on",
+  "editor.snippetSuggestions": "top",
+  "workbench.statusBar.visible": false,
+  "material-icon-theme.folders.theme": "classic",
 }
