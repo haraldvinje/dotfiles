@@ -7,3 +7,5 @@
 [user]
 	email = harald@xperitech.com
 	name = Harald Vinje
+[push]
+	autoSetupRemote = true
