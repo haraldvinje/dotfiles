@@ -34,7 +34,7 @@
     }
   },
   "terminal.external.linuxExec": "truecolor",
-  "terminal.integrated.fontFamily": "'Hack Nerd Font'",
+  "terminal.integrated.fontFamily": "Hack Nerd Font",
   "workbench.iconTheme": "material-icon-theme",
   "workbench.productIconTheme": "material-product-icons",
   "[typescriptreact]": {
@@ -53,10 +53,7 @@
     "editor.defaultFormatter": "vscode.json-language-features"
   },
   "json.schemas": [],
-  "editor.formatOnSave": false,
-  "editor.minimap.enabled": false,
   "gitlens.hovers.currentLine.over": "line",
-  "bracket-pair-colorizer-2.depreciation-notice": false,
   "cloudcode.autoDependencies": "off",
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -64,7 +61,6 @@
   "[php]": {
     "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
   },
-  "php-cs-fixer.executablePath": "${extensionPath}/php-cs-fixer.phar",
   "diffEditor.ignoreTrimWhitespace": false,
   "editor.linkedEditing": true,
   "liveServer.settings.donotShowInfoMsg": true,
@@ -73,20 +69,9 @@
   },
   "material-icon-theme.activeIconPack": "react",
   "workbench.colorTheme": "Gruvbox DrakenLords Dark",
-  "aws.sam.enableCodeLenses": false,
   "yaml.schemas": {
     "file:///home/haraldv/.vscode/extensions/atlassian.atlascode-2.10.12/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
   },
-  "atlascode.jira.jqlList": [
-    {
-      "id": "3f3a54f6-3949-4d1a-a7bf-1416857f92fa",
-      "enabled": true,
-      "name": "My xperitech Issues",
-      "query": "assignee = currentUser() AND resolution = Unresolved ORDER BY lastViewed DESC",
-      "siteId": "31b340be-bbd7-4f67-aedb-a351c0966496",
-      "monitor": true
-    }
-  ],
   "yaml.customTags": [
     "!And",
     "!And sequence",
@@ -117,12 +102,9 @@
     "!Split sequence"
   ],
   "redhat.telemetry.enabled": false,
-  "atlascode.jira.lastCreateSiteAndProject": {
-    "siteId": "31b340be-bbd7-4f67-aedb-a351c0966496",
-    "projectKey": "CAM"
-  },
   "typescript.updateImportsOnFileMove.enabled": "always",
-  "editor.fontFamily": "'DejaVu Sans Mono', 'DejaVuSansMono', 'FontAwesome', 'DejaVu Sans', 'Droid Sans', 'FiraCode Nerd Font', 'Hack Nerd Font'",
+  "editor.fontFamily": "'Hack Nerd Font'",
+  // "editor.fontFamily": "'DejaVuSansMono Nerd Font', 'FontAwesome', 'DejaVu Sans', 'Droid Sans', 'FiraCode Nerd Font', 'Hack Nerd Font'",
   "aws.profile": "profile:default",
   "editor.inlineSuggest.enabled": true,
   "svelte.enable-ts-plugin": true,
@@ -138,6 +120,11 @@
   "editor.suggest.preview": true,
   "editor.acceptSuggestionOnEnter": "on",
   "editor.snippetSuggestions": "top",
-  "workbench.statusBar.visible": false,
-  "material-icon-theme.folders.theme": "classic",
+  "material-icon-theme.folders.theme": "specific",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": true,
+  "editor.minimap.enabled": false,
+  "npm.keybindingsChangedWarningShown": true,
+  "reactSnippets.settings.prettierEnabled": true,
 }

@@ -300,7 +300,7 @@ alias probe="sudo -E hw-probe -all -upload"
 alias ssn="sudo shutdown now"
 alias sr="sudo reboot"
 
-alias lock="i3lock-fancy-rapid 5 3"
+alias lock="i3lock-fancy"
 
 # # ex = EXtractor for all kinds of archives
 # # usage: ex <file>
