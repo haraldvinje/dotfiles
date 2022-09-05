@@ -3,6 +3,6 @@
 sleep 1
 sh /home/haraldv/.scripts/resolve-screens.sh
 sleep 1
-sh /home/haraldv/.config/polybar/launch.sh 
+sh /home/haraldv/.config/polybar/launch-new.sh --forest
 xmodmap /home/haraldv/.Xmodmap
 feh --bg-scale --randomize /home/haraldv/Pictures/Wallpapers/

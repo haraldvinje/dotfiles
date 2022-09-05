@@ -127,4 +127,25 @@
   "editor.minimap.enabled": false,
   "npm.keybindingsChangedWarningShown": true,
   "reactSnippets.settings.prettierEnabled": true,
+  "remote.SSH.defaultExtensions": [
+    "gitpod.gitpod-remote-ssh"
+  ],
+  "settingsSync.ignoredSettings": [
+    "configurationSync.store"
+  ],
+  "configurationSync.store": {
+    "url": "https://gitpod.io/code-sync",
+    "stableUrl": "https://gitpod.io/code-sync",
+    "insidersUrl": "https://gitpod.io/code-sync",
+    "canSwitch": false,
+    "authenticationProviders": {
+      "gitpod": {
+        "scopes": [
+          "function:accessCodeSyncStorage",
+          "function:getLoggedInUser",
+          "resource:default"
+        ]
+      }
+    }
+  },
 }
