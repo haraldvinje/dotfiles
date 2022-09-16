@@ -9,3 +9,5 @@
 	name = Harald Vinje
 [push]
 	autoSetupRemote = true
+[safe]
+	directory = /opt/flutter

@@ -4,7 +4,6 @@ call plug#begin()
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'tpope/vim-surround'
 Plug 'iberianpig/ranger-explorer.vim'
-Plug 'jiangmiao/auto-pairs'
 "Plugin for moving, deleting files in vim and on disk 
 Plug 'tpope/vim-eunuch'
 "

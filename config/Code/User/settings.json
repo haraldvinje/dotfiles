@@ -10,7 +10,9 @@
     "<C-shift+`>": false,
     "<C-b>": false,
     "<C-f>": false,
-    "<C-n>": false
+    "<C-n>": false,
+    "<C-c>": false,
+    "<C-v>": false,
   },
   "editor.lineNumbers": "relative",
   "terminal.integrated.profiles.linux": {
@@ -37,14 +39,25 @@
   "terminal.integrated.fontFamily": "Hack Nerd Font",
   "workbench.iconTheme": "material-icon-theme",
   "workbench.productIconTheme": "material-product-icons",
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
-  },
   "[typescript]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
+    "editor.defaultFormatter": "vscode.typescript-language-features",
+    "editor.detectIndentation": false,
+    "editor.tabSize": 2
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features",
+    "editor.detectIndentation": false,
+    "editor.tabSize": 2
   },
   "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.detectIndentation": false,
+    "editor.tabSize": 2
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.detectIndentation": false,
+    "editor.tabSize": 2
   },
   "[terraform]": {
     "editor.defaultFormatter": "hashicorp.terraform"
@@ -127,6 +140,7 @@
   "editor.minimap.enabled": false,
   "npm.keybindingsChangedWarningShown": true,
   "reactSnippets.settings.prettierEnabled": true,
+  "reactSnippets.settings.importReactOnTop": false,
   "remote.SSH.defaultExtensions": [
     "gitpod.gitpod-remote-ssh"
   ],
@@ -148,4 +162,6 @@
       }
     }
   },
+  "sqltools.useNodeRuntime": true,
+  "vim.useSystemClipboard": true
 }

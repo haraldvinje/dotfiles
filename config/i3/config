@@ -527,7 +527,7 @@ bindsym control+mod1+c exec --no-startup-id catfish;focus
 
 #arcolinux-logout
 bindsym control+mod1+k exec --no-startup-id arcolinux-logout
-bindsym control+mod1+l exec --no-startup-id arcolinux-logout
+#bindsym control+mod1+l exec --no-startup-id arcolinux-logout
 
 #rofi theme selector
 bindsym control+mod1+r exec --no-startup-id rofi-theme-selector
