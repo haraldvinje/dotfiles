@@ -11,3 +11,5 @@
 	autoSetupRemote = true
 [safe]
 	directory = /opt/flutter
+[init]
+	defaultBranch = master

@@ -342,7 +342,6 @@ zvm_after_init_commands+=('[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh;
     source /usr/share/fzf/key-bindings.zsh')
 
 neofetch
-
 eval "$(starship init zsh)"
 
 ##
@@ -360,6 +359,18 @@ export PATH=$PATH:$ANDROID_SDK_ROOT/tools/bin/
 export PATH=$PATH:$ANDROID_ROOT/emulator
 export PATH=$PATH:$ANDROID_SDK_ROOT/tools/
 
+export AWS_PROFILE=personal
+
+fpath+=(~/.scripts)
+autoload -Uz aws-set-profile
+autoload -Uz compinit; compinit
+
+source ~/Documents/Programming/item/posten/code/.tokens
+
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="/home/haraldv/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)

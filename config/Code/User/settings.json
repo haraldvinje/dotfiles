@@ -12,7 +12,6 @@
     "<C-f>": false,
     "<C-n>": false,
     "<C-c>": false,
-    "<C-v>": false,
   },
   "editor.lineNumbers": "relative",
   "terminal.integrated.profiles.linux": {
@@ -71,9 +70,6 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "[php]": {
-    "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
-  },
   "diffEditor.ignoreTrimWhitespace": false,
   "editor.linkedEditing": true,
   "liveServer.settings.donotShowInfoMsg": true,
@@ -121,12 +117,6 @@
   "aws.profile": "profile:default",
   "editor.inlineSuggest.enabled": true,
   "svelte.enable-ts-plugin": true,
-  "github.copilot.enable": {
-    "*": true,
-    "yaml": false,
-    "plaintext": false,
-    "markdown": true
-  },
   "aws.samcli.enableCodeLenses": false,
   "diffEditor.renderSideBySide": false,
   "editor.suggest.showMethods": true,
@@ -138,30 +128,20 @@
   "editor.formatOnPaste": true,
   "editor.formatOnType": true,
   "editor.minimap.enabled": false,
-  "npm.keybindingsChangedWarningShown": true,
   "reactSnippets.settings.prettierEnabled": true,
   "reactSnippets.settings.importReactOnTop": false,
   "remote.SSH.defaultExtensions": [
     "gitpod.gitpod-remote-ssh"
   ],
-  "settingsSync.ignoredSettings": [
-    "configurationSync.store"
-  ],
-  "configurationSync.store": {
-    "url": "https://gitpod.io/code-sync",
-    "stableUrl": "https://gitpod.io/code-sync",
-    "insidersUrl": "https://gitpod.io/code-sync",
-    "canSwitch": false,
-    "authenticationProviders": {
-      "gitpod": {
-        "scopes": [
-          "function:accessCodeSyncStorage",
-          "function:getLoggedInUser",
-          "resource:default"
-        ]
-      }
-    }
+  "vim.useSystemClipboard": true,
+  "search.exclude": {
+    "**/build": true
   },
-  "sqltools.useNodeRuntime": true,
-  "vim.useSystemClipboard": true
+  "aws.resources.enabledResources": [
+    "AWS::EC2::Host",
+    "AWS::EC2::KeyPair",
+    "AWS::EC2::Subnet",
+    "AWS::EC2::VPC"
+  ],
+  "azureResourceGroups.groupBy": "resourceType"
 }
