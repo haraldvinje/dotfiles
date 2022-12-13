@@ -1,179 +1,105 @@
-"Harald's nvim configuration
-"Plugins
 call plug#begin()
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'tpope/vim-surround'
-Plug 'iberianpig/ranger-explorer.vim'
-"Plugin for moving, deleting files in vim and on disk 
-Plug 'tpope/vim-eunuch'
-"
-Plug 'vimwiki/vimwiki'
-Plug 'junegunn/goyo.vim'
-Plug 'mattn/emmet-vim'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
-Plug 'simeji/winresizer'
-Plug 'scrooloose/nerdtree'
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-Plug 'MaxMEllon/vim-jsx-pretty'
-Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'chriskempson/base16-vim'
 Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'rafi/awesome-vim-colorschemes'
-Plug 'scrooloose/nerdcommenter'
-Plug 'ryanoasis/vim-devicons'
-Plug 'lervag/vimtex'
-Plug 'udalov/kotlin-vim'
-Plug 'PotatoesMaster/i3-vim-syntax'
-Plug 'tpope/vim-fugitive'
-Plug 'mhinz/vim-startify'
-Plug 'kevinhwang91/rnvimr', {'do': 'make sync'}
-Plug 'gcmt/taboo.vim'
-Plug 'hashivim/vim-terraform'
+
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+
+Plug 'hrsh7th/cmp-vsnip'
+Plug 'hrsh7th/vim-vsnip'
 call plug#end()
 
-"basics
-set mouse=a
-filetype plugin indent on
-syntax on 
-set hidden
-set autochdir
-vnoremap < <gv
-vnoremap > >gv
+set nu rnu
 
-"Yanking
-nnoremap Y y$
-
-"Pasting
-nnoremap p gp
-nnoremap P gP
-
-"numbering
-set number relativenumber
 augroup numbertoggle
   autocmd!
   autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
-  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+  autocmd BufLeave,FocusLost,Insertenter * set norelativenumber
 augroup END
 
-set cursorline
-set nocompatible
+syntax enable
+"set background=dark
+set expandtab
+set softtabstop=4
+set shiftwidth=4
+set mouse=a
+filetype plugin indent on
+  
+set statusline+=%F
+set laststatus=1
+let $PAGER=''
 
-"split navigations
 nnoremap <C-H> <C-W><C-h>
 nnoremap <C-J> <C-W><C-j>
 nnoremap <C-K> <C-W><C-k>
 nnoremap <C-L> <C-W><C-l>
 
-nnoremap <C-Left>   <C-W><C-h>
-nnoremap <C-Down>   <C-W><C-j>
-nnoremap <C-Up>     <C-W><C-k>
-nnoremap <C-Right>  <C-W><C-l>
-
-set splitbelow
-set splitright
-
-"resize windows
-let g:winresizer_start_key = '<C-S>'
-let g:python3_host_prog = '/bin/python3'
-
-"Aesthetics
-colorscheme gruvbox
-hi Normal guibg=NONE ctermbg=NONE
-set termguicolors
-
-"StatusLine
-set laststatus=2
-let g:airline_powerline_fonts = 1
-let g:airline_theme='dark'
-
-"NerdTree
-map <C-n> :NERDTreeToggle<CR>
-let g:NERDTreeChDirMode=2
-let g:NERDTreeIgnore=['\.rbc$', '\~$', '\.pyc$', '\.db$', '\.sqlite$', '__pycache__', 'node_modules']
-let g:NERDTreeSortOrder=['^__\.py$', '\/$', '*', '\.swp$', '\.bak$', '\~$']
-let g:nerdtree_tabs_focus_on_files=1
-let g:NERDTreeMapOpenInTabSilent = '<RightMouse>'
-let g:NERDTreeShowHidden=1
-let g:NERDTreeIgnore=['.git']
-let NERDTreeMapCustomOpen='l'
-let NERDTreeMapCloseChildren ='h'
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.db,*.sqlite
-
-"NerdTree Syntax Highligt
-let g:NERDTreeFileExtensionHighlightFullName = 1
-let g:NERDTreeExactMatchHighlightFullName = 1
-let g:NERDTreePatternMatchHighlightFullName = 1
-let g:NERDTreeSyntaxEnabledExtensions = ['jsx', 'tsx']
-
-"LeaderButtons
-let mapleader = " "
-let maplocalleader = "\\"
-
-"indeting
-vnoremap < <gv
-vnoremap > >gv
-
-"spacing and tabs
-set incsearch
-set ignorecase
 set nohlsearch
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
-set expandtab
-" change spacing for language specific
-autocmd Filetype python setlocal ts=4 sts=4 sw=4
-autocmd Filetype javascript,typescript,javascript.jsx,typescript.tsx,css setlocal ts=2 sts=2 sw=2
-autocmd BufNewFile,BufRead *.jsx set filetype=javascript.jsx
-autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
+set smartcase
 
-"coc
-let g:coc_global_extensions = [
-  \ 'coc-tsserver'
-  \ ]
+set completeopt=menu,menuone,noselect
 
-if isdirectory('./node_modules') && isdirectory('./node_modules/prettier')
-  let g:coc_global_extensions += ['coc-prettier']
-endif
+lua <<EOF
+  -- Set up nvim-cmp.
+  local cmp = require'cmp'
 
-if isdirectory('./node_modules') && isdirectory('./node_modules/eslint')
-  let g:coc_global_extensions += ['coc-eslint']
-endif
+  cmp.setup({
+    snippet = {
+      -- REQUIRED - you must specify a snippet engine
+      expand = function(args)
+        vim.fn["vsnip#anonymous"](args.body)
+      end,
+    },
+    mapping = cmp.mapping.preset.insert({
+      ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+      ['<C-f>'] = cmp.mapping.scroll_docs(4),
+      ['<C-Space>'] = cmp.mapping.complete(),
+      ['<C-e>'] = cmp.mapping.abort(),
+      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    }),
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      { name = 'vsnip' }, -- For vsnip users.
+    }, {
+      { name = 'buffer' },
+    })
+  })
 
-command! -nargs=0 Prettier :CocCommand prettier.formatFile
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gr <Plug>(coc-references)
-nmap <leader>rn <Plug>(coc-rename)
-nnoremap <silent> K :call CocAction('doHover')<CR>
+  -- Set configuration for specific filetype.
+  cmp.setup.filetype('gitcommit', {
+    sources = cmp.config.sources({
+      { name = 'cmp_git' }, -- You can specify the `cmp_git` source if you were installed it.
+    }, {
+      { name = 'buffer' },
+    })
+  })
 
+  -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline({ '/', '?' }, {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = {
+      { name = 'buffer' }
+    }
+  })
 
-"fzf
-let g:ctrlp_map = '<c-t>'
-nnoremap <c-b> :CtrlPBuffer<Cr>
-nnoremap <c-p> :Files<Cr>
+  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      { name = 'cmdline' }
+    })
+  })
 
-"vimtex
-let g:vimtex_compiler_latexmk = {
-            \ 'build_dir' : 'build',
-            \}
-let g:vimtex_view_method = 'zathura'
-let g:tex_flavor = 'latex'
-
-"Ripgrep
-nnoremap <Leader>ps :Rg<SPACE>
-
-"Startify
-
-let g:startify_custom_header = [
-\   '                       _           ',
-\   '                      (_)          ', 
-\   ' _ __   ___  _____   ___ ____ ___  ', 
-\   '| _  \ / _ \/ _ \ \ / / |  _   _ \ ', 
-\   '| | | |  __/ (_) \ V /| | | | | | |',
-\   '|_| |_|\___|\___/ \_/ |_|_| |_| |_|',
-\   '                                   '
-\]
+  -- Set up lspconfig.
+  local capabilities = require('cmp_nvim_lsp').default_capabilities()
+  -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
+  require('lspconfig')['pyright'].setup {
+    capabilities = capabilities
+  }
+EOF

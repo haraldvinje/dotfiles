@@ -155,25 +155,23 @@ bindsym $mod+m exec rofimoji
 
 #Backup exit
 #Press ctrl+alt+x - check toolbar for next choices
-# bindsym $mod+Shift+e mode "$mode_system"
-
-set $mode_system System (k) lock, (l) logout, (u) suspend, (h) hibernate, (r) reboot, (s) shutdown
+bindsym $mod+Shift+e mode "$mode_system"
+set $mode_system System (e) lock, (l) logout, (Shift+s) suspend, (h) hibernate, (r) reboot, (s) shutdown
 mode "$mode_system" {
-    bindsym k exec --no-startup-id ~/.config/i3/scripts/i3exit.sh lock, mode "default"
-    bindsym l exec --no-startup-id ~/.config/i3/scripts/i3exit.sh logout, mode "default"
-    bindsym u exec --no-startup-id ~/.config/i3/scripts/i3exit.sh suspend, mode "default"
-    bindsym h exec --no-startup-id ~/.config/i3/scripts/i3exit.sh hibernate, mode "default"
-    bindsym r exec --no-startup-id ~/.config/i3/scripts/i3exit.sh reboot, mode "default"
-    bindsym s exec --no-startup-id ~/.config/i3/scripts/i3exit.sh shutdown, mode "default"
+    bindsym e exec --no-startup-id i3lock-fancy-multimonitor -b=5x4, mode "default"
+    bindsym l exec --no-startup-id i3exit logout, mode "default"
+    bindsym Shift+s exec --no-startup-id i3exit suspend, mode "default"
+    bindsym h exec --no-startup-id i3exit hibernate, mode "default"
+    bindsym r exec --no-startup-id i3exit reboot, mode "default"
+    bindsym s exec --no-startup-id i3exit shutdown, mode "default"
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
 
-
 # ArcoLinux Logout
-bindsym $mod+Shift+e exec --no-startup-id archlinux-logout
+# bindsym $mod+Shift+e exec --no-startup-id oblogout
 # bindsym $mod+X exec --no-startup-id arcolinux-logout
 
 
@@ -342,7 +340,7 @@ bindsym $mod+Mod1+Ctrl+$left resize grow width 3 px or 3 ppt
         # back to normal: Enter or Escape
  #      bindsym Return mode "default"
  #      bindsym Escape mode "default"
-#}
+# }
 
 
 #####################################################################################################################
@@ -410,9 +408,6 @@ font pango:Noto Mono Regular 13
 
 # USER APPLICATIONS TO START AT BOOT
 
-# ArcoLinux Welcome App
-exec --no-startup-id dex $HOME/.config/autostart/arcolinux-welcome-app.desktop
-
 # Autotiling
 #exec_always --no-startup-id autotiling
 
@@ -475,9 +470,6 @@ exec --no-startup-id volumeicon
 #Conky
 # exec --no-startup-id conky -c ~/.config/i3/system-overview
 
-#feh sets wallpaper
-#exec --no-startup-id feh --bg-fill /usr/share/backgrounds/arcolinux/arco-wallpaper.jpg &
-
 #Polybar
 #exec_always --no-startup-id ~/.config/polybar/launch.sh &
 
@@ -496,12 +488,6 @@ exec --no-startup-id /usr/lib/xfce4/notifyd/xfce4-notifyd &
 #####################################################################################################################
 
 #not workspace related
-
-#ArcoLinux Welcome App
-bindsym control+mod1+w exec --no-startup-id arcolinux-welcome-app
-
-#ArcoLinux Tweak Tool
-bindsym control+mod1+e exec --no-startup-id arcolinux-tweak-tool
 
 #conky
 bindsym $mod+c exec --no-startup-id conky-toggle
@@ -525,27 +511,11 @@ bindsym control+mod1+m exec --no-startup-id xfce4-settings-manager
 #catfish
 bindsym control+mod1+c exec --no-startup-id catfish;focus
 
-#arcolinux-logout
-bindsym control+mod1+k exec --no-startup-id arcolinux-logout
-#bindsym control+mod1+l exec --no-startup-id arcolinux-logout
-
 #rofi theme selector
 bindsym control+mod1+r exec --no-startup-id rofi-theme-selector
 
-#arcolinux conflict
-#bindsym $mod+m exec --no-startup-id pragha;focus
-
-#htop
-#arcolinux conflict
-#bindsym $mod+h exec --no-startup-id htop;focus
-
 #pavucontrol
-#arcolinux conflict
 bindsym control+mod1+u exec --no-startup-id pavucontrol
-
-# start xfce-appfinder
-#arcolinux does not seem to work
-bindsym control+mod1+a exec --no-startup-id xfce4-appfinder
 
 #pamac-manager
 bindsym control+mod1+p exec --no-startup-id pamac-manager
@@ -871,9 +841,9 @@ mode "$mode_gaps_outer" {
 #####################################################################################################################
 
 #if you want transparency on non-focused windows, ...
-exec_always --no-startup-id picom --config ~/.config/i3/picom.conf
+exec_always --no-startup-id picom --config ~/.config/picom.conf
 
-bindsym control+mod1+o exec --no-startup-id ~/.config/i3/scripts/picom-toggle.sh
+# bindsym control+mod1+o exec --no-startup-id ~/.config/i3/scripts/picom-toggle.sh
 
 #####################################################################################################################
 #####################################################################################################################
@@ -1053,5 +1023,5 @@ bindsym control+mod1+o exec --no-startup-id ~/.config/i3/scripts/picom-toggle.sh
 #####################################################################################################################
 #
 
-#Polybar
-exec_always --no-startup-id $HOME/.scripts/startup.sh
+#Startup script
+exec_always --no-startup-id /home/haraldv/.scripts/startup.sh

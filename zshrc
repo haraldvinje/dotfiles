@@ -9,7 +9,7 @@ export PATH=$HOME/bin:/usr/local/bin:$HOME/.local/bin:$HOME/.scripts:$HOME/.emac
 #installation via script from github
 #export ZSH="/home/$USER/.oh-my-zsh"
 #installation via yay -S oh-my-zsh-git
-export ZSH=/usr/share/oh-my-zsh/
+# export ZSH=/usr/share/oh-my-zsh/
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -78,10 +78,18 @@ ZSH_THEME="norm"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(aws gcloud git zsh-vi-mode zsh-syntax-highlighting colorize terraform colored-man-pages)
+source /usr/share/zsh/share/antigen.zsh
+antigen use oh-my-zsh
+antigen bundle aws
+antigen bundle gcloud
+antigen bundle jeffreytse/zsh-vi-mode
+antigen bundle zsh-syntax-highlighting
+antigen bundle colorize
+antigen bundle terraform
+antigen bundle colored-man-pages
+antigen apply
 
-
-source $ZSH/oh-my-zsh.sh
+# source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
@@ -112,7 +120,7 @@ setopt GLOB_DOTS
 [[ $- != *i* ]] && return
 
 export HISTCONTROL=ignoreboth:erasedups
-export CHROME_EXECUTABLE='/usr/bin/google-chrome-stable'
+export CHROME_EXECUTABLE='/usr/bin/google-chrome-beta'
 
 #PS1='[\u@\h \W]\$ '
 
@@ -300,7 +308,7 @@ alias probe="sudo -E hw-probe -all -upload"
 alias ssn="sudo shutdown now"
 alias sr="sudo reboot"
 
-alias lock="i3lock-fancy"
+alias lock="i3lock-fancy-multimonitor -b=5x4"
 
 # # ex = EXtractor for all kinds of archives
 # # usage: ex <file>
@@ -341,7 +349,6 @@ zvm_after_init_commands+=('[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh;
     source /usr/share/fzf/completion.zsh;
     source /usr/share/fzf/key-bindings.zsh')
 
-neofetch
 eval "$(starship init zsh)"
 
 ##
@@ -365,12 +372,9 @@ fpath+=(~/.scripts)
 autoload -Uz aws-set-profile
 autoload -Uz compinit; compinit
 
-source ~/Documents/Programming/item/posten/code/.tokens
+source ~/Documents/Programming/work/posten/.tokens
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
+#export JAVA_HOME='$SDKMAN_DIR/candidates/java/current'
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
-
-### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="/home/haraldv/.rd/bin:$PATH"
-### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)

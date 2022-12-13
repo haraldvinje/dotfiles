@@ -113,8 +113,6 @@
   "redhat.telemetry.enabled": false,
   "typescript.updateImportsOnFileMove.enabled": "always",
   "editor.fontFamily": "'Hack Nerd Font'",
-  // "editor.fontFamily": "'DejaVuSansMono Nerd Font', 'FontAwesome', 'DejaVu Sans', 'Droid Sans', 'FiraCode Nerd Font', 'Hack Nerd Font'",
-  "aws.profile": "profile:default",
   "editor.inlineSuggest.enabled": true,
   "svelte.enable-ts-plugin": true,
   "aws.samcli.enableCodeLenses": false,
