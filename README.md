@@ -1,3 +1,3 @@
 # dotfiles
 
-My dotfiles for [ArcoLinux](https://arcolinux.com/)
+My dotfiles for [Garuda Linux](https://garudalinux.org/)
