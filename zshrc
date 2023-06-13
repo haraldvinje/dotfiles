@@ -3,7 +3,7 @@
 # confirmations, etc.) must go above this block; everything else may go below.
 
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:/usr/local/bin:$HOME/.local/bin:$HOME/.scripts:$HOME/.emacs.d/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$HOME/.local/bin:$HOME/.scripts:$HOME/.emacs.d/bin:$HOME/.dotnet/tools:$PATH
 
 # Path to your oh-my-zsh installation.
 #installation via script from github
@@ -373,8 +373,14 @@ autoload -Uz aws-set-profile
 autoload -Uz compinit; compinit
 
 source ~/Documents/Programming/work/posten/.tokens
+source ~/.tokens
 
 export SDKMAN_DIR="$HOME/.sdkman"
+
+export XP=/home/haraldv/Documents/Programming/work/posten/enonic_xp
+export XP_INSTALL=${XP}
+export XP_HOME=${XP}/home
+
 #export JAVA_HOME='$SDKMAN_DIR/candidates/java/current'
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"

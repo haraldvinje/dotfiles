@@ -116,22 +116,19 @@
   "editor.inlineSuggest.enabled": true,
   "svelte.enable-ts-plugin": true,
   "aws.samcli.enableCodeLenses": false,
-  "diffEditor.renderSideBySide": false,
   "editor.suggest.showMethods": true,
   "editor.suggest.preview": true,
   "editor.acceptSuggestionOnEnter": "on",
   "editor.snippetSuggestions": "top",
   "material-icon-theme.folders.theme": "specific",
-  "editor.formatOnSave": true,
-  "editor.formatOnPaste": true,
-  "editor.formatOnType": true,
-  "editor.minimap.enabled": false,
+  "editor.formatOnSave": false,
+  "editor.formatOnPaste": false,
+  "editor.formatOnType": false,
   "reactSnippets.settings.prettierEnabled": true,
   "reactSnippets.settings.importReactOnTop": false,
   "remote.SSH.defaultExtensions": [
     "gitpod.gitpod-remote-ssh"
   ],
-  "vim.useSystemClipboard": true,
   "search.exclude": {
     "**/build": true
   },
@@ -141,5 +138,44 @@
     "AWS::EC2::Subnet",
     "AWS::EC2::VPC"
   ],
-  "azureResourceGroups.groupBy": "resourceType"
+  "azureResourceGroups.groupBy": "resourceType",
+  "vim.normalModeKeyBindingsNonRecursive": [
+    // Undo & Redo
+    {
+      "before": [
+        "u"
+      ],
+      "commands": [
+        "undo"
+      ]
+    },
+    {
+      "before": [
+        "c-r"
+      ],
+      "commands": [
+        "redo"
+      ]
+    }
+  ],
+  "githubPullRequests.pullBranch": "never",
+  "[python]": {
+    "editor.formatOnType": true
+  },
+  "editor.minimap.enabled": false,
+  "git.defaultBranchName": "master",
+  "workbench.editor.tabSizingFixedMaxWidth": 160,
+  "workbench.editor.tabSizing": "fixed",
+  "[dart]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.rulers": [
+      80
+    ],
+    "editor.selectionHighlight": false,
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "editor.suggestSelection": "first",
+    "editor.tabCompletion": "onlySnippets",
+    "editor.wordBasedSuggestions": false
+  }
 }
