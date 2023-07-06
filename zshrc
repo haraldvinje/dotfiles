@@ -367,6 +367,7 @@ export PATH=$PATH:$ANDROID_ROOT/emulator
 export PATH=$PATH:$ANDROID_SDK_ROOT/tools/
 
 export AWS_PROFILE=personal
+$(aws configure export-credentials --format env)
 
 fpath+=(~/.scripts)
 autoload -Uz aws-set-profile
