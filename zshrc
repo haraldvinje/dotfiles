@@ -120,7 +120,7 @@ setopt GLOB_DOTS
 [[ $- != *i* ]] && return
 
 export HISTCONTROL=ignoreboth:erasedups
-export CHROME_EXECUTABLE='/usr/bin/google-chrome-beta'
+export CHROME_EXECUTABLE='/usr/bin/google-chrome-stable'
 
 #PS1='[\u@\h \W]\$ '
 
@@ -367,7 +367,7 @@ export PATH=$PATH:$ANDROID_ROOT/emulator
 export PATH=$PATH:$ANDROID_SDK_ROOT/tools/
 
 export AWS_PROFILE=personal
-$(aws configure export-credentials --format env)
+$(aws configure export-credentials --format env 2> /dev/null || true)
 
 fpath+=(~/.scripts)
 autoload -Uz aws-set-profile
