@@ -3,7 +3,7 @@
 # confirmations, etc.) must go above this block; everything else may go below.
 
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:/usr/local/bin:$HOME/.local/bin:$HOME/.scripts:$HOME/.emacs.d/bin:$HOME/.dotnet/tools:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$HOME/.local/bin:$HOME/.scripts:$HOME/.emacs.d/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 #installation via script from github
@@ -87,6 +87,7 @@ antigen bundle zsh-syntax-highlighting
 antigen bundle colorize
 antigen bundle terraform
 antigen bundle colored-man-pages
+antigen bundle asdf
 antigen apply
 
 # source $ZSH/oh-my-zsh.sh
@@ -120,7 +121,7 @@ setopt GLOB_DOTS
 [[ $- != *i* ]] && return
 
 export HISTCONTROL=ignoreboth:erasedups
-export CHROME_EXECUTABLE='/usr/bin/google-chrome-stable'
+export CHROME_EXECUTABLE='/usr/bin/google-chrome-beta'
 
 #PS1='[\u@\h \W]\$ '
 
@@ -351,12 +352,6 @@ zvm_after_init_commands+=('[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh;
 
 eval "$(starship init zsh)"
 
-##
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-#
-
 alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'
 
 export ANDROID_SDK_ROOT='/opt/android-sdk'
@@ -369,19 +364,9 @@ export PATH=$PATH:$ANDROID_SDK_ROOT/tools/
 export AWS_PROFILE=personal
 $(aws configure export-credentials --format env 2> /dev/null || true)
 
+
 fpath+=(~/.scripts)
 autoload -Uz aws-set-profile
 autoload -Uz compinit; compinit
 
 source ~/Documents/Programming/work/posten/.tokens
-source ~/.tokens
-
-export SDKMAN_DIR="$HOME/.sdkman"
-
-export XP=/home/haraldv/Documents/Programming/work/posten/enonic_xp
-export XP_INSTALL=${XP}
-export XP_HOME=${XP}/home
-
-#export JAVA_HOME='$SDKMAN_DIR/candidates/java/current'
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"

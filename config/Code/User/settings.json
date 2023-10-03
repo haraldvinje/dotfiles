@@ -12,6 +12,7 @@
     "<C-f>": false,
     "<C-n>": false,
     "<C-c>": false,
+    "<C-p>": false,
   },
   "editor.lineNumbers": "relative",
   "terminal.integrated.profiles.linux": {
@@ -119,7 +120,7 @@
   "editor.suggest.showMethods": true,
   "editor.suggest.preview": true,
   "editor.acceptSuggestionOnEnter": "on",
-  "editor.snippetSuggestions": "top",
+  "editor.snippetSuggestions": "bottom",
   "material-icon-theme.folders.theme": "specific",
   "editor.formatOnSave": false,
   "editor.formatOnPaste": false,
@@ -178,5 +179,7 @@
     "editor.tabCompletion": "onlySnippets",
     "editor.wordBasedSuggestions": false
   },
-  "window.zoomLevel": 1
+  "aws.suppressPrompts": {
+    "codeWhispererNewWelcomeMessage": true
+  }
 }
