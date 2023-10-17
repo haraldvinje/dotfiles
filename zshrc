@@ -121,7 +121,7 @@ setopt GLOB_DOTS
 [[ $- != *i* ]] && return
 
 export HISTCONTROL=ignoreboth:erasedups
-export CHROME_EXECUTABLE='/usr/bin/google-chrome-beta'
+export CHROME_EXECUTABLE='/usr/bin/google-chrome'
 
 #PS1='[\u@\h \W]\$ '
 
@@ -370,3 +370,10 @@ autoload -Uz aws-set-profile
 autoload -Uz compinit; compinit
 
 source ~/Documents/Programming/work/posten/.tokens
+
+# bun completions
+[ -s "/home/haraldv/.bun/_bun" ] && source "/home/haraldv/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
