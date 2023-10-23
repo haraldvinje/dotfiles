@@ -121,7 +121,7 @@ setopt GLOB_DOTS
 [[ $- != *i* ]] && return
 
 export HISTCONTROL=ignoreboth:erasedups
-export CHROME_EXECUTABLE='/usr/bin/google-chrome'
+export CHROME_EXECUTABLE='/usr/bin/google-chrome-stable'
 
 #PS1='[\u@\h \W]\$ '
 
