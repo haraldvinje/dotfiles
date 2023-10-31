@@ -369,7 +369,7 @@ fpath+=(~/.scripts)
 autoload -Uz aws-set-profile
 autoload -Uz compinit; compinit
 
-source ~/Documents/Programming/work/posten/.tokens
+[[ -f ~/Documents/Programming/work/posten/.tokens ]] && source ~/Documents/Programming/work/posten/.tokens
 
 # bun completions
 [ -s "/home/haraldv/.bun/_bun" ] && source "/home/haraldv/.bun/_bun"
