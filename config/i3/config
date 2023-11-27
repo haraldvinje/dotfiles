@@ -93,16 +93,16 @@ exec --no-startup-id xrandr --output HDMI2 --right-of HDMI1 --auto
 set $firstMonitor HDMI1
 set $secondMonitor HDMI2
 
-workspace 1 output $firstMonitor
-workspace 2 output $firstMonitor
-workspace 3 output $firstMonitor
-workspace 4 output $firstMonitor
-workspace 5 output $firstMonitor
-workspace 6 output $secondMonitor
-workspace 7 output $secondMonitor
-workspace 8 output $secondMonitor
-workspace 9 output $secondMonitor
-workspace 10 output $secondMonitor
+# workspace 1 output $firstMonitor
+# workspace 2 output $firstMonitor
+# workspace 3 output $firstMonitor
+# workspace 4 output $firstMonitor
+# workspace 5 output $firstMonitor
+# workspace 6 output $secondMonitor
+# workspace 7 output $secondMonitor
+# workspace 8 output $secondMonitor
+# workspace 9 output $secondMonitor
+# workspace 10 output $secondMonitor
 
 # switch to workspace
 bindsym $mod+1 workspace 1
