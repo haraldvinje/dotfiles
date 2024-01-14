@@ -83,7 +83,7 @@ antigen use oh-my-zsh
 antigen bundle aws
 antigen bundle gcloud
 antigen bundle jeffreytse/zsh-vi-mode
-antigen bundle zsh-syntax-highlighting
+antigen bundle zdharma-continuum/fast-syntax-highlighting
 antigen bundle colorize
 antigen bundle terraform
 antigen bundle colored-man-pages
@@ -112,8 +112,6 @@ fi
 
 ####   ARCOLINUX SETTINGS   ####
 
-
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 setopt GLOB_DOTS
 
@@ -361,6 +359,8 @@ export PATH=$PATH:$ANDROID_SDK_ROOT/tools/bin/
 export PATH=$PATH:$ANDROID_ROOT/emulator
 export PATH=$PATH:$ANDROID_SDK_ROOT/tools/
 
+export AWS_REGION=eu-west-1
+export AWS_DEFAULT_REGION=eu-west-1
 export AWS_PROFILE=personal
 $(aws configure export-credentials --format env 2> /dev/null || true)
 
