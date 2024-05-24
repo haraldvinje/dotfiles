@@ -46,5 +46,15 @@
         "key": "alt+c",
         "command": "-workbench.action.terminal.toggleFindCaseSensitive",
         "when": "terminalFindFocused && terminalHasBeenCreated || terminalFindFocused && terminalProcessSupported || terminalFocus && terminalHasBeenCreated || terminalFocus && terminalProcessSupported"
+    },
+    {
+        "key": "escape",
+        "command": "-aws.amazonq.rejectCodeSuggestion",
+        "when": "aws.codewhisperer.connected && inlineSuggestionVisible && !editorReadonly || isCloud9 && suggestWidgetVisible && !editorReadonly"
+    },
+    {
+        "key": "escape",
+        "command": "-aws.amazonq.rejectCodeSuggestion",
+        "when": "aws.codewhisperer.connected && inlineSuggestionVisible && !editorReadonly"
     }
 ]

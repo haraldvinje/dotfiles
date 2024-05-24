@@ -352,13 +352,6 @@ eval "$(starship init zsh)"
 
 alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'
 
-export ANDROID_SDK_ROOT='/opt/android-sdk'
-export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools/
-export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/
-export PATH=$PATH:$ANDROID_SDK_ROOT/tools/bin/
-export PATH=$PATH:$ANDROID_ROOT/emulator
-export PATH=$PATH:$ANDROID_SDK_ROOT/tools/
-
 export AWS_REGION=eu-west-1
 export AWS_DEFAULT_REGION=eu-west-1
 export AWS_PROFILE=personal
@@ -370,6 +363,10 @@ autoload -Uz aws-set-profile
 autoload -Uz compinit; compinit
 
 [[ -f ~/Documents/Programming/work/posten/.tokens ]] && source ~/Documents/Programming/work/posten/.tokens
+
+# go
+export GOPATH="$HOME/.go"
+export PATH="$GOPATH/bin:$PATH"
 
 # bun completions
 [ -s "/home/haraldv/.bun/_bun" ] && source "/home/haraldv/.bun/_bun"
