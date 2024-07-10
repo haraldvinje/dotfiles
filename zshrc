@@ -376,3 +376,10 @@ export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 . ~/.asdf/plugins/java/set-java-home.zsh
+
+initialize b-scrips when starting a shell session
+export BRING_DIR="$HOME/Documents/Programming/work/posten"
+if [[ -d "$BRING_DIR" && -x $BRING_DIR/b-scripts/bin/b ]]; then
+    eval "$($BRING_DIR/b-scripts/bin/b init -)"
+fi
+export POSTEN_SLACK_USERNAME=harald.vinje
