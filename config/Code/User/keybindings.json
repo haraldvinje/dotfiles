@@ -56,5 +56,30 @@
         "key": "escape",
         "command": "-aws.amazonq.rejectCodeSuggestion",
         "when": "aws.codewhisperer.connected && inlineSuggestionVisible && !editorReadonly"
+    },
+    {
+        "key": "ctrl+shift+alt+right",
+        "command": "editor.action.inlineSuggest.showNext",
+        "when": "inlineSuggestionVisible && !editorReadonly"
+    },
+    {
+        "key": "alt+]",
+        "command": "-editor.action.inlineSuggest.showNext",
+        "when": "inlineSuggestionVisible && !editorReadonly"
+    },
+    {
+        "key": "ctrl+shift+alt+left",
+        "command": "editor.action.inlineSuggest.showPrevious",
+        "when": "inlineSuggestionVisible && !editorReadonly"
+    },
+    {
+        "key": "alt+[",
+        "command": "-editor.action.inlineSuggest.showPrevious",
+        "when": "inlineSuggestionVisible && !editorReadonly"
+    },
+    {
+        "command": "github.copilot.generate",
+        "key": "ctrl+enter",
+        "when": "editorTextFocus && github.copilot.activated && !inInteractiveInput && !interactiveEditorFocused"
     }
 ]

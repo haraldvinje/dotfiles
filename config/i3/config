@@ -90,10 +90,10 @@ exec --no-startup-id xrandr --output HDMI2 --right-of HDMI1 --auto
 #set $firstMonitor HDMI-1
 #set $secondMonitor HDMI-2
 
-set $firstMonitor eDP1
-set $secondMonitor DP2
-set $thirdMonitor HDMI1
-
+# set $firstMonitor eDP1
+# set $secondMonitor HDMI1
+# set $thirdMonitor DP2
+#
 # workspace 1 output $firstMonitor
 # workspace 2 output $secondMonitor
 # workspace 3 output $thirdMonitor
@@ -1023,6 +1023,13 @@ exec_always --no-startup-id picom --config ~/.config/picom.conf
 #################                          personal settings                                        #################
 #####################################################################################################################
 #
+
+for_window [class="jetbrains-idea"] focus
+for_window [title="^Search Everywhere$"] focus
+for_window [title="^Find Action$"] focus
+
+for_window [title="^Search Everywhere$"] floating enable
+for_window [title="^Find Action$"] floating enable
 
 #Startup script
 exec_always --no-startup-id /home/haraldv/.scripts/startup.sh

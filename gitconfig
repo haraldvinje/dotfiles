@@ -11,8 +11,9 @@
     pull-rebase = "!f() { current_branch=$(git rev-parse --abbrev-ref HEAD) && git switch $1 && git pull && git switch $current_branch && git rebase $1; }; f"
 
 [user]
-    email = haraldvinje@gmail.com
-    name = Harald Vinje
+	email = haraldvinje@gmail.com
+	name = Harald Vinje
+	signingkey = 694F20855473A8F7
 [push]
     autoSetupRemote = true
 [safe]
