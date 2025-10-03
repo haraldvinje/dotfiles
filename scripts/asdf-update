@@ -1,0 +1,14 @@
+#!/bin/bash
+
+for tool in $(asdf plugin list | sed '/java\|gradle/d'); do
+  latest_version=$(asdf latest $tool)
+  asdf install "${tool}" ${latest_version}\
+    &&  asdf set -u "${tool}" ${latest_version} \
+    &&  printf "${tool} version ${latest_version} set globally\n\n"
+done
+
+latest_openjdk=$(asdf list all java | grep "^openjdk" | tail -1)
+asdf install java ${latest_openjdk} && asdf set -u java ${latest_openjdk} && printf "java ${latest_openjdk} set globally\n\n"
+
+latest_gradle=$(asdf list all gradle | grep '^[0-9]\+\.[0-9]\+\(\.[0-9]\+\)\?$' | tail -1)
+asdf install gradle ${latest_gradle} && asdf set -u gradle ${latest_gradle} && printf "gradle ${latest_gradle} set globally\n\n"
