@@ -69,7 +69,7 @@ set $right l
 #exec --no-startup-id xrandr --output DVI-1 --right-of DVI-0 --auto
 #exec --no-startup-id xrandr --output DVI-D-1 --right-of DVI-I-1 --auto
 #exec --no-startup-id xrandr --output HDMI-2 --right-of HDMI-1 --auto
-exec --no-startup-id xrandr --output HDMI2 --right-of HDMI1 --auto
+#exec --no-startup-id xrandr --output HDMI2 --right-of HDMI1 --auto
 
 
 # my current setup

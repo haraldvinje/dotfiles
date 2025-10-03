@@ -87,7 +87,7 @@ antigen bundle zdharma-continuum/fast-syntax-highlighting
 antigen bundle colorize
 antigen bundle terraform
 antigen bundle colored-man-pages
-antigen bundle asdf
+# antigen bundle asdf
 antigen apply
 
 # source $ZSH/oh-my-zsh.sh
@@ -143,6 +143,7 @@ alias bright='xrandr --output eDP1 --brightness 1.1'
 alias battery='upower -i $(upower -e | grep BAT) | grep --color=never -E "state|to\ full|to\ empty|percentage"'
 #fix obvious typo's
 alias cd..='cd ..'
+alias ..='cd ..'
 alias pdw="pwd"
 alias udpate='sudo pacman -Syu'
 alias upate='sudo pacman -Syu'
@@ -348,6 +349,21 @@ zvm_after_init_commands+=('[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh;
     source /usr/share/fzf/completion.zsh;
     source /usr/share/fzf/key-bindings.zsh')
 
+fzf_cd() {
+  local dir
+  dir=$(fd . . \
+           --type d \
+           | fzf --height 40%) && cd "$dir"
+}
+
+fzf_cd_widget() {
+  fzf_cd
+  zle reset-prompt
+}
+zle -N fzf_cd_widget
+
+bindkey '^[c' fzf_cd_widget
+
 eval "$(starship init zsh)"
 
 alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'
@@ -360,7 +376,6 @@ $(aws configure export-credentials --format env 2> /dev/null || true)
 
 fpath+=(~/.scripts)
 autoload -Uz set-aws-profile
-autoload -Uz compinit; compinit
 
 [[ -f ~/Documents/Programming/work/posten/.tokens ]] && source ~/Documents/Programming/work/posten/.tokens
 
@@ -375,5 +390,11 @@ export PATH="$GOPATH/bin:$PATH"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-. ~/.asdf/plugins/java/set-java-home.zsh
+# asdf
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
+fpath=(${ASDF_DATA_DIR:-$HOME/.asdf}/completions $fpath)
+
+alias full-update='sudo snap refresh && asdf-update && sudo garuda-update --noconfirm && yay --noconfirm'
+
+autoload -Uz compinit && compinit
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-[[ ! -z $(xrandr | grep "DP2 connected" || xrandr | grep -i "HDMI1 connected" || xrandr | grep -i "DP3 connected") ]] && \
+[[ ! -z $(xrandr | grep "DP-2 connected" || xrandr | grep -i "HDMI-1 connected" || xrandr | grep -i "DP-3 connected") ]] && \
     ([[ $(nmcli | grep -i vinjelarsennett) ]] && source /home/haraldv/.screenlayout/home.sh) || \
     ([[ $(nmcli | grep -i vinjenett) ]] && source /home/haraldv/.screenlayout/korsvollbakken.sh) || \
     ([[ $(nmcli | grep -i datek) ]] && source /home/haraldv/.screenlayout/datek.sh) || \

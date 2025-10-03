@@ -5,6 +5,7 @@
     lg = !"git lg1"
     acm = !sh -c 'git add -A && git commit --amend --no-edit'
     cm = commit -m
+    head = rev-parse --short HEAD
     ignore = update-index --assume-unchanged
     unignore = update-index --no-assume-unchanged
     ignored = !git ls-files -v | grep "^[[:lower:]]"
