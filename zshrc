@@ -138,8 +138,8 @@ alias ll='lsd -la'
 alias l='lsd'
 alias l.="ls -A | egrep '^\.'"
 alias r='ranger'
-alias dim='xrandr --output eDP1 --brightness 0.5'
-alias bright='xrandr --output eDP1 --brightness 1.1'
+alias dim='xrandr --output eDP-1 --brightness 0.5'
+alias bright='xrandr --output eDP-1 --brightness 1.1'
 alias battery='upower -i $(upower -e | grep BAT) | grep --color=never -E "state|to\ full|to\ empty|percentage"'
 #fix obvious typo's
 alias cd..='cd ..'
