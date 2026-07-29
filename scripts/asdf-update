@@ -1,14 +1,43 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# asdf-update — bump every asdf-managed tool to its latest version and write it
+# to $HOME/.tool-versions, with special handling for java and gradle.
+#
+# Run as your normal user (not sudo). This is also where `uv` gets updated,
+# since uv is an asdf-managed tool.
 
-for tool in $(asdf plugin list | sed '/java\|gradle/d'); do
-  latest_version=$(asdf latest $tool)
-  asdf install "${tool}" ${latest_version}\
-    &&  asdf set -u "${tool}" ${latest_version} \
-    &&  printf "${tool} version ${latest_version} set globally\n\n"
+set -uo pipefail
+
+set_global() {
+  local tool=$1 version=$2
+
+  if [[ -z ${version} ]]; then
+    printf '!! skipping %s — could not determine a version\n\n' "${tool}"
+    return 1
+  fi
+
+  # asdf 0.16+: --home writes to $HOME/.tool-versions (the old "global").
+  # Your original used `asdf set -u`; -u isn't in asdf's docs, so this uses the
+  # documented --home flag. Confirm with `asdf set --help` and adjust if needed.
+  asdf install "${tool}" "${version}" \
+    && asdf set --home "${tool}" "${version}" \
+    && printf '%s %s set globally\n\n' "${tool}" "${version}"
+}
+
+# Everything except java and gradle: just take asdf's reported "latest".
+for tool in $(asdf plugin list | grep -vE 'java|gradle'); do
+  set_global "${tool}" "$(asdf latest "${tool}")"
 done
 
-latest_openjdk=$(asdf list all java | grep "^openjdk" | tail -1)
-asdf install java ${latest_openjdk} && asdf set -u java ${latest_openjdk} && printf "java ${latest_openjdk} set globally\n\n"
+# java: newest OpenJDK build specifically — not asdf's generic "latest", which
+# could resolve to a different vendor (oracle, zulu, temurin, ...).
+# sort -V guards against asdf listing versions out of numeric order.
+latest_openjdk=$(asdf list all java | grep '^openjdk' | sort -V | tail -1)
+set_global java "${latest_openjdk}"
 
-latest_gradle=$(asdf list all gradle | grep '^[0-9]\+\.[0-9]\+\(\.[0-9]\+\)\?$' | tail -1)
-asdf install gradle ${latest_gradle} && asdf set -u gradle ${latest_gradle} && printf "gradle ${latest_gradle} set globally\n\n"
+# gradle: newest *stable* release — plain X.Y or X.Y.Z, excluding rc/milestone
+# tags like 8.12-rc-1.
+latest_gradle=$(asdf list all gradle | grep -E '^[0-9]+\.[0-9]+(\.[0-9]+)?$' | sort -V | tail -1)
+set_global gradle "${latest_gradle}"
+
+# Regenerate shims so they point at the freshly installed versions (e.g. uv).
+asdf reshim

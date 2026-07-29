@@ -1,1 +1,3 @@
-rofi.theme: /usr/share/rofi/themes/android_notification.rasi
+rofi.theme: ~/.config/rofi/clean-blur.rasi
+rofi.modi: drun,window
+rofi.show-icons: true

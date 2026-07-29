@@ -1,1 +1,7 @@
-@theme "/usr/share/rofi/themes/onedark.rasi"
+configuration {
+    modi: "drun,window";
+    show-icons: true;
+    drun-display-format: "{name}";
+}
+
+@theme "~/.config/rofi/clean-blur.rasi"

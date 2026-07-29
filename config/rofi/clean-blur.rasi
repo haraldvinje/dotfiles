@@ -1,0 +1,94 @@
+* {
+    black: #000000;
+    red: #eb6e67;
+    green: #95ee8f;
+    yellow: #f8c456;
+    blue: #6eaafb;
+    magenta: #d886f3;
+    cyan: #6cdcf7;
+    emphasis: #50536b;
+    text: #dfdfdf;
+    text-alt: #b2b2b2;
+    fg: #abb2bf;
+    bg: #282c34;
+
+    spacing: 0;
+    background-color: transparent;
+    font: "Knack Nerd Font 14";
+    text-color: @text;
+}
+
+window {
+    transparency: "real";
+    fullscreen: true;
+    background-color: #282c3470;
+}
+
+mainbox {
+    padding: 30% 30%;
+}
+
+inputbar {
+    margin: 0px 0px 20px 0px;
+    children: [prompt, textbox-prompt-colon, entry, case-indicator];
+}
+
+prompt {
+    text-color: @blue;
+}
+
+textbox-prompt-colon {
+    expand: false;
+    str: ":";
+    text-color: @text-alt;
+}
+
+entry {
+    margin: 0px 10px;
+    placeholder: "Type to search";
+}
+
+listview {
+    lines: 7;
+    spacing: 5px;
+    dynamic: true;
+    scrollbar: false;
+}
+
+element {
+    padding: 5px;
+    text-color: @text-alt;
+    highlight: bold #95ee8f;
+    border-radius: 3px;
+}
+
+element selected.normal, element selected.active {
+    background-color: @emphasis;
+    text-color: @text;
+}
+
+element normal.urgent, element selected.urgent {
+    text-color: @red;
+}
+
+element normal.active, element selected.active {
+    text-color: @magenta;
+}
+
+element-icon {
+    size: 1em;
+}
+
+message {
+    padding: 5px;
+    border-radius: 3px;
+    background-color: @emphasis;
+    border: 1px;
+    border-color: @cyan;
+}
+
+button selected.normal {
+    padding: 5px;
+    border-radius: 3px;
+    background-color: @emphasis;
+}

@@ -1,161 +1,73 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
-# More info : https://github.com/jaagr/polybar/wiki
-
-# Install the following applications for polybar and icons in polybar if you are on ArcoLinuxD
-# awesome-terminal-fonts
-# Tip : There are other interesting fonts that provide icons like nerd-fonts-complete
-# --log=error
-# Terminate already running bar instances
 killall -q polybar
+while pgrep -x polybar >/dev/null; do sleep 0.2; done
 
-# Wait until the processes have been shut down
-while pgrep -u $UID -x polybar > /dev/null; do sleep 1; done
+# Wait until i3 IPC is ready (prevents stale socket errors).
+for _ in {1..30}; do
+  if i3-msg -t get_version >/dev/null 2>&1; then
+    break
+  fi
+  sleep 0.2
+done
 
-desktop=$(echo $DESKTOP_SESSION)
-count=$(xrandr --query | grep " connected" | cut -d" " -f1 | wc -l)
+I3SOCK="$(i3 --get-socketpath 2>/dev/null || true)"
+if [ -n "$I3SOCK" ]; then
+  export I3SOCK
+fi
 
-case $desktop in
+DEFAULT_IFACE="$(ip route | awk '/^default/ {print $5; exit}')"
+export DEFAULT_IFACE
 
-    i3|/usr/share/xsessions/i3)
-    if type "xrandr" > /dev/null; then
-      for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-        MONITOR=$m polybar --reload mainbar-i3 -c ~/.config/polybar/config &
-      done
+# Launch one bar per active i3 output.
+# Keep tray only on a preferred monitor (internal, else primary, else first).
+mapfile -t connected_monitors < <(
+  i3-msg -t get_outputs | python -c '
+import json, sys
+for out in json.load(sys.stdin):
+    if out.get("active"):
+        print(out["name"])
+'
+)
+
+# Fallbacks when i3 output query isn't available yet.
+if [ "${#connected_monitors[@]}" -eq 0 ]; then
+  mapfile -t connected_monitors < <(polybar --list-monitors 2>/dev/null | awk -F: '{print $1}')
+fi
+if [ "${#connected_monitors[@]}" -eq 0 ]; then
+  mapfile -t connected_monitors < <(xrandr --query | awk '$2 == "connected" {print $1}')
+fi
+
+if [ "${#connected_monitors[@]}" -eq 0 ]; then
+  polybar -c "$HOME/.config/polybar/config.ini" main &
+else
+  tray_monitor=""
+  tray_monitor="$(printf '%s\n' "${connected_monitors[@]}" | awk '/^(eDP|EDP|LVDS|DSI)/ {print; exit}')"
+  if [ -z "$tray_monitor" ]; then
+    tray_monitor="$(
+      i3-msg -t get_outputs | python -c '
+import json, sys
+for out in json.load(sys.stdin):
+    if out.get("active") and out.get("primary"):
+        print(out["name"])
+        break
+'
+    )"
+  fi
+  if [ -z "$tray_monitor" ]; then
+    tray_monitor="${connected_monitors[0]}"
+  fi
+
+  for monitor in "${connected_monitors[@]}"; do
+    if [ "$monitor" = "$tray_monitor" ]; then
+      MONITOR="$monitor" TRAY_POSITION="right" polybar -c "$HOME/.config/polybar/config.ini" main &
     else
-    polybar --reload mainbar-i3 -c ~/.config/polybar/config &
+      MONITOR="$monitor" TRAY_POSITION="none" polybar -c "$HOME/.config/polybar/config.ini" main &
     fi
-    # second polybar at bottom
-    # if type "xrandr" > /dev/null; then
-    #   for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-    #     MONITOR=$m polybar --reload mainbar-i3-extra -c ~/.config/polybar/config &
-    #   done
-    # else
-    # polybar --reload mainbar-i3-extra -c ~/.config/polybar/config &
-    # fi
-    ;;
+  done
+fi
 
-    openbox|/usr/share/xsessions/openbox)
-    if type "xrandr" > /dev/null; then
-      for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-        MONITOR=$m polybar --reload mainbar-openbox -c ~/.config/polybar/config &
-      done
-    else
-    polybar --reload mainbar-openbox -c ~/.config/polybar/config &
-    fi
-    # second polybar at bottom
-    # if type "xrandr" > /dev/null; then
-    #   for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-    #     MONITOR=$m polybar --reload mainbar-openbox-extra -c ~/.config/polybar/config &
-    #   done
-    # else
-    # polybar --reload mainbar-openbox-extra -c ~/.config/polybar/config &
-    # fi
-    ;;
-
-    bspwm|/usr/share/xsessions/bspwm)
-    if type "xrandr" > /dev/null; then
-      for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-        MONITOR=$m polybar --reload mainbar-bspwm -c ~/.config/polybar/config &
-      done
-    else
-    polybar --reload mainbar-bspwm -c ~/.config/polybar/config &
-    fi
-    # second polybar at bottom
-    # if type "xrandr" > /dev/null; then
-    #   for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-    #     MONITOR=$m polybar --reload mainbar-bspwm-extra -c ~/.config/polybar/config &
-    #   done
-    # else
-    # polybar --reload mainbar-bspwm-extra -c ~/.config/polybar/config &
-    # fi
-    ;;
-
-    herbstluftwm|/usr/share/xsessions/herbstluftwm)
-    if type "xrandr" > /dev/null; then
-      for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-        MONITOR=$m polybar --reload mainbar-herbstluftwm -c ~/.config/polybar/config &
-      done
-    else
-    polybar --reload mainbar-herbstluftwm -c ~/.config/polybar/config &
-    fi
-    # second polybar at bottom
-    # if type "xrandr" > /dev/null; then
-    #   for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-    #     MONITOR=$m polybar --reload mainbar-herbstluftwm-extra -c ~/.config/polybar/config &
-    #   done
-    # else
-    # polybar --reload mainbar-herbstluftwm-extra -c ~/.config/polybar/config &
-    # fi
-    ;;
-
-    xmonad|/usr/share/xsessions/xmonad)
-    if [ $count = 1 ]; then
-      m=$(xrandr --query | grep " connected" | cut -d" " -f1)
-      MONITOR=$m polybar --reload mainbar-xmonad -c ~/.config/polybar/config &
-    else
-      for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-        MONITOR=$m polybar --reload mainbar-xmonad -c ~/.config/polybar/config &
-      done
-    fi
-    # second polybar at bottom
-    # if [ $count = 1 ]; then
-    #   m=$(xrandr --query | grep " connected" | cut -d" " -f1)
-    #   MONITOR=$m polybar --reload mainbar-xmonad-extra -c ~/.config/polybar/config &
-    # else
-    #   for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-    #     MONITOR=$m polybar --reload mainbar-xmonad-extra -c ~/.config/polybar/config &
-    #   done
-    # fi
-    ;;
-
-    spectrwm|/usr/share/xsessions/spectrwm)
-    if type "xrandr" > /dev/null; then
-      for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-        MONITOR=$m polybar --reload mainbar-spectrwm -c ~/.config/polybar/config &
-      done
-    else
-    polybar --reload mainbar-spectrwm -c ~/.config/polybar/config &
-    fi
-    ;;
-
-    cwm|/usr/share/xsessions/cwm)
-    if type "xrandr" > /dev/null; then
-      for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-        MONITOR=$m polybar --reload mainbar-cwm -c ~/.config/polybar/config &
-      done
-    else
-    polybar --reload mainbar-cwm -c ~/.config/polybar/config &
-    fi
-
-     # second polybar at bottom
-     # if type "xrandr" > /dev/null; then
-     #  for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-     #    MONITOR=$m polybar --reload mainbar-cwm-extra -c ~/.config/polybar/config &
-     #  done
-     # else
-     # polybar --reload mainbar-cwm-extra -c ~/.config/polybar/config &
-     # fi
-
-    ;;
-
-    fvwm3|/usr/share/xsessions/fvwm3)
-    if type "xrandr" > /dev/null; then
-      for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-        MONITOR=$m polybar --reload mainbar-fvwm3 -c ~/.config/polybar/config &
-      done
-    else
-    polybar --reload mainbar-fvwm3 -c ~/.config/polybar/config &
-    fi
-
-     # second polybar at bottom
-     # if type "xrandr" > /dev/null; then
-     #  for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-     #    MONITOR=$m polybar --reload mainbar-fvwm3-extra -c ~/.config/polybar/config &
-     #  done
-     # else
-     # polybar --reload mainbar-fvwm3-extra -c ~/.config/polybar/config &
-     # fi
-
-    ;;
-esac
+# Restart NetworkManager tray applet after bar is up.
+sleep 1
+killall -q nm-applet
+nohup nm-applet >/dev/null 2>&1 &

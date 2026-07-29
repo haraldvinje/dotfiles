@@ -1,0 +1,81 @@
+[global]
+monitor = 0
+follow = mouse
+width = 320
+height = 110
+origin = top-right
+offset = 18x42
+scale = 0
+notification_limit = 6
+history_length = 20
+sticky_history = no
+
+progress_bar = true
+progress_bar_height = 10
+progress_bar_frame_width = 0
+progress_bar_corner_radius = 0
+progress_bar_min_width = 220
+progress_bar_max_width = 300
+
+indicate_hidden = yes
+transparency = 0
+separator_height = 0
+padding = 14
+horizontal_padding = 14
+text_icon_padding = 8
+frame_width = 1
+frame_color = "#2a2f3a"
+corner_radius = 0
+
+font = Noto Sans 11
+line_height = 0
+markup = full
+format = "<b>%s</b>\n%b"
+alignment = left
+vertical_alignment = center
+show_age_threshold = 60
+word_wrap = yes
+ellipsize = middle
+ignore_newline = no
+stack_duplicates = true
+hide_duplicate_count = false
+show_indicators = yes
+
+icon_position = left
+min_icon_size = 20
+max_icon_size = 32
+icon_theme = Papirus-Dark
+
+mouse_left_click = close_current
+mouse_middle_click = do_action, close_current
+mouse_right_click = close_all
+
+[urgency_low]
+timeout = 3s
+background = "#11141a"
+foreground = "#e6e6e6"
+highlight = "#7aa2f7"
+
+[urgency_normal]
+timeout = 5s
+background = "#11141a"
+foreground = "#e6e6e6"
+highlight = "#7aa2f7"
+
+[urgency_critical]
+timeout = 5s
+background = "#2a1114"
+foreground = "#ffe9ea"
+frame_color = "#e06c75"
+highlight = "#e06c75"
+
+[force-timeout]
+override_dbus_timeout = true
+ignore_dbusclose = true
+timeout = 5s
+
+[slack]
+appname = "Slack"
+override_dbus_timeout = true
+timeout = 3s
+history_ignore = true

@@ -14,7 +14,7 @@
 [user]
 	email = haraldvinje@gmail.com
 	name = Harald Vinje
-	signingkey = 694F20855473A8F7
+	signingkey = 3A8402BB3D3356DE
 [push]
     autoSetupRemote = true
 [safe]
@@ -22,9 +22,12 @@
 [init]
     defaultBranch = master
 [commit]
-    gpgSign = true
+	gpgsign = true
 [filter "lfs"]
     clean = git-lfs clean -- %f
     smudge = git-lfs smudge -- %f
     process = git-lfs filter-process
     required = true
+[pack]
+	threads = 2
+	windowMemory = 512m

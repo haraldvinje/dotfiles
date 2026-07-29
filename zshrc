@@ -5,6 +5,9 @@
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$HOME/.local/bin:$HOME/.scripts:$HOME/.emacs.d/bin:$PATH
 
+# Load profile exports (Qt theming vars, Toolbox PATH, etc.) for terminal sessions.
+[[ -f "$HOME/.profile" ]] && source "$HOME/.profile"
+
 # Path to your oh-my-zsh installation.
 #installation via script from github
 #export ZSH="/home/$USER/.oh-my-zsh"
@@ -370,8 +373,12 @@ alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'
 
 export AWS_REGION=eu-west-1
 export AWS_DEFAULT_REGION=eu-west-1
-export AWS_PROFILE=personal
-$(aws configure export-credentials --format env 2> /dev/null || true)
+export AWS_PROFILE=vintech
+
+# Load AWS credentials only when explicitly requested.
+aws-load-creds() {
+  eval "$(aws configure export-credentials --format env 2>/dev/null)"
+}
 
 
 fpath+=(~/.scripts)
@@ -394,7 +401,16 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 fpath=(${ASDF_DATA_DIR:-$HOME/.asdf}/completions $fpath)
 
-alias full-update='sudo snap refresh && asdf-update && sudo garuda-update --noconfirm && yay --noconfirm'
-
-autoload -Uz compinit && compinit
-
+autoload -Uz compinit
+# Reuse completion cache when available to reduce startup cost.
+if [[ -n ${ZDOTDIR:-} ]]; then
+  _zcompdump_path="${ZDOTDIR}/.zcompdump"
+else
+  _zcompdump_path="${HOME}/.zcompdump"
+fi
+if [[ -s "$_zcompdump_path" && -z "$_zcompdump_path"(#qNmh+24) ]]; then
+  compinit -C -d "$_zcompdump_path"
+else
+  compinit -d "$_zcompdump_path"
+fi
+unset _zcompdump_path

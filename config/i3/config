@@ -18,7 +18,6 @@
 # Print = PRINT key
 # Tab = TAB key
 
-
 #####################################################################################################################
 #################                          Define the $mod variable/key                             #################
 #####################################################################################################################
@@ -145,9 +144,9 @@ bindsym mod1+F2 exec --no-startup-id gmrun
 bindsym mod1+F3 exec --no-startup-id xfce4-appfinder
 
 # start program launcher
-bindsym $mod+d exec --no-startup-id rofi -show drun -show-icons
-bindsym $mod+w exec --no-startup-id rofi -show window -show-icons
-bindsym $mod+space exec --no-startup-id rofi -show combi -show-icons
+bindsym $mod+d exec --no-startup-id rofi -show drun -show-icons -theme ~/.config/rofi/clean-blur.rasi
+bindsym $mod+w exec --no-startup-id rofi -show window -show-icons -theme ~/.config/rofi/clean-blur.rasi
+bindsym $mod+space exec --no-startup-id rofi -show combi -show-icons -theme ~/.config/rofi/clean-blur.rasi
 bindsym $mod+m exec rofimoji
 
 #####################################################################################################################
@@ -434,20 +433,16 @@ for_window [class="Spotify"] focus
 
 # TRAY APPLICATIONS
 
-# applications that are not installed will not start
-# you may see a wheel - hashtag out things you do not want
+# Minimal tray apps (wifi via nm-applet in polybar launcher).
 
 #Authentication dialog
 exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 
-# Updater
-exec --no-startup-id pamac-tray
-
 # bluetooth
-#exec --no-startup-id blueberry-tray
+exec --no-startup-id sh -c 'command -v blueman-applet >/dev/null && blueman-applet'
 
 # network
-exec --no-startup-id nm-applet
+# nm-applet is launched by polybar launcher
 
 # num lock activated
 exec_always --no-startup-id numlockx on
@@ -459,14 +454,13 @@ exec_always --no-startup-id numlockx on
 #exec --no-startup-id insync start
 
 # volume
-#exec --no-startup-id pasystray
 exec --no-startup-id volumeicon
 
 #variety
 #exec --no-startup-id variety
 
-# clipman
-#exec --no-startup-id xfce4-clipman
+# battery indicator (useful on laptops)
+exec --no-startup-id sh -c 'command -v cbatticon >/dev/null && cbatticon'
 
 #Conky
 # exec --no-startup-id conky -c ~/.config/i3/system-overview
@@ -478,11 +472,15 @@ exec --no-startup-id volumeicon
 #################                                 system applications                               #################
 #####################################################################################################################
 
+# Power: blank screen after 10 min, no auto-suspend (see ~/.config/xfce4/.../xfce4-power-manager.xml)
+exec --no-startup-id sh -c 'xset s 600 600 600; xset dpms 600 600 600; xset +dpms'
 exec --no-startup-id xfce4-power-manager &
 # ommitted next line to get super key to bring up the menu in xfce and avoid error then in i3
 # IF xfsettingsd is activated you can not change themes
 #exec --no-startup-id xfsettingsd &
-exec --no-startup-id /usr/lib/xfce4/notifyd/xfce4-notifyd &
+exec --no-startup-id sh -c 'pkill -x xsettingsd; xsettingsd'
+exec --no-startup-id gsettings set org.gnome.desktop.interface color-scheme prefer-dark
+exec --no-startup-id dunst &
 
 #####################################################################################################################
 #################                          applications keyboard shortcuts                          #################
@@ -702,14 +700,14 @@ bindsym mod1+Shift+u exec --no-startup-id wal -i $(cat $HOME/.config/variety/wal
 #####################################################################################################################
 
 
-bindsym XF86AudioRaiseVolume exec --no-startup-id "amixer -D pulse sset Master '5%+'"
-bindsym XF86AudioLowerVolume exec --no-startup-id "amixer -D pulse sset Master '5%-'"
-bindsym XF86AudioMute exec --no-startup-id "amixer -D pulse set Master toggle"
+bindsym XF86AudioRaiseVolume exec --no-startup-id /home/harald/.config/i3/scripts/volume-up.sh
+bindsym XF86AudioLowerVolume exec --no-startup-id /home/harald/.config/i3/scripts/volume-down.sh
+bindsym XF86AudioMute exec --no-startup-id /home/harald/.config/i3/scripts/volume-mute-toggle.sh
 #https://github.com/acrisci/playerctl/
-bindsym XF86AudioPlay exec --no-startup-id playerctl play-pause
-bindsym XF86AudioNext exec --no-startup-id playerctl next
-bindsym XF86AudioPrev exec --no-startup-id playerctl previous
-bindsym XF86AudioStop exec --no-startup-id playerctl stop
+bindsym XF86AudioPlay exec --no-startup-id sh -c 'command -v playerctl >/dev/null && playerctl play-pause'
+bindsym XF86AudioNext exec --no-startup-id sh -c 'command -v playerctl >/dev/null && playerctl next'
+bindsym XF86AudioPrev exec --no-startup-id sh -c 'command -v playerctl >/dev/null && playerctl previous'
+bindsym XF86AudioStop exec --no-startup-id sh -c 'command -v playerctl >/dev/null && playerctl stop'
 #bindsym XF86AudioPlay exec --no-startup-id "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause"
 #bindsym XF86AudioNext exec --no-startup-id "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next"
 #bindsym XF86AudioPrev exec --no-startup-id "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous"
@@ -720,8 +718,8 @@ bindsym XF86AudioStop exec --no-startup-id playerctl stop
 #################                          xbacklight                                               #################
 #####################################################################################################################
 
-bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 20 # increase screen brightness
-bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 20 # decrease screen brightness
+bindsym XF86MonBrightnessUp exec --no-startup-id /home/harald/.config/i3/scripts/brightness-up.sh
+bindsym XF86MonBrightnessDown exec --no-startup-id /home/harald/.config/i3/scripts/brightness-down.sh
 
 
 
@@ -842,7 +840,7 @@ mode "$mode_gaps_outer" {
 #####################################################################################################################
 
 #if you want transparency on non-focused windows, ...
-exec_always --no-startup-id picom --config ~/.config/picom.conf
+exec_always --no-startup-id sh -c 'pkill -x picom; picom --config ~/.config/picom.conf'
 
 # bindsym control+mod1+o exec --no-startup-id ~/.config/i3/scripts/picom-toggle.sh
 
@@ -1032,4 +1030,12 @@ for_window [title="^Search Everywhere$"] floating enable
 for_window [title="^Find Action$"] floating enable
 
 #Startup script
-exec_always --no-startup-id /home/haraldv/.scripts/startup.sh
+# Keep startup simple and stable.
+# Ensure GUI-launched apps (rofi, desktop files) get Qt theme vars.
+exec_always --no-startup-id dbus-update-activation-environment --systemd QT_QPA_PLATFORMTHEME=qt6ct QT_STYLE_OVERRIDE=kvantum
+exec_always --no-startup-id feh --no-fehbg --bg-fill --randomize /home/harald/Pictures/Wallpapers/
+exec_always --no-startup-id /home/harald/.config/polybar/launch.sh
+# Manual monitor/layout reapply when you plug/unplug.
+bindsym $mod+Shift+o exec --no-startup-id /home/harald/.config/i3/scripts/monitor-reapply.sh
+# Swap Caps Lock and Escape.
+exec_always --no-startup-id setxkbmap -option caps:swapescape
