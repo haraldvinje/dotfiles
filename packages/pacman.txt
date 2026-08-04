@@ -23,3 +23,5 @@ autorandr
 starship
 numlockx
 github-cli
+xfce4-screenshooter
+xclip
