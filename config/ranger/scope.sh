@@ -140,34 +140,31 @@ handle_image() {
 
         ## Image
         image/*)
-            local orientation
-            orientation="$( identify -format '%[EXIF:Orientation]\n' -- "${FILE_PATH}" )"
-            ## If orientation data is present and the image actually
-            ## needs rotating ("1" means no rotation)...
-            if [[ -n "$orientation" && "$orientation" != 1 ]]; then
-                ## ...auto-rotate the image according to the EXIF data.
-                convert -- "${FILE_PATH}" -auto-orient "${IMAGE_CACHE_PATH}" && exit 6
+            if [[ "${PV_IMAGE_ENABLED}" == 'True' ]]; then
+                local orientation
+                orientation="$( identify -format '%[EXIF:Orientation]\n' -- "${FILE_PATH}" 2>/dev/null )"
+                if [[ -n "$orientation" && "$orientation" != 1 ]]; then
+                    convert -- "${FILE_PATH}" -auto-orient "${IMAGE_CACHE_PATH}" && exit 6
+                fi
+                exit 7
             fi
-
-            ## `w3mimgdisplay` will be called for all images (unless overriden
-            ## as above), but might fail for unsupported types.
-            exit 7;;
+            chafa --animate=off -f symbols -s "${PV_WIDTH}x${PV_HEIGHT}" -- "${FILE_PATH}" && exit 4
+            exit 1;;
 
         ## Video
-        # video/*)
-        #     # Thumbnail
-        #     ffmpegthumbnailer -i "${FILE_PATH}" -o "${IMAGE_CACHE_PATH}" -s 0 && exit 6
-        #     exit 1;;
+        video/*)
+            ffmpegthumbnailer -i "${FILE_PATH}" -o "${IMAGE_CACHE_PATH}" -s 0 && exit 6
+            exit 1;;
 
         ## PDF
-        # application/pdf)
-        #     pdftoppm -f 1 -l 1 \
-        #              -scale-to-x "${DEFAULT_SIZE%x*}" \
-        #              -scale-to-y -1 \
-        #              -singlefile \
-        #              -jpeg -tiffcompression jpeg \
-        #              -- "${FILE_PATH}" "${IMAGE_CACHE_PATH%.*}" \
-        #         && exit 6 || exit 1;;
+        application/pdf)
+            pdftoppm -f 1 -l 1 \
+                     -scale-to-x "${DEFAULT_SIZE%x*}" \
+                     -scale-to-y -1 \
+                     -singlefile \
+                     -jpeg -tiffcompression jpeg \
+                     -- "${FILE_PATH}" "${IMAGE_CACHE_PATH%.*}" \
+                && exit 6 || exit 1;;
 
 
         ## ePub, MOBI, FB2 (using Calibre)
@@ -320,7 +317,7 @@ handle_mime() {
 
         ## Image
         image/*)
-            ## Preview as text conversion
+            chafa --animate=off -f symbols -s "${PV_WIDTH}x${PV_HEIGHT}" -- "${FILE_PATH}" && exit 4
             # img2txt --gamma=0.6 --width="${PV_WIDTH}" -- "${FILE_PATH}" && exit 4
             exiftool "${FILE_PATH}" && exit 5
             exit 1;;

@@ -1,0 +1,25 @@
+# Official packages — Garuda i3 delta (beyond a stock Garuda i3 install).
+# Install:  sudo pacman -S --needed - < packages/pacman.txt
+
+rcm
+lsd
+ranger
+neovim
+terminator
+volumeicon
+cbatticon
+rofimoji
+git-lfs
+w3m
+ueberzugpp
+ffmpegthumbnailer
+poppler
+papirus-icon-theme
+kvantum
+qt6ct
+micro
+ibus
+autorandr
+starship
+numlockx
+github-cli

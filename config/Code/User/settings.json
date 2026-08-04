@@ -1,9 +1,9 @@
 {
-  "vim.neovimPath": "/usr/bin/nvim",
-  "vim.enableNeovim": true,
   "vim.vimrc.enable": true,
   "editor.mouseWheelZoom": true,
   "keyboard.dispatch": "keyCode",
+  "explorer.compactFolders": false,
+  "workbench.tree.indent": 12,
   "vim.handleKeys": {
     "<C-w>": false,
     "<C-k>": false,
@@ -12,7 +12,7 @@
     "<C-f>": false,
     "<C-n>": false,
     "<C-c>": false,
-    "<C-p>": false,
+    "<C-p>": false
   },
   "editor.lineNumbers": "relative",
   "terminal.integrated.profiles.linux": {
@@ -21,7 +21,8 @@
       "icon": "terminal-bash"
     },
     "zsh": {
-      "path": "/bin/zsh"
+      "path": "/bin/zsh",
+      "icon": "terminal-bash"
     },
     "fish": {
       "path": "/bin/fish"
@@ -35,27 +36,35 @@
       "icon": "terminal-powershell"
     }
   },
+  "terminal.integrated.defaultProfile.linux": "zsh",
   "terminal.external.linuxExec": "truecolor",
   "terminal.integrated.fontFamily": "Hack Nerd Font",
-  "workbench.iconTheme": "material-icon-theme",
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "biome.enabled": true,
   "workbench.productIconTheme": "material-product-icons",
   "[typescript]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features",
+    "editor.defaultFormatter": "biomejs.biome",
     "editor.detectIndentation": false,
     "editor.tabSize": 2
   },
   "[typescriptreact]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features",
+    "editor.defaultFormatter": "biomejs.biome",
     "editor.detectIndentation": false,
     "editor.tabSize": 2
   },
   "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "biomejs.biome",
     "editor.detectIndentation": false,
     "editor.tabSize": 2
   },
   "[javascriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "biomejs.biome",
     "editor.detectIndentation": false,
     "editor.tabSize": 2
   },
@@ -67,7 +76,6 @@
   },
   "json.schemas": [],
   "gitlens.hovers.currentLine.over": "line",
-  "cloudcode.autoDependencies": "off",
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
@@ -78,10 +86,7 @@
     "editor.defaultFormatter": "vscode.html-language-features"
   },
   "material-icon-theme.activeIconPack": "react",
-  "workbench.colorTheme": "Gruvbox DrakenLords Dark",
-  "yaml.schemas": {
-    "file:///home/haraldv/.vscode/extensions/atlassian.atlascode-2.10.12/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
-  },
+  "workbench.colorTheme": "Gruvbox Dark Hard",
   "yaml.customTags": [
     "!And",
     "!And sequence",
@@ -115,8 +120,6 @@
   "typescript.updateImportsOnFileMove.enabled": "always",
   "editor.fontFamily": "'Hack Nerd Font'",
   "editor.inlineSuggest.enabled": true,
-  "svelte.enable-ts-plugin": true,
-  "aws.samcli.enableCodeLenses": false,
   "editor.suggest.showMethods": true,
   "editor.suggest.preview": true,
   "editor.acceptSuggestionOnEnter": "on",
@@ -125,8 +128,6 @@
   "editor.formatOnSave": false,
   "editor.formatOnPaste": false,
   "editor.formatOnType": false,
-  "reactSnippets.settings.prettierEnabled": true,
-  "reactSnippets.settings.importReactOnTop": false,
   "remote.SSH.defaultExtensions": [
     "gitpod.gitpod-remote-ssh"
   ],
@@ -139,7 +140,6 @@
     "AWS::EC2::Subnet",
     "AWS::EC2::VPC"
   ],
-  "azureResourceGroups.groupBy": "resourceType",
   "vim.normalModeKeyBindingsNonRecursive": [
     // Undo & Redo
     {
@@ -156,6 +156,24 @@
       ],
       "commands": [
         "redo"
+      ]
+    },
+    {
+      "before": [
+        "<C-i>"
+      ],
+      "commands": [
+        "interactiveEditor.start"
+      ]
+    }
+  ],
+  "vim.visualModeKeyBindingsNonRecursive": [
+    {
+      "before": [
+        "<C-i>"
+      ],
+      "commands": [
+        "interactiveEditor.start"
       ]
     }
   ],
@@ -177,10 +195,85 @@
     "editor.suggest.snippetsPreventQuickSuggestions": false,
     "editor.suggestSelection": "first",
     "editor.tabCompletion": "onlySnippets",
-    "editor.wordBasedSuggestions": false
+    "editor.wordBasedSuggestions": "off"
   },
-  "aws.suppressPrompts": {
-    "codeWhispererNewWelcomeMessage": true
+  "editor.wordWrap": "on",
+  "gitlens.views.scm.grouped.views": {
+    "commits": true,
+    "branches": true,
+    "remotes": true,
+    "stashes": true,
+    "tags": true,
+    "worktrees": true,
+    "contributors": true,
+    "repositories": false,
+    "searchAndCompare": true,
+    "launchpad": false
   },
-  "editor.wordWrap": "on"
+  "kotlin.languageServer.enabled": false,
+  "kotlin.debugAdapter.enabled": false,
+  "database-client.autoSync": true,
+  "http.experimental.systemCertificatesV2": true,
+  "window.menuBarVisibility": "classic",
+  "vim.neovimPath": "/usr/bin/nvim",
+  "github.copilot.editor.enableAutoCompletions": true,
+  "docker.extension.enableComposeLanguageServer": false,
+  "chat.instructionsFilesLocations": {
+    ".github/instructions": true,
+    ".claude/rules": true,
+    "~/.copilot/instructions": true,
+    "~/.claude/rules": true,
+    "/tmp/postman-http-request-post-response.instructions.md": true,
+    "/tmp/postman-http-request-pre-request.instructions.md": true,
+    "/tmp/postman-collections-post-response.instructions.md": true,
+    "/tmp/postman-collections-pre-request.instructions.md": true,
+    "/tmp/postman-folder-post-response.instructions.md": true,
+    "/tmp/postman-folder-pre-request.instructions.md": true,
+    ".github/copilot-instructions.md": true
+  },
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "python.analysis.typeCheckingMode": "basic",
+  "chat.mcp.autostart": "newAndOutdated",
+  "files.trimTrailingWhitespace": true,
+  "[dockercompose]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.autoIndent": "advanced",
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": false,
+      "strings": true
+    },
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "files.autoSave": "afterDelay",
+  "aws.cloudformation.telemetry.enabled": true,
+  "claudeCode.preferredLocation": "sidebar",
+  "gitlens.ai.model": "vscode",
+  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+  "workbench.iconTheme": "material-icon-theme",
+  "editor.defaultFormatter": "biomejs.biome",
+  "json.schemaDownload.trustedDomains": {
+    "https://schemastore.azurewebsites.net/": true,
+    "https://raw.githubusercontent.com/": true,
+    "https://www.schemastore.org/": true,
+    "https://json.schemastore.org/": true,
+    "https://json-schema.org/": true,
+    "https://biomejs.dev": true
+  },
+  "chat.mcp.gallery.enabled": true,
+  "claudeCode.allowDangerouslySkipPermissions": true,
+  "claudeCode.initialPermissionMode": "bypassPermissions",
+  "java.gradle.buildServer.enabled": "off",
+  "yaml.disableSchemaDetection": [
+    "**/.github/workflows/*.yml",
+    "**/.github/workflows/*.yaml",
+    "**/.gitea/workflows/*.yml",
+    "**/.gitea/workflows/*.yaml",
+    "**/.forgejo/workflows/*.yml",
+    "**/.forgejo/workflows/*.yaml"
+  ]
 }

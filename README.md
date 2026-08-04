@@ -1,11 +1,41 @@
 # dotfiles
 
-My dotfiles for [Garuda Linux](https://garudalinux.org/)
+Dotfiles for [Garuda Linux](https://garudalinux.org/) **i3**.
 
-## Usage
+Managed with [rcm](https://github.com/thoughtbot/rcm).
 
-You'll need the [https://github.com/thoughtbot/rcm](rcm) package to run the following commands.
+## Quick start (new machine)
 
-To add a new file to dotfile managament run `mkrc -v <path to the file or directory you want to backup>`, e.g. `mkrc -v ~/.bashrc`.
+See **[docs/reinstall.md](docs/reinstall.md)** for the full Garuda + i3 checklist (packages, fonts, rcup, manual steps).
 
-To apply the files from this repository to your local machine's dotfiles run `rcup`. You can also specify a path or directory: `rcup -v .bashrc`.
+Short version:
+
+```bash
+sudo pacman -S --needed git rcm
+git clone git@github.com:haraldvinje/dotfiles.git ~/.dotfiles
+sudo pacman -S --needed - < ~/.dotfiles/packages/pacman.txt
+paru -S --needed - < ~/.dotfiles/packages/aur.txt
+sudo pacman -S --needed - < ~/.dotfiles/packages/fonts.txt
+# optional: paru -S --needed - < ~/.dotfiles/packages/optional.txt
+rcup -v -d ~/.dotfiles
+chsh -s /bin/zsh
+```
+
+Bring your own wallpapers into `~/Pictures/Wallpapers/`.
+
+## Day-to-day
+
+```bash
+mkrc -v ~/.some/config     # start tracking a file
+rcup -v -d ~/.dotfiles     # re-apply links
+```
+
+## Package lists
+
+| File | Purpose |
+|------|---------|
+| `packages/pacman.txt` | Official repo delta |
+| `packages/aur.txt` | AUR / Chaotic (paru) |
+| `packages/fonts.txt` | Nerd / UI fonts |
+| `packages/optional.txt` | Chrome, editors, Docker, … |
+

@@ -1032,10 +1032,10 @@ for_window [title="^Find Action$"] floating enable
 #Startup script
 # Keep startup simple and stable.
 # Ensure GUI-launched apps (rofi, desktop files) get Qt theme vars.
-exec_always --no-startup-id dbus-update-activation-environment --systemd QT_QPA_PLATFORMTHEME=qt6ct QT_STYLE_OVERRIDE=kvantum
-exec_always --no-startup-id feh --no-fehbg --bg-fill --randomize /home/harald/Pictures/Wallpapers/
-exec_always --no-startup-id /home/harald/.config/polybar/launch.sh
+exec_always --no-startup-id dbus-update-activation-environment --systemd QT_QPA_PLATFORMTHEME=qt6ct QT_STYLE_OVERRIDE=kvantum GTK_THEME=Qogir-Dark:dark GTK_APPLICATION_PREFER_DARK_THEME=1
+exec_always --no-startup-id feh --no-fehbg --bg-fill --randomize $HOME/Pictures/Wallpapers/
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 # Manual monitor/layout reapply when you plug/unplug.
-bindsym $mod+Shift+o exec --no-startup-id /home/harald/.config/i3/scripts/monitor-reapply.sh
+bindsym $mod+Shift+o exec --no-startup-id $HOME/.config/i3/scripts/monitor-reapply.sh
 # Swap Caps Lock and Escape.
 exec_always --no-startup-id setxkbmap -option caps:swapescape

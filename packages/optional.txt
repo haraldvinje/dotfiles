@@ -1,0 +1,15 @@
+# Optional apps — skip on a minimal rebuild.
+# Defaults (BROWSER / mimeapps) assume google-chrome if you keep those configs.
+# Install:  paru -S --needed - < packages/optional.txt
+# (google-chrome is in chaotic/AUR; use pacman if it resolves there)
+
+google-chrome
+visual-studio-code-bin
+cursor-bin
+docker
+docker-compose
+brave-bin
+discord
+slack-desktop
+jetbrains-toolbox
+aws-cli-v2

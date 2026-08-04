@@ -1,0 +1,9 @@
+# Fonts required for polybar / nerd glyphs / Terminator.
+# Install:  sudo pacman -S --needed - < packages/fonts.txt
+
+ttf-hack-nerd
+ttf-iosevka-nerd
+ttf-nerd-fonts-symbols-mono
+ttf-icomoon-feather
+noto-fonts
+noto-fonts-emoji

@@ -1,0 +1,10 @@
+# AUR / Chaotic packages (install with paru, separately from pacman).
+# Install:  paru -S --needed - < packages/aur.txt
+
+antigen
+asdf-vm
+i3lock-fancy-multimonitor
+fzf-tab-git
+qogir-gtk-theme-git
+qogir-icon-theme-git
+kvantum-theme-qogir-git

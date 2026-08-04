@@ -14,7 +14,7 @@
 [user]
 	email = haraldvinje@gmail.com
 	name = Harald Vinje
-	signingkey = 3A8402BB3D3356DE
+	signingkey = 4479653BF0232E17
 [push]
     autoSetupRemote = true
 [safe]

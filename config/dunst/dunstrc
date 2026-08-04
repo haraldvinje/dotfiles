@@ -2,9 +2,9 @@
 monitor = 0
 follow = mouse
 width = 320
-height = 110
+height = (0, 110)
 origin = top-right
-offset = 18x42
+offset = (18, 42)
 scale = 0
 notification_limit = 6
 history_length = 20
@@ -50,6 +50,9 @@ mouse_left_click = close_current
 mouse_middle_click = do_action, close_current
 mouse_right_click = close_all
 
+# Enforce configured timeouts instead of letting apps close notifications early.
+ignore_dbusclose = true
+
 [urgency_low]
 timeout = 3s
 background = "#11141a"
@@ -69,13 +72,8 @@ foreground = "#ffe9ea"
 frame_color = "#e06c75"
 highlight = "#e06c75"
 
-[force-timeout]
-override_dbus_timeout = true
-ignore_dbusclose = true
-timeout = 5s
-
 [slack]
 appname = "Slack"
-override_dbus_timeout = true
+override_dbus_timeout = 3s
 timeout = 3s
 history_ignore = true

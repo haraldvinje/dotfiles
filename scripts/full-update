@@ -1,0 +1,228 @@
+#!/usr/bin/env bash
+# full-update — Garuda system update + asdf home tools (+ snap/flatpak if present)
+#
+# Usage: full-update
+#   FULL_UPDATE_AUR=0 full-update   # skip paru/yay AUR pass (default: include AUR)
+#
+# Confirmations: pacman/paru/yay are always --noconfirm (assumes Yes).
+# You still enter sudo once when needed.
+set -uo pipefail
+
+UPDATE_AUR="${FULL_UPDATE_AUR:-1}"
+
+# --- pretty output ----------------------------------------------------------
+if [[ -t 1 ]] && command -v tput >/dev/null && [[ $(tput colors 2>/dev/null || echo 0) -ge 8 ]]; then
+  BOLD=$(tput bold); DIM=$(tput dim); RESET=$(tput sgr0)
+  CYAN=$(tput setaf 6); GREEN=$(tput setaf 2); YELLOW=$(tput setaf 3)
+  RED=$(tput setaf 1); MAGENTA=$(tput setaf 5); BLUE=$(tput setaf 4)
+else
+  BOLD=; DIM=; RESET=; CYAN=; GREEN=; YELLOW=; RED=; MAGENTA=; BLUE=
+fi
+
+WIDTH=64
+hr() { printf '%s\n' "${DIM}$(printf '─%.0s' $(seq 1 "$WIDTH"))${RESET}"; }
+
+banner() {
+  echo
+  hr
+  printf '%s%s  ❯ full-update%s\n' "$BOLD" "$CYAN" "$RESET"
+  printf '%s  Garuda · asdf · optional snap/flatpak%s\n' "$DIM" "$RESET"
+  hr
+  echo
+}
+
+section() {
+  local n=$1 title=$2
+  echo
+  printf '%s%s[%s]%s %s%s%s\n' "$BOLD" "$MAGENTA" "$n" "$RESET" "$BOLD" "$title" "$RESET"
+  hr
+}
+
+ok()   { printf '  %s✓%s %s\n' "$GREEN" "$RESET" "$*"; }
+warn() { printf '  %s!%s %s\n' "$YELLOW" "$RESET" "$*"; }
+err()  { printf '  %s✗%s %s\n' "$RED" "$RESET" "$*"; }
+info() { printf '  %s·%s %s\n' "$BLUE" "$RESET" "$*"; }
+skip() { printf '  %s–%s %s\n' "$DIM" "$RESET" "$*"; }
+
+have() { command -v "$1" >/dev/null 2>&1; }
+
+# True only when snapd is actually usable (binary alone is not enough on Garuda).
+snapd_ready() {
+  have snap || return 1
+  # snapd package/service must be present; "snapd unavailable" means stub/partial install
+  local ver
+  ver="$(snap version 2>/dev/null || true)"
+  [[ "$ver" == *snapd* ]] || return 1
+  [[ "$ver" != *unavailable* ]] || return 1
+  return 0
+}
+
+SECONDS_START=$SECONDS
+STEPS_OK=0
+STEPS_FAIL=0
+STEPS_SKIP=0
+
+# --- 1. Garuda (+ AUR) ------------------------------------------------------
+# Note: garuda-update --noconfirm only affects pacman. Its -a path runs plain
+# `paru -Sua` and still prompts — so we run paru ourselves with --noconfirm.
+run_garuda() {
+  section 1 "Garuda system update"
+  if ! have garuda-update; then
+    err "garuda-update not found"
+    STEPS_FAIL=$((STEPS_FAIL + 1))
+    return 1
+  fi
+
+  info "pacman via garuda-update --noconfirm (assumes Yes)"
+  if garuda-update --noconfirm; then
+    ok "Garuda update finished"
+    STEPS_OK=$((STEPS_OK + 1))
+  else
+    err "Garuda update reported an error"
+    STEPS_FAIL=$((STEPS_FAIL + 1))
+    return 1
+  fi
+
+  if [[ "$UPDATE_AUR" != "1" ]]; then
+    skip "AUR skipped (FULL_UPDATE_AUR=0)"
+    STEPS_SKIP=$((STEPS_SKIP + 1))
+    return 0
+  fi
+
+  section 1b "AUR packages"
+  if have paru; then
+    info "paru -Sua --noconfirm --skipreview (assumes Yes)"
+    if paru -Sua --noconfirm --skipreview; then
+      ok "AUR update finished"
+      STEPS_OK=$((STEPS_OK + 1))
+    else
+      err "paru AUR update failed"
+      STEPS_FAIL=$((STEPS_FAIL + 1))
+      return 1
+    fi
+  elif have yay; then
+    info "yay -Sua --noconfirm (assumes Yes)"
+    if yay -Sua --noconfirm; then
+      ok "AUR update finished"
+      STEPS_OK=$((STEPS_OK + 1))
+    else
+      err "yay AUR update failed"
+      STEPS_FAIL=$((STEPS_FAIL + 1))
+      return 1
+    fi
+  else
+    warn "No paru/yay found — AUR skipped"
+    STEPS_SKIP=$((STEPS_SKIP + 1))
+  fi
+}
+
+# --- 2. asdf ----------------------------------------------------------------
+run_asdf() {
+  section 2 "asdf tools (home ~/.tool-versions)"
+  if ! have asdf; then
+    err "asdf not found"
+    STEPS_FAIL=$((STEPS_FAIL + 1))
+    return 1
+  fi
+
+  info "Updating plugins…"
+  if asdf plugin update --all; then
+    ok "Plugins updated"
+  else
+    warn "Plugin update had issues (continuing)"
+  fi
+
+  local asdf_update="${HOME}/.scripts/asdf-update"
+  if [[ ! -x "$asdf_update" ]]; then
+    asdf_update="${HOME}/.dotfiles/scripts/asdf-update"
+  fi
+  if [[ ! -x "$asdf_update" ]]; then
+    err "asdf-update script missing"
+    STEPS_FAIL=$((STEPS_FAIL + 1))
+    return 1
+  fi
+
+  info "Installing latest versions into ~/.tool-versions…"
+  echo
+  if "$asdf_update"; then
+    ok "asdf tools updated"
+    if [[ -f "${HOME}/.tool-versions" ]]; then
+      echo
+      while read -r line; do
+        [[ -z "$line" || "$line" == \#* ]] && continue
+        info "$line"
+      done < "${HOME}/.tool-versions"
+    fi
+    STEPS_OK=$((STEPS_OK + 1))
+  else
+    err "asdf-update failed"
+    STEPS_FAIL=$((STEPS_FAIL + 1))
+    return 1
+  fi
+}
+
+# --- 3. snap ----------------------------------------------------------------
+run_snap() {
+  section 3 "Snap packages"
+  if ! snapd_ready; then
+    skip "snapd not active — skipping (no password prompt)"
+    STEPS_SKIP=$((STEPS_SKIP + 1))
+    return 0
+  fi
+  # snap refresh must run as root to change system snaps.
+  info "Refreshing snaps (sudo)…"
+  if sudo snap refresh; then
+    ok "Snap refresh finished"
+    STEPS_OK=$((STEPS_OK + 1))
+  else
+    err "snap refresh failed"
+    STEPS_FAIL=$((STEPS_FAIL + 1))
+    return 1
+  fi
+}
+
+# --- 4. flatpak (bonus, only if present) ------------------------------------
+run_flatpak() {
+  section 4 "Flatpak"
+  if ! have flatpak; then
+    skip "flatpak not installed — skipping"
+    STEPS_SKIP=$((STEPS_SKIP + 1))
+    return 0
+  fi
+  info "Updating flatpaks…"
+  if flatpak update -y; then
+    ok "Flatpak update finished"
+    STEPS_OK=$((STEPS_OK + 1))
+  else
+    err "flatpak update failed"
+    STEPS_FAIL=$((STEPS_FAIL + 1))
+    return 1
+  fi
+}
+
+# --- summary ----------------------------------------------------------------
+summary() {
+  local elapsed=$((SECONDS - SECONDS_START))
+  echo
+  hr
+  printf '%s%s  done%s  %s(%sm %ss)%s\n' \
+    "$BOLD" "$GREEN" "$RESET" "$DIM" "$((elapsed / 60))" "$((elapsed % 60))" "$RESET"
+  printf '  %sok %s%d%s  %sfail %s%d%s  %sskip %s%d%s\n' \
+    "$GREEN" "$BOLD" "$STEPS_OK" "$RESET" \
+    "$RED" "$BOLD" "$STEPS_FAIL" "$RESET" \
+    "$DIM" "$BOLD" "$STEPS_SKIP" "$RESET"
+  hr
+  echo
+  if (( STEPS_FAIL > 0 )); then
+    return 1
+  fi
+  return 0
+}
+
+# --- main -------------------------------------------------------------------
+banner
+run_garuda || true
+run_asdf || true
+run_snap || true
+run_flatpak || true
+summary

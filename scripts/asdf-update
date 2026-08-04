@@ -7,6 +7,13 @@
 
 set -uo pipefail
 
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:${PATH:-/usr/bin}"
+
+if ! command -v asdf >/dev/null 2>&1; then
+  printf 'asdf not found on PATH\n' >&2
+  exit 1
+fi
+
 set_global() {
   local tool=$1 version=$2
 
@@ -16,28 +23,34 @@ set_global() {
   fi
 
   # asdf 0.16+: --home writes to $HOME/.tool-versions (the old "global").
-  # Your original used `asdf set -u`; -u isn't in asdf's docs, so this uses the
-  # documented --home flag. Confirm with `asdf set --help` and adjust if needed.
   asdf install "${tool}" "${version}" \
     && asdf set --home "${tool}" "${version}" \
-    && printf '%s %s set globally\n\n' "${tool}" "${version}"
+    && printf '✓ %s %s set in ~/.tool-versions\n\n' "${tool}" "${version}"
 }
 
-# Everything except java and gradle: just take asdf's reported "latest".
-for tool in $(asdf plugin list | grep -vE 'java|gradle'); do
+mapfile -t plugins < <(asdf plugin list 2>/dev/null)
+
+if ((${#plugins[@]} == 0)); then
+  printf 'No asdf plugins installed.\n'
+  exit 0
+fi
+
+for tool in "${plugins[@]}"; do
+  case "$tool" in
+    java|gradle) continue ;;
+  esac
   set_global "${tool}" "$(asdf latest "${tool}")"
 done
 
-# java: newest OpenJDK build specifically — not asdf's generic "latest", which
-# could resolve to a different vendor (oracle, zulu, temurin, ...).
-# sort -V guards against asdf listing versions out of numeric order.
-latest_openjdk=$(asdf list all java | grep '^openjdk' | sort -V | tail -1)
-set_global java "${latest_openjdk}"
+if printf '%s\n' "${plugins[@]}" | grep -qx java; then
+  # Prefer newest OpenJDK build over asdf's generic "latest" vendor.
+  latest_openjdk=$(asdf list all java 2>/dev/null | grep '^openjdk' | sort -V | tail -1)
+  set_global java "${latest_openjdk}"
+fi
 
-# gradle: newest *stable* release — plain X.Y or X.Y.Z, excluding rc/milestone
-# tags like 8.12-rc-1.
-latest_gradle=$(asdf list all gradle | grep -E '^[0-9]+\.[0-9]+(\.[0-9]+)?$' | sort -V | tail -1)
-set_global gradle "${latest_gradle}"
+if printf '%s\n' "${plugins[@]}" | grep -qx gradle; then
+  latest_gradle=$(asdf list all gradle 2>/dev/null | grep -E '^[0-9]+\.[0-9]+(\.[0-9]+)?$' | sort -V | tail -1)
+  set_global gradle "${latest_gradle}"
+fi
 
-# Regenerate shims so they point at the freshly installed versions (e.g. uv).
 asdf reshim

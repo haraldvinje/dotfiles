@@ -291,6 +291,10 @@ alias nmirrorlist="sudo nano /etc/pacman.d/mirrorlist"
 alias nsddm="sudo nano /etc/sddm.conf"
 alias bls="betterlockscreen -u /usr/share/backgrounds/arcolinux/"
 
+# GPG signing in terminal (pinentry needs a TTY)
+export GPG_TTY="$(tty 2>/dev/null || echo /dev/tty)"
+gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1 || true
+
 #gpg
 #verify signature for isos
 alias gpg-check="gpg2 --keyserver-options auto-key-retrieve --verify"
@@ -344,13 +348,21 @@ ex ()
 #in there. They will not be overwritten by skel.
 SHOW_AWS_PROMPT=false
 
+alias full-update='$HOME/.scripts/full-update'
+alias upd='/usr/bin/garuda-update'
 
 [[ -f ~/.zshrc-personal ]] && . ~/.zshrc-personal
 
+# fzf-tab styles (plugin sourced after compinit / in zvm_after_init)
+zstyle ':completion:*' menu no
+zstyle ':completion:*' special-dirs false
+zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'lsd -1 --color=always -- $realpath 2>/dev/null || ls -1 -- $realpath'
+
 zvm_after_init_commands+=('[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh;
-    source /usr/share/fzf-tab-completion/zsh/fzf-zsh-completion.sh;
     source /usr/share/fzf/completion.zsh;
-    source /usr/share/fzf/key-bindings.zsh')
+    source /usr/share/fzf/key-bindings.zsh;
+    source /usr/share/zsh/plugins/fzf-tab-git/fzf-tab.zsh')
 
 fzf_cd() {
   local dir
@@ -391,7 +403,7 @@ export GOPATH="$HOME/.go"
 export PATH="$GOPATH/bin:$PATH"
 
 # bun completions
-[ -s "/home/haraldv/.bun/_bun" ] && source "/home/haraldv/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
@@ -414,3 +426,8 @@ else
   compinit -d "$_zcompdump_path"
 fi
 unset _zcompdump_path
+
+# fzf-tab needs compinit first; re-sourced in zvm_after_init for vi-mode Tab.
+if (( ! $+functions[_fzf_tab_complete] )); then
+  source /usr/share/zsh/plugins/fzf-tab-git/fzf-tab.zsh
+fi
