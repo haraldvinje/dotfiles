@@ -21,7 +21,7 @@
 #   cwlogs
 #   cwlogs -s 1h
 #   cwlogs -f -s 15m /aws/lambda/my-fn
-#   cwlogs -p avigo-dev -s 6h --filter ERROR
+#   cwlogs -p myprofile -s 6h --filter ERROR
 
 set -euo pipefail
 
