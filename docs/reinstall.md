@@ -94,7 +94,7 @@ i3/feh expect that directory.
 | **SSH** | `~/.ssh` stays local; add public key to GitHub. |
 | **gh** | `gh auth login` |
 | **asdf** | Plugins + `asdf install` from `~/.tool-versions` (after `asdf-vm` from AUR) |
-| **autorandr** | Save layouts on this hardware: `autorandr --save laptop` / `--save docked` |
+| **autorandr** | Save layouts on this hardware: `autorandr --save laptop` / `--save docked-home`. Map SSID / ethernet names in `~/.config/i3/scripts/monitor-map`. Mod+Shift+o applies. |
 | **Docker** | If installed: enable service, add user to `docker` group |
 | **JetBrains Toolbox** | Optional; `.profile` only adds its PATH if present |
 

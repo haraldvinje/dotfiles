@@ -1,0 +1,15 @@
+# Place → autorandr profile (Mod+Shift+o).
+# Fields: place|external|profile
+#   place     NM connection name or Wi-Fi SSID; * matches anything
+#   external  yes = a non-laptop output is connected; no = laptop only
+#   profile   autorandr profile name, or "auto" for autorandr --change
+#
+# Add a new office by saving a profile (`autorandr --save docked-office`)
+# then adding its SSID / ethernet connection name here.
+
+VinjeLarsenNett|yes|docked-home
+VinjeLarsenNett|no|laptop
+Wired connection 1|yes|docked-home
+Wired connection 1|no|laptop
+*|yes|auto
+*|no|laptop

@@ -1,0 +1,321 @@
+#!/usr/bin/env bash
+# cwlogs — fetch CloudWatch Logs and page them with level-aware colors.
+#
+# Usage:
+#   cwlogs [options] [log-group]
+#
+# Options:
+#   -s, --since <duration>   Look-back window (default: 3h). Units: s m h d w
+#   -f, --follow             Keep polling for new events (like tail -f)
+#   -g, --group <name>       Log group name (skips interactive picker)
+#   -p, --profile <name>     AWS profile (default: $AWS_PROFILE)
+#   -r, --region <name>      AWS region (default: profile/config region)
+#   -F, --filter <pattern>   CloudWatch filter pattern
+#   -S, --stream-prefix <p>  Only streams whose name starts with this prefix
+#       --format <fmt>       aws logs tail format: detailed|short|json (default: detailed)
+#   -n, --no-color           Disable ANSI colors
+#   -o, --stdout             Print to stdout instead of less
+#   -h, --help               Show this help
+#
+# Examples:
+#   cwlogs
+#   cwlogs -s 1h
+#   cwlogs -f -s 15m /aws/lambda/my-fn
+#   cwlogs -p avigo-dev -s 6h --filter ERROR
+
+set -euo pipefail
+
+SINCE="3h"
+FOLLOW=0
+GROUP=""
+PROFILE="${AWS_PROFILE:-}"
+REGION=""
+FILTER=""
+STREAM_PREFIX=""
+FORMAT="detailed"
+NO_COLOR=0
+USE_STDOUT=0
+
+usage() {
+  sed -n '2,25p' "$0" | sed 's/^# \?//'
+}
+
+die() {
+  printf 'cwlogs: %s\n' "$*" >&2
+  exit 1
+}
+
+need_cmd() {
+  command -v "$1" >/dev/null 2>&1 || die "required command not found: $1"
+}
+
+# Colorize common log levels (plain text and JSON "level" fields).
+# Uses only basic ANSI so less -R handles it cleanly.
+colorize() {
+  # Skip when asked, or when writing raw stdout to a non-tty (e.g. files/pipes).
+  # When paging through less we always colorize unless --no-color.
+  if [[ "$NO_COLOR" -eq 1 ]] || { [[ "$USE_STDOUT" -eq 1 ]] && [[ ! -t 1 ]]; }; then
+    cat
+    return
+  fi
+
+  # shellcheck disable=SC2016
+  awk '
+  BEGIN {
+    reset  = "\033[0m"
+    bold   = "\033[1m"
+    dim    = "\033[2m"
+    red    = "\033[31m"
+    green  = "\033[32m"
+    yellow = "\033[33m"
+    blue   = "\033[34m"
+    magenta= "\033[35m"
+    cyan   = "\033[36m"
+    gray   = "\033[90m"
+  }
+
+  function color_for(level,   u) {
+    u = toupper(level)
+    if (u ~ /^(FATAL|CRITICAL|CRIT|EMERG|ALERT)$/) return bold red
+    if (u ~ /^(ERROR|ERR|SEVERE|EXCEPTION)$/)       return bold red
+    if (u ~ /^(WARN|WARNING)$/)                     return yellow
+    if (u ~ /^(INFO|INFORMATION|NOTICE)$/)          return green
+    if (u ~ /^(DEBUG|DBG)$/)                        return cyan
+    if (u ~ /^(TRACE|TRC|VERBOSE|FINE|FINER|FINEST)$/) return gray
+    return ""
+  }
+
+  {
+    line = $0
+    colored = 0
+
+    # Timestamp at start of aws logs tail "detailed"/"short" lines
+    if (match(line, /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:.+-]+/)) {
+      ts = substr(line, RSTART, RLENGTH)
+      rest = substr(line, RSTART + RLENGTH)
+      line = dim ts reset rest
+    }
+
+    # Bracketed / bare levels: [ERROR], ERROR:, "level":"warn", level=INFO
+    n = split("FATAL CRITICAL CRIT EMERG ALERT ERROR ERR SEVERE EXCEPTION WARN WARNING INFO INFORMATION NOTICE DEBUG DBG TRACE TRC VERBOSE FINE FINER FINEST", levels, " ")
+    for (i = 1; i <= n; i++) {
+      lvl = levels[i]
+      # word-ish match, case-insensitive via tolower scan of original $0
+      if (match(toupper($0), "(^|[^A-Z0-9_])" lvl "([^A-Z0-9_]|$)")) {
+        c = color_for(lvl)
+        if (c != "") {
+          # recolor the actual matched substring on the (possibly already
+          # timestamp-colored) line — use the original casing from $0
+          # Find case-insensitive occurrence in current line text.
+          # Work on a plain copy for matching positions against $0.
+          plain = $0
+          up = toupper(plain)
+          if (match(up, "(^|[^A-Z0-9_])" lvl "([^A-Z0-9_]|$)")) {
+            # adjust if leading non-word consumed
+            start = RSTART
+            len = RLENGTH
+            # trim leading separator from match if present
+            first = substr(up, start, 1)
+            if (first !~ /[A-Z0-9_]/) {
+              start++
+              len--
+            }
+            # trim trailing separator
+            last = substr(up, start + len - 1, 1)
+            if (last !~ /[A-Z0-9_]/) {
+              len--
+            }
+            token = substr(plain, start, len)
+            # Apply color to every occurrence of this exact token casing
+            # (simple gsub on the display line for the bare token)
+            gsub(token, c token reset, line)
+            colored = 1
+          }
+          break
+        }
+      }
+    }
+
+    # Exception / stack-trace hints
+    if (!colored && $0 ~ /(Exception|Traceback|Caused by:| at [a-zA-Z0-9_$.]+\([A-Za-z0-9_.]+:[0-9]+\))/) {
+      line = red line reset
+    }
+
+    print line
+  }
+  '
+}
+
+pick_profile() {
+  need_cmd fzf
+  local selected
+  selected="$(aws configure list-profiles | fzf --prompt='AWS profile: ' --height=40% --reverse)" \
+    || die "no profile selected"
+  [[ -n "$selected" ]] || die "no profile selected"
+  PROFILE="$selected"
+  export AWS_PROFILE="$PROFILE"
+}
+
+pick_group() {
+  need_cmd fzf
+  need_cmd jq
+
+  local aws_args=()
+  [[ -n "$PROFILE" ]] && aws_args+=(--profile "$PROFILE")
+  [[ -n "$REGION" ]] && aws_args+=(--region "$REGION")
+
+  printf 'Fetching log groups' >&2
+  [[ -n "$PROFILE" ]] && printf ' (profile=%s)' "$PROFILE" >&2
+  [[ -n "$REGION" ]] && printf ' (region=%s)' "$REGION" >&2
+  printf '...\n' >&2
+
+  local groups
+  groups="$(
+    aws logs describe-log-groups \
+      "${aws_args[@]}" \
+      --output json \
+      --query 'logGroups[].logGroupName' \
+      --no-cli-pager \
+      | jq -r '.[]' \
+      | sort
+  )" || die "failed to list log groups (check SSO login / credentials)"
+
+  [[ -n "$groups" ]] || die "no log groups found"
+
+  local selected
+  selected="$(printf '%s\n' "$groups" | fzf \
+    --prompt='Log group: ' \
+    --height=60% \
+    --reverse \
+    --preview-window=hidden \
+    --header="since=${SINCE}  profile=${PROFILE:-default}  region=${REGION:-auto}")" \
+    || die "no log group selected"
+
+  [[ -n "$selected" ]] || die "no log group selected"
+  GROUP="$selected"
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -s|--since)
+      [[ $# -ge 2 ]] || die "$1 requires a value"
+      SINCE="$2"
+      shift 2
+      ;;
+    -f|--follow)
+      FOLLOW=1
+      shift
+      ;;
+    -g|--group)
+      [[ $# -ge 2 ]] || die "$1 requires a value"
+      GROUP="$2"
+      shift 2
+      ;;
+    -p|--profile)
+      [[ $# -ge 2 ]] || die "$1 requires a value"
+      PROFILE="$2"
+      shift 2
+      ;;
+    -r|--region)
+      [[ $# -ge 2 ]] || die "$1 requires a value"
+      REGION="$2"
+      shift 2
+      ;;
+    -F|--filter)
+      [[ $# -ge 2 ]] || die "$1 requires a value"
+      FILTER="$2"
+      shift 2
+      ;;
+    -S|--stream-prefix)
+      [[ $# -ge 2 ]] || die "$1 requires a value"
+      STREAM_PREFIX="$2"
+      shift 2
+      ;;
+    --format)
+      [[ $# -ge 2 ]] || die "$1 requires a value"
+      FORMAT="$2"
+      shift 2
+      ;;
+    -n|--no-color)
+      NO_COLOR=1
+      shift
+      ;;
+    -o|--stdout)
+      USE_STDOUT=1
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    --)
+      shift
+      break
+      ;;
+    -*)
+      die "unknown option: $1 (try --help)"
+      ;;
+    *)
+      # positional log group
+      if [[ -z "$GROUP" ]]; then
+        GROUP="$1"
+      else
+        die "unexpected argument: $1"
+      fi
+      shift
+      ;;
+  esac
+done
+
+need_cmd aws
+
+# Profile: use existing, or pick interactively when none is set and stdin is a tty
+if [[ -z "$PROFILE" ]]; then
+  if [[ -t 0 ]]; then
+    pick_profile
+  fi
+fi
+
+if [[ -z "$GROUP" ]]; then
+  if [[ ! -t 0 ]]; then
+    die "no log group given and stdin is not a tty (use -g or pass the name)"
+  fi
+  pick_group
+fi
+
+aws_args=()
+[[ -n "$PROFILE" ]] && aws_args+=(--profile "$PROFILE")
+[[ -n "$REGION" ]] && aws_args+=(--region "$REGION")
+
+tail_args=(
+  logs tail "$GROUP"
+  --since "$SINCE"
+  --format "$FORMAT"
+  --no-cli-pager
+)
+[[ "$FOLLOW" -eq 1 ]] && tail_args+=(--follow)
+[[ -n "$FILTER" ]] && tail_args+=(--filter-pattern "$FILTER")
+[[ -n "$STREAM_PREFIX" ]] && tail_args+=(--log-stream-name-prefix "$STREAM_PREFIX")
+
+printf 'cwlogs: group=%s since=%s' "$GROUP" "$SINCE" >&2
+[[ -n "$PROFILE" ]] && printf ' profile=%s' "$PROFILE" >&2
+[[ -n "$REGION" ]] && printf ' region=%s' "$REGION" >&2
+[[ "$FOLLOW" -eq 1 ]] && printf ' follow=on' >&2
+printf '\n' >&2
+
+# Follow mode: stream live with colors to the terminal (less is a poor fit).
+if [[ "$FOLLOW" -eq 1 ]]; then
+  aws "${aws_args[@]}" "${tail_args[@]}" | colorize
+  exit $?
+fi
+
+if [[ "$USE_STDOUT" -eq 1 ]]; then
+  aws "${aws_args[@]}" "${tail_args[@]}" | colorize
+  exit $?
+fi
+
+need_cmd less
+
+# -R: pass ANSI colors  -S: chop long lines (toggle with -)  -F: quit if one screen
+# -X: don't clear screen on exit  +G: start at end (newest events often last)
+aws "${aws_args[@]}" "${tail_args[@]}" | colorize | less -RSFX +G

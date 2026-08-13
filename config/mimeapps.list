@@ -12,5 +12,7 @@ image/jpeg=viewnior.desktop
 image/png=viewnior.desktop
 image/gif=viewnior.desktop
 text/plain=mousepad.desktop
+x-scheme-handler/jetbrains=jetbrainsd.desktop
+x-scheme-handler/slack=slack.desktop
 
 [Added Associations]
