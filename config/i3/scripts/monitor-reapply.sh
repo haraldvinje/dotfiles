@@ -50,13 +50,32 @@ match_profile() {
   return 1
 }
 
+# Outputs can stay "disconnected" with an old mode/position; autorandr --change
+# may still match a docked profile. Turn those CRTCs off.
+disable_stale_outputs() {
+  local out
+  while IFS= read -r out; do
+    [ -n "$out" ] || continue
+    xrandr --output "$out" --off || true
+  done < <(
+    xrandr --query | awk '$2 == "disconnected" {
+      for (i = 3; i <= NF; i++) if ($i ~ /^[0-9]+x[0-9]+/) { print $1; break }
+    }'
+  )
+}
+
 apply_profile() {
   local profile="$1"
   if [ "$profile" = "auto" ]; then
     autorandr --change || xrandr --auto || true
-    return
+  elif autorandr --list 2>/dev/null | grep -qx "$profile"; then
+    autorandr --load "$profile" || xrandr --auto || true
+  else
+    # Named profile missing (e.g. laptop with no EDID setup): do not --change,
+    # that re-applies docked when an output is only half-disconnected.
+    xrandr --auto || true
   fi
-  autorandr --load "$profile" || autorandr --change || xrandr --auto || true
+  disable_stale_outputs
 }
 
 has_profiles=0
@@ -69,12 +88,13 @@ if [ "$has_profiles" -eq 1 ] && command -v autorandr >/dev/null 2>&1; then
   if [ -n "${chosen:-}" ]; then
     apply_profile "$chosen"
   elif [ "$has_external" -eq 1 ]; then
-    autorandr --change || xrandr --auto || true
+    apply_profile auto
   else
-    autorandr --load laptop || autorandr --change || xrandr --auto || true
+    apply_profile laptop
   fi
 else
   xrandr --auto || true
+  disable_stale_outputs
 fi
 
 # Give X/i3 a moment to settle output geometry.

@@ -252,8 +252,6 @@
   "files.autoSave": "afterDelay",
   "aws.cloudformation.telemetry.enabled": true,
   "claudeCode.preferredLocation": "sidebar",
-  "gitlens.ai.model": "vscode",
-  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
   "workbench.iconTheme": "material-icon-theme",
   "editor.defaultFormatter": "biomejs.biome",
   "json.schemaDownload.trustedDomains": {
