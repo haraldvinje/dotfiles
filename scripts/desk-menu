@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Rofi script-mode wrapper. Rofi invokes this with 0 args (list) or 1 (select).
+exec "${HOME}/.scripts/desk" rofi "$@"

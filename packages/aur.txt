@@ -8,3 +8,4 @@ fzf-tab-git
 qogir-gtk-theme-git
 qogir-icon-theme-git
 kvantum-theme-qogir-git
+rofi-greenclip

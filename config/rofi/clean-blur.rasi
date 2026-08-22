@@ -92,3 +92,5 @@ button selected.normal {
     border-radius: 3px;
     background-color: @emphasis;
 }
+
+@import "colors.generated.rasi"

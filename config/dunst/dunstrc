@@ -8,7 +8,7 @@ offset = (18, 42)
 scale = 0
 notification_limit = 6
 history_length = 20
-sticky_history = no
+sticky_history = yes
 
 progress_bar = true
 progress_bar_height = 10

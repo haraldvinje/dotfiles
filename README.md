@@ -23,6 +23,8 @@ chsh -s /bin/zsh
 
 Bring your own wallpapers into `~/Pictures/Wallpapers/`.
 
+`desk` is the desktop command router (Super+Space). After `rcup`, run `desk help`.
+
 ## Day-to-day
 
 ```bash

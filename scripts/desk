@@ -1,0 +1,644 @@
+#!/usr/bin/env bash
+# desk — one verb per desktop action (menu, clipboard, capture, theme, …).
+# i3, polybar, and agents should call this instead of ad-hoc one-liners.
+set -u
+
+DESK="${HOME}/.scripts/desk"
+CONF="${XDG_CONFIG_HOME:-$HOME/.config}/desk"
+CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/desk"
+I3CONF="${XDG_CONFIG_HOME:-$HOME/.config}/i3/config"
+ROFI_THEME="${XDG_CONFIG_HOME:-$HOME/.config}/rofi/clean-blur.rasi"
+WALLDIR="${DESK_WALLPAPERS:-$HOME/Pictures/Wallpapers}"
+CITY="${DESK_WEATHER_CITY:-Oslo}"
+
+mkdir -p "$CACHE"
+
+have() { command -v "$1" >/dev/null 2>&1; }
+
+rofi_dmenu() {
+  local prompt="$1"
+  shift
+  rofi -dmenu -i -p "$prompt" -theme "$ROFI_THEME" "$@"
+}
+
+notify() {
+  if have dunstify; then
+    dunstify -a desk "$@"
+  elif have notify-send; then
+    notify-send "$@"
+  fi
+}
+
+need() {
+  local bin="$1"
+  if ! have "$bin"; then
+    notify -u low "desk" "Missing $bin"
+    return 1
+  fi
+  return 0
+}
+
+# --- commands.json ----------------------------------------------------------
+
+cmd_label() {
+  if have jq; then
+    printf '%s' "$1" | jq -r '.label'
+  else
+    printf '%s' "$1" | sed -n 's/.*"label":"\([^"]*\)".*/\1/p'
+  fi
+}
+cmd_run() {
+  if have jq; then
+    printf '%s' "$1" | jq -r '.run'
+  else
+    printf '%s' "$1" | sed -n 's/.*"run":"\([^"]*\)".*/\1/p'
+  fi
+}
+
+list_commands() {
+  local file="$CONF/commands.json"
+  if [ -r "$file" ] && have jq; then
+    jq -c '.[]' "$file"
+    return 0
+  fi
+  # Minimal palette if jq / the json file is not available yet.
+  printf '%s\n' \
+    '{"label":"Apps","run":"apps"}' \
+    '{"label":"Clipboard history","run":"clipboard"}' \
+    '{"label":"Notifications: replay last","run":"notify replay"}' \
+    '{"label":"Notifications: toggle DND","run":"notify dnd-toggle"}' \
+    '{"label":"Network: Wi-Fi","run":"wifi"}' \
+    '{"label":"Audio: outputs","run":"audio"}' \
+    '{"label":"Bluetooth","run":"bluetooth"}' \
+    '{"label":"Power","run":"power"}' \
+    '{"label":"Theme: wallpaper","run":"theme pick"}' \
+    '{"label":"Keybindings","run":"keys"}'
+}
+
+# --- menu / rofi script mode ------------------------------------------------
+
+desk_apps() {
+  rofi -show drun -show-icons -theme "$ROFI_THEME"
+}
+
+desk_menu() {
+  rofi -show desk \
+    -modi "desk:${HOME}/.scripts/desk-menu,drun,window" \
+    -show-icons \
+    -theme "$ROFI_THEME"
+}
+
+desk_rofi() {
+  local selected="${1:-}"
+  local row label
+  if [ -z "$selected" ]; then
+    while IFS= read -r row; do
+      [ -n "$row" ] || continue
+      cmd_label "$row"
+    done < <(list_commands)
+    return 0
+  fi
+  while IFS= read -r row; do
+    label="$(cmd_label "$row")"
+    if [ "$label" = "$selected" ]; then
+      # shellcheck disable=SC2086
+      exec "$DESK" $(cmd_run "$row")
+    fi
+  done < <(list_commands)
+}
+
+# --- clipboard --------------------------------------------------------------
+
+desk_clipboard() {
+  need greenclip || return 1
+  rofi -modi "clipboard:greenclip print" -show clipboard -theme "$ROFI_THEME"
+}
+
+# --- notifications ----------------------------------------------------------
+
+desk_notify() {
+  local sub="${1:-status}"
+  need dunstctl || return 1
+  case "$sub" in
+    replay)
+      dunstctl history-pop
+      ;;
+    replay-many)
+      local i
+      for i in $(seq 1 10); do
+        dunstctl history-pop || break
+      done
+      ;;
+    dnd-on)
+      dunstctl set-paused true
+      notify -u low -r 2601 "Notifications" "Do not disturb on"
+      ;;
+    dnd-off)
+      dunstctl set-paused false
+      notify -u low -r 2601 "Notifications" "Do not disturb off"
+      ;;
+    dnd-toggle)
+      if [ "$(dunstctl is-paused)" = "true" ]; then
+        desk_notify dnd-off
+      else
+        desk_notify dnd-on
+      fi
+      ;;
+    status)
+      if [ "$(dunstctl is-paused 2>/dev/null)" = "true" ]; then
+        printf '%s\n' "%{T3}󰂛%{T-} DND"
+      fi
+      ;;
+    *)
+      echo "usage: desk notify replay|replay-many|dnd-toggle|dnd-on|dnd-off|status" >&2
+      return 1
+      ;;
+  esac
+}
+
+# --- capture ----------------------------------------------------------------
+
+_grab_region() {
+  local dest="$1"
+  if have maim; then
+    maim -s -u "$dest"
+  elif have flameshot; then
+    flameshot gui --raw >"$dest"
+    [ -s "$dest" ]
+  elif have scrot; then
+    scrot -s "$dest"
+  else
+    notify "desk" "Need maim, flameshot, or scrot for a region grab"
+    return 1
+  fi
+}
+
+desk_capture() {
+  local sub="${1:-}"
+  local tmp
+  tmp="$(mktemp --suffix=.png)"
+  # shellcheck disable=SC2064
+  trap "rm -f '$tmp'" RETURN
+
+  case "$sub" in
+    ocr)
+      need tesseract || return 1
+      _grab_region "$tmp" || return 1
+      local tesslang=""
+      if tesseract --list-langs 2>/dev/null | grep -qx eng; then
+        tesslang="-l eng"
+      fi
+      # shellcheck disable=SC2086
+      if tesseract "$tmp" stdout $tesslang 2>/dev/null | xclip -selection clipboard; then
+        notify -u low "OCR" "Text copied to clipboard"
+      else
+        notify -u low "OCR" "No text found"
+        return 1
+      fi
+      ;;
+    qr)
+      need zbarimg || return 1
+      _grab_region "$tmp" || return 1
+      local decoded
+      decoded="$(zbarimg --quiet --raw "$tmp" 2>/dev/null | head -n1 || true)"
+      rm -f "$tmp"
+      if [ -z "$decoded" ]; then
+        notify -u low "QR" "No code in selection"
+        return 1
+      fi
+      printf '%s' "$decoded" | xclip -selection clipboard
+      if [[ "$decoded" == otpauth://* ]]; then
+        notify -u low "QR" "otpauth copied (not written to disk)"
+      else
+        notify -u low "QR" "Decoded value copied"
+      fi
+      ;;
+    annotate)
+      need flameshot || return 1
+      flameshot gui
+      ;;
+    region)
+      xfce4-screenshooter -r
+      ;;
+    full)
+      xfce4-screenshooter -f
+      ;;
+    window)
+      xfce4-screenshooter -w
+      ;;
+    *)
+      echo "usage: desk capture ocr|qr|annotate|region|full|window" >&2
+      return 1
+      ;;
+  esac
+}
+
+# --- theme ------------------------------------------------------------------
+
+load_defaults() {
+  local file="$CONF/theme/default.conf"
+  [ -r "$file" ] || return 1
+  # shellcheck disable=SC1090
+  set -a
+  # strip comments / blanks
+  eval "$(grep -E '^[A-Za-z_][A-Za-z0-9_]*=' "$file")"
+  set +a
+}
+
+load_wal() {
+  local wal="${XDG_CACHE_HOME:-$HOME/.cache}/wal/colors.json"
+  have jq || return 1
+  [ -r "$wal" ] || return 1
+  bg="$(jq -r '.special.background' "$wal")"
+  fg="$(jq -r '.special.foreground' "$wal")"
+  text="$fg"
+  text_alt="$(jq -r '.colors.color8' "$wal")"
+  muted="$text_alt"
+  accent="$(jq -r '.colors.color4' "$wal")"
+  warn="$(jq -r '.colors.color3' "$wal")"
+  urgent="$(jq -r '.colors.color1' "$wal")"
+  clock="$(jq -r '.colors.color5' "$wal")"
+  cpu="$warn"
+  memory="$(jq -r '.colors.color2' "$wal")"
+  disk="$(jq -r '.colors.color6' "$wal")"
+  network="$(jq -r '.colors.color5' "$wal")"
+  volume="$(jq -r '.colors.color1' "$wal")"
+  black="$(jq -r '.colors.color0' "$wal")"
+  red="$(jq -r '.colors.color1' "$wal")"
+  green="$(jq -r '.colors.color2' "$wal")"
+  yellow="$(jq -r '.colors.color3' "$wal")"
+  blue="$(jq -r '.colors.color4' "$wal")"
+  magenta="$(jq -r '.colors.color5' "$wal")"
+  cyan="$(jq -r '.colors.color6' "$wal")"
+  emphasis="$(jq -r '.colors.color8' "$wal")"
+  dunst_bg="$bg"
+  dunst_frame="$accent"
+  dunst_critical_bg="$bg"
+  dunst_critical_fg="$fg"
+  # Keep the bar translucent; only replace the RGB.
+  bg_alpha="#66${bg#\#}"
+  bg_alt="#88${bg#\#}"
+}
+
+write_theme_files() {
+  mkdir -p "$CACHE"
+
+  cat >"$CACHE/polybar-colors.ini" <<EOF
+[colors]
+bg = ${bg_alpha}
+bg-alt = ${bg_alt}
+fg = ${fg}
+muted = ${muted}
+accent = ${accent}
+warn = ${warn}
+urgent = ${urgent}
+clock = ${clock}
+cpu = ${cpu}
+memory = ${memory}
+disk = ${disk}
+network = ${network}
+volume = ${volume}
+EOF
+
+  cat >"$CACHE/rofi-colors.rasi" <<EOF
+* {
+    black: ${black};
+    red: ${red};
+    green: ${green};
+    yellow: ${yellow};
+    blue: ${blue};
+    magenta: ${magenta};
+    cyan: ${cyan};
+    emphasis: ${emphasis};
+    text: ${text};
+    text-alt: ${text_alt};
+    fg: ${fg};
+    bg: ${bg};
+}
+EOF
+
+  cat >"$CACHE/dunst-colors" <<EOF
+[urgency_low]
+background = "${dunst_bg}"
+foreground = "${fg}"
+highlight = "${accent}"
+
+[urgency_normal]
+background = "${dunst_bg}"
+foreground = "${fg}"
+highlight = "${accent}"
+
+[urgency_critical]
+background = "${dunst_critical_bg}"
+foreground = "${dunst_critical_fg}"
+frame_color = "${urgent}"
+highlight = "${urgent}"
+EOF
+
+  local rofi_link="${XDG_CONFIG_HOME:-$HOME/.config}/rofi/colors.generated.rasi"
+  local poly_link="${XDG_CONFIG_HOME:-$HOME/.config}/polybar/colors.generated.ini"
+  ln -sfn "$CACHE/rofi-colors.rasi" "$rofi_link"
+  ln -sfn "$CACHE/polybar-colors.ini" "$poly_link"
+}
+
+reload_theme_consumers() {
+  if [ -x "${XDG_CONFIG_HOME:-$HOME/.config}/polybar/launch.sh" ]; then
+    "${XDG_CONFIG_HOME:-$HOME/.config}/polybar/launch.sh" >/dev/null 2>&1 &
+  fi
+  if have dunstctl; then
+    dunstctl reload >/dev/null 2>&1 || true
+  fi
+}
+
+desk_theme() {
+  local sub="${1:-ensure}"
+  case "$sub" in
+    ensure)
+      load_defaults || true
+      if [ -r "${XDG_CACHE_HOME:-$HOME/.cache}/wal/colors.json" ]; then
+        load_wal || load_defaults
+      fi
+      write_theme_files
+      ;;
+    apply)
+      load_defaults
+      load_wal || true
+      write_theme_files
+      reload_theme_consumers
+      ;;
+    pick)
+      need rofi || return 1
+      [ -d "$WALLDIR" ] || { notify "Theme" "No $WALLDIR"; return 1; }
+      local pick
+      pick="$(find "$WALLDIR" -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) | sort | rofi_dmenu "Wallpaper")" || return 0
+      [ -n "$pick" ] || return 0
+      feh --no-fehbg --bg-fill "$pick" || true
+      if have wal; then
+        wal -n -i "$pick" >/dev/null
+      fi
+      desk_theme apply
+      ;;
+    *)
+      echo "usage: desk theme ensure|apply|pick" >&2
+      return 1
+      ;;
+  esac
+}
+
+# --- control panels ---------------------------------------------------------
+
+desk_wifi() {
+  need nmcli || return 1
+  local lines choice ssid
+  lines="$(
+    {
+      echo "Scan + refresh"
+      echo "Connection editor"
+      echo "Radio off"
+      echo "Radio on"
+      nmcli -t -f IN-USE,SSID,SIGNAL,SECURITY device wifi list \
+        | awk -F: 'NF && $2 != "" {
+            mark = ($1 == "*") ? "● " : "  "
+            printf "%s%s  %s%%  %s\n", mark, $2, $3, $4
+          }'
+    }
+  )"
+  choice="$(printf '%s\n' "$lines" | rofi_dmenu "Wi-Fi")" || return 0
+  [ -n "$choice" ] || return 0
+  case "$choice" in
+    "Scan + refresh") nmcli device wifi rescan >/dev/null; desk_wifi ;;
+    "Connection editor") have nm-connection-editor && nm-connection-editor & ;;
+    "Radio off") nmcli radio wifi off; notify -u low "Wi-Fi" "Off" ;;
+    "Radio on") nmcli radio wifi on; notify -u low "Wi-Fi" "On" ;;
+    *)
+      ssid="$(printf '%s' "$choice" | sed -E 's/^[● ]+//; s/  +[0-9]+%.*//')"
+      ssid="${ssid#"${ssid%%[![:space:]]*}"}"
+      ssid="${ssid%"${ssid##*[![:space:]]}"}"
+      [ -n "$ssid" ] || return 0
+      if nmcli device wifi connect "$ssid"; then
+        notify -u low "Wi-Fi" "Connected to $ssid"
+      else
+        notify -u low "Wi-Fi" "Could not connect to $ssid (saved secret?)"
+      fi
+      ;;
+  esac
+}
+
+desk_audio() {
+  need pactl || return 1
+  local default lines choice sink
+  default="$(pactl get-default-sink 2>/dev/null || true)"
+  lines="$(
+    pactl list short sinks | awk -v def="$default" '{
+      mark = ($2 == def) ? "● " : "  "
+      print mark $2
+    }'
+  )"
+  choice="$(printf '%s\n' "$lines" | rofi_dmenu "Audio output")" || return 0
+  [ -n "$choice" ] || return 0
+  sink="$(printf '%s' "$choice" | sed -E 's/^[● ]+//')"
+  pactl set-default-sink "$sink"
+  notify -u low "Audio" "Output: $sink"
+}
+
+desk_bluetooth() {
+  need bluetoothctl || return 1
+  local lines choice mac name
+  bluetoothctl power on >/dev/null 2>&1 || true
+  lines="$(
+    {
+      echo "Power on"
+      echo "Power off"
+      echo "Scan 8s"
+      bluetoothctl devices | awk '{mac=$2; $1=$2=""; sub(/^  /,""); printf "%s  %s\n", mac, $0}'
+    }
+  )"
+  choice="$(printf '%s\n' "$lines" | rofi_dmenu "Bluetooth")" || return 0
+  [ -n "$choice" ] || return 0
+  case "$choice" in
+    "Power on") bluetoothctl power on; notify -u low "Bluetooth" "On" ;;
+    "Power off") bluetoothctl power off; notify -u low "Bluetooth" "Off" ;;
+    "Scan 8s")
+      bluetoothctl --timeout 8 scan on >/dev/null
+      desk_bluetooth
+      ;;
+    *)
+      mac="$(printf '%s' "$choice" | awk '{print $1}')"
+      name="$(printf '%s' "$choice" | cut -d' ' -f2-)"
+      if bluetoothctl connect "$mac"; then
+        notify -u low "Bluetooth" "Connected $name"
+      else
+        bluetoothctl disconnect "$mac" && notify -u low "Bluetooth" "Disconnected $name"
+      fi
+      ;;
+  esac
+}
+
+desk_display() {
+  local lines choice
+  lines="$(
+    {
+      echo "Reapply mapped layout"
+      if have autorandr; then
+        autorandr --list 2>/dev/null
+      fi
+    }
+  )"
+  choice="$(printf '%s\n' "$lines" | rofi_dmenu "Display")" || return 0
+  [ -n "$choice" ] || return 0
+  case "$choice" in
+    "Reapply mapped layout")
+      "${XDG_CONFIG_HOME:-$HOME/.config}/i3/scripts/monitor-reapply.sh"
+      ;;
+    *)
+      need autorandr || return 1
+      autorandr --load "$choice" || true
+      "${XDG_CONFIG_HOME:-$HOME/.config}/polybar/launch.sh" >/dev/null 2>&1 &
+      ;;
+  esac
+}
+
+desk_power() {
+  local choice
+  choice="$(printf '%s\n' "Lock" "Logout" "Suspend" "Reboot" "Shutdown" | rofi_dmenu "Power")" || return 0
+  case "$choice" in
+    Lock) desk_lock ;;
+    Logout) i3-msg exit ;;
+    Suspend) systemctl suspend ;;
+    Reboot) systemctl reboot ;;
+    Shutdown) systemctl poweroff ;;
+  esac
+}
+
+# --- weather / keys / misc --------------------------------------------------
+
+desk_weather() {
+  local brief full
+  brief="$(curl -fsS --max-time 5 "https://wttr.in/${CITY}?format=%l:+%c+%t+%h+%w" || true)"
+  full="$(curl -fsS --max-time 6 "https://wttr.in/${CITY}?0QT" || true)"
+  if [ -n "$brief" ]; then
+    notify "Weather" "${full:-$brief}"
+  else
+    notify "Weather" "Could not reach wttr.in"
+  fi
+}
+
+desk_weather_bar() {
+  curl -fsS --max-time 4 "https://wttr.in/${CITY}?format=%c+%t" 2>/dev/null | tr -d '\n' || true
+  echo
+}
+
+desk_keys() {
+  [ -r "$I3CONF" ] || return 1
+  local line key cmd pick
+  local rows=""
+  while IFS= read -r line; do
+    [[ "$line" =~ ^[[:space:]]*bindsym ]] || continue
+    [[ "$line" =~ ^[[:space:]]*# ]] && continue
+    line="${line#bindsym }"
+    line="${line#--release }"
+    key="${line%% *}"
+    cmd="${line#* }"
+    key="${key//\$mod/Super}"
+    key="${key//Mod1/Alt}"
+    key="${key//mod1/Alt}"
+    key="${key//Control/Ctrl}"
+    key="${key//control/Ctrl}"
+    rows+="${key}  →  ${cmd}"$'\n'
+  done <"$I3CONF"
+  pick="$(printf '%s' "$rows" | rofi_dmenu "Keybindings")" || return 0
+  [ -n "$pick" ] || return 0
+  printf '%s' "${pick#*  →  }" | xclip -selection clipboard
+  notify -u low "Keybindings" "Command copied"
+}
+
+desk_emoji() {
+  if have rofimoji; then
+    rofimoji
+  else
+    notify "desk" "rofimoji is not installed"
+  fi
+}
+
+desk_lock() {
+  if have i3lock-fancy-multimonitor; then
+    i3lock-fancy-multimonitor -b=5x4
+  elif have i3lock; then
+    i3lock -c 11141a
+  else
+    notify "desk" "No lock screen found"
+  fi
+}
+
+desk_update() {
+  if [ -x "${HOME}/.scripts/full-update" ]; then
+    if have terminator; then
+      terminator -e "${HOME}/.scripts/full-update; echo; read -r _" &
+    else
+      "${HOME}/.scripts/full-update"
+    fi
+  else
+    notify "desk" "full-update script missing"
+  fi
+}
+
+desk_help() {
+  cat <<'EOF'
+desk <verb> [args]
+
+  menu              Unified rofi (commands + apps + windows)
+  apps              Apps-only launcher
+  rofi [selection]  Rofi script mode (used by desk-menu)
+  clipboard         Clipboard history
+  notify            replay | replay-many | dnd-toggle | status
+  capture           ocr | qr | annotate | region | full | window
+  theme             ensure | apply | pick
+  wifi              Network panel
+  audio             Output picker
+  bluetooth         Device picker
+  display           Autorandr / mapped layout
+  power             Lock / logout / suspend / reboot / shutdown
+  weather           Forecast toast
+  weather-bar       One-line polybar text
+  keys              Searchable i3 binds
+  emoji             rofimoji
+  lock              Lock screen
+  update            full-update in a terminal
+  help              This list
+EOF
+}
+
+# --- router -----------------------------------------------------------------
+
+main() {
+  local cmd="${1:-help}"
+  shift || true
+  case "$cmd" in
+    menu) desk_menu ;;
+    apps) desk_apps ;;
+    rofi) desk_rofi "${1:-}" ;;
+    clipboard|clip) desk_clipboard ;;
+    notify) desk_notify "${1:-status}" ;;
+    capture) desk_capture "${1:-}" ;;
+    theme) desk_theme "${1:-ensure}" ;;
+    wifi|network) desk_wifi ;;
+    audio) desk_audio ;;
+    bluetooth|bt) desk_bluetooth ;;
+    display) desk_display ;;
+    power) desk_power ;;
+    weather) desk_weather ;;
+    weather-bar) desk_weather_bar ;;
+    keys) desk_keys ;;
+    emoji) desk_emoji ;;
+    lock) desk_lock ;;
+    update) desk_update ;;
+    help|-h|--help) desk_help ;;
+    *)
+      echo "desk: unknown command '$cmd'" >&2
+      desk_help >&2
+      return 1
+      ;;
+  esac
+}
+
+main "$@"

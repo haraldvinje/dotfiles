@@ -120,3 +120,5 @@ cd ~/.dotfiles && git pull
 rcup -v -d ~/.dotfiles
 # then package lists if they changed
 ```
+
+Desktop extras (`desk`, clipboard history, OCR/QR) need the packages in `pacman.txt` / `aur.txt` (`jq`, `maim`, `tesseract`, `tesseract-data-eng`, `zbar`, `flameshot`, `rofi-greenclip`). Super+Space opens the command palette. English OCR needs `tesseract-data-eng`.

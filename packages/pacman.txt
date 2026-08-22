@@ -25,3 +25,11 @@ numlockx
 github-cli
 xfce4-screenshooter
 xclip
+jq
+maim
+tesseract
+tesseract-data-eng
+zbar
+flameshot
+python-pywal
+python-requests

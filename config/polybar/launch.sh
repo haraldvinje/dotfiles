@@ -1,5 +1,27 @@
 #!/usr/bin/env bash
 
+# Theme cache + rofi/polybar color links (no-op if already written).
+if [ -x "$HOME/.scripts/desk" ]; then
+  "$HOME/.scripts/desk" theme ensure
+elif [ ! -e "$HOME/.config/polybar/colors.generated.ini" ]; then
+  cat >"$HOME/.config/polybar/colors.generated.ini" <<'EOF'
+[colors]
+bg = #66000000
+bg-alt = #88242424
+fg = #e6e6e6
+muted = #a8a8a8
+accent = #7aa2f7
+warn = #f6c177
+urgent = #e06c75
+clock = #c4a7e7
+cpu = #f6c177
+memory = #9ece6a
+disk = #7dcfff
+network = #bb9af7
+volume = #f7768e
+EOF
+fi
+
 killall -q polybar
 while pgrep -x polybar >/dev/null; do sleep 0.2; done
 

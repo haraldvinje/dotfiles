@@ -146,8 +146,11 @@ bindsym mod1+F3 exec --no-startup-id xfce4-appfinder
 # start program launcher
 bindsym $mod+d exec --no-startup-id rofi -show drun -show-icons -theme ~/.config/rofi/clean-blur.rasi
 bindsym $mod+w exec --no-startup-id rofi -show window -show-icons -theme ~/.config/rofi/clean-blur.rasi
-bindsym $mod+space exec --no-startup-id rofi -show combi -show-icons -theme ~/.config/rofi/clean-blur.rasi
-bindsym $mod+m exec rofimoji
+# Unified command palette (apps + windows via rofi modi tabs).
+bindsym $mod+space exec --no-startup-id $HOME/.scripts/desk menu
+bindsym $mod+Mod1+space exec --no-startup-id $HOME/.scripts/desk apps
+bindsym $mod+m exec --no-startup-id $HOME/.scripts/desk emoji
+bindsym $mod+Control+e exec --no-startup-id $HOME/.scripts/desk emoji
 
 #####################################################################################################################
 #################                          how to exit, logoff, suspend, ...                        #################
@@ -438,6 +441,12 @@ for_window [class="Spotify"] focus
 #Authentication dialog
 exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 
+# Generated theme files (polybar / rofi / dunst includes).
+exec_always --no-startup-id $HOME/.scripts/desk theme ensure
+
+# Clipboard history daemon
+exec --no-startup-id sh -c 'command -v greenclip >/dev/null && greenclip daemon'
+
 # bluetooth
 exec --no-startup-id sh -c 'command -v blueman-applet >/dev/null && blueman-applet'
 
@@ -480,7 +489,7 @@ exec --no-startup-id xfce4-power-manager &
 #exec --no-startup-id xfsettingsd &
 exec --no-startup-id sh -c 'pkill -x xsettingsd; xsettingsd'
 exec --no-startup-id gsettings set org.gnome.desktop.interface color-scheme prefer-dark
-exec --no-startup-id dunst &
+exec --no-startup-id sh -c '$HOME/.scripts/desk theme ensure; pkill -x dunst; dunst'
 
 #####################################################################################################################
 #################                          applications keyboard shortcuts                          #################
@@ -582,6 +591,10 @@ bindsym control+mod1+s exec --no-startup-id spotify;focus
 bindsym --release Print exec --no-startup-id xfce4-screenshooter -r
 bindsym --release Shift+Print exec --no-startup-id xfce4-screenshooter -f
 bindsym --release Control+Print exec --no-startup-id xfce4-screenshooter -w
+# Capture extras (OCR / QR / annotate).
+bindsym --release $mod+Print exec --no-startup-id $HOME/.scripts/desk capture annotate
+bindsym --release $mod+Shift+Print exec --no-startup-id $HOME/.scripts/desk capture ocr
+bindsym --release $mod+Mod1+Print exec --no-startup-id $HOME/.scripts/desk capture qr
 
 
 
@@ -1039,3 +1052,29 @@ exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 bindsym $mod+Shift+o exec --no-startup-id $HOME/.config/i3/scripts/monitor-reapply.sh
 # Swap Caps Lock and Escape.
 exec_always --no-startup-id setxkbmap -option caps:swapescape
+
+#####################################################################################################################
+#################                          desk (Omarchy-inspired actions)                          #################
+#####################################################################################################################
+
+# Clipboard history
+bindsym $mod+Control+v exec --no-startup-id $HOME/.scripts/desk clipboard
+
+# Notifications: replay last / last ten / DND
+bindsym $mod+Shift+n exec --no-startup-id $HOME/.scripts/desk notify replay
+bindsym $mod+Shift+Mod1+n exec --no-startup-id $HOME/.scripts/desk notify replay-many
+bindsym $mod+Control+n exec --no-startup-id $HOME/.scripts/desk notify dnd-toggle
+
+# Control panels
+bindsym $mod+Control+a exec --no-startup-id $HOME/.scripts/desk audio
+bindsym $mod+Control+b exec --no-startup-id $HOME/.scripts/desk bluetooth
+bindsym $mod+Control+w exec --no-startup-id $HOME/.scripts/desk wifi
+bindsym $mod+Control+p exec --no-startup-id $HOME/.scripts/desk power
+bindsym $mod+Control+d exec --no-startup-id $HOME/.scripts/desk display
+
+# Theme / wallpaper picker (pywal + feh when available)
+bindsym $mod+Control+space exec --no-startup-id $HOME/.scripts/desk theme pick
+
+# Searchable i3 keybindings
+bindsym $mod+Mod1+k exec --no-startup-id $HOME/.scripts/desk keys
+bindsym $mod+Shift+slash exec --no-startup-id $HOME/.scripts/desk keys

@@ -1,0 +1,20 @@
+[
+  {"id": "apps", "label": "Apps", "keywords": "launch application drun", "run": "apps"},
+  {"id": "clipboard", "label": "Clipboard history", "keywords": "paste clip greenclip", "run": "clipboard"},
+  {"id": "notify-replay", "label": "Notifications: replay last", "keywords": "dunst history toast", "run": "notify replay"},
+  {"id": "notify-dnd", "label": "Notifications: toggle DND", "keywords": "pause silent mute dunst", "run": "notify dnd-toggle"},
+  {"id": "wifi", "label": "Network: Wi-Fi", "keywords": "wifi nmcli ssid", "run": "wifi"},
+  {"id": "audio", "label": "Audio: outputs", "keywords": "sink pulse speaker headphone", "run": "audio"},
+  {"id": "bluetooth", "label": "Bluetooth", "keywords": "bt devices pair", "run": "bluetooth"},
+  {"id": "display", "label": "Display: layouts", "keywords": "autorandr monitor screen", "run": "display"},
+  {"id": "power", "label": "Power", "keywords": "lock logout suspend reboot shutdown", "run": "power"},
+  {"id": "theme", "label": "Theme: wallpaper", "keywords": "wal feh background colors", "run": "theme pick"},
+  {"id": "ocr", "label": "Capture: OCR to clipboard", "keywords": "tesseract text screenshot", "run": "capture ocr"},
+  {"id": "qr", "label": "Capture: QR to clipboard", "keywords": "zbar otp qrcode", "run": "capture qr"},
+  {"id": "annotate", "label": "Capture: annotate", "keywords": "flameshot screenshot edit", "run": "capture annotate"},
+  {"id": "weather", "label": "Weather", "keywords": "forecast oslo wttr", "run": "weather"},
+  {"id": "keys", "label": "Keybindings", "keywords": "hotkeys bindsym cheatsheet", "run": "keys"},
+  {"id": "emoji", "label": "Emoji", "keywords": "rofimoji symbols", "run": "emoji"},
+  {"id": "lock", "label": "Lock screen", "keywords": "i3lock", "run": "lock"},
+  {"id": "update", "label": "Update system", "keywords": "full-update garuda pacman asdf", "run": "update"}
+]
