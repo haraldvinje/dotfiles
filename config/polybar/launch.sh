@@ -6,10 +6,10 @@ if [ -x "$HOME/.scripts/desk" ]; then
 elif [ ! -e "$HOME/.config/polybar/colors.generated.ini" ]; then
   cat >"$HOME/.config/polybar/colors.generated.ini" <<'EOF'
 [colors]
-bg = #66000000
-bg-alt = #88242424
-fg = #e6e6e6
-muted = #a8a8a8
+bg = #e0141820
+bg-alt = #cc1c2230
+fg = #f0f2f6
+muted = #c8ccd6
 accent = #7aa2f7
 warn = #f6c177
 urgent = #e06c75

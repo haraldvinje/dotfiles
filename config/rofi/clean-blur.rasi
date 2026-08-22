@@ -1,3 +1,5 @@
+@import "colors.generated.rasi"
+
 * {
     black: #000000;
     red: #eb6e67;
@@ -6,30 +8,37 @@
     blue: #6eaafb;
     magenta: #d886f3;
     cyan: #6cdcf7;
-    emphasis: #50536b;
-    text: #dfdfdf;
-    text-alt: #b2b2b2;
-    fg: #abb2bf;
-    bg: #282c34;
+    emphasis: #3d4a66;
+    text: #f4f6fb;
+    text-alt: #d0d4de;
+    fg: #f4f6fb;
+    bg: #141820;
 
     spacing: 0;
     background-color: transparent;
-    font: "Hack Nerd Font 14";
+    font: "Hack Nerd Font 15";
     text-color: @text;
 }
 
 window {
     transparency: "real";
-    fullscreen: true;
-    background-color: #282c3470;
+    fullscreen: false;
+    width: 45em;
+    padding: 18;
+    border: 2;
+    border-color: @blue;
+    background-color: argb:f2141820;
 }
 
 mainbox {
-    padding: 30% 30%;
+    padding: 8;
+    background-color: argb:f2141820;
 }
 
 inputbar {
-    margin: 0px 0px 20px 0px;
+    margin: 0px 0px 14px 0px;
+    padding: 10px 12px;
+    background-color: #1c2230;
     children: [prompt, textbox-prompt-colon, entry, case-indicator];
 }
 
@@ -46,32 +55,42 @@ textbox-prompt-colon {
 entry {
     margin: 0px 10px;
     placeholder: "Type to search";
+    text-color: @text;
 }
 
 listview {
-    lines: 7;
-    spacing: 5px;
+    lines: 12;
+    spacing: 4px;
     dynamic: true;
     scrollbar: false;
 }
 
 element {
-    padding: 5px;
-    text-color: @text-alt;
-    highlight: bold #95ee8f;
-    border-radius: 3px;
-}
-
-element selected.normal, element selected.active {
-    background-color: @emphasis;
+    padding: 8px 10px;
     text-color: @text;
+    highlight: bold #95ee8f;
+    border-radius: 2px;
 }
 
-element normal.urgent, element selected.urgent {
+element selected.normal {
+    background-color: @blue;
+    text-color: #11141a;
+}
+
+element selected.active {
+    background-color: @blue;
+    text-color: #11141a;
+}
+
+element normal.urgent {
     text-color: @red;
 }
 
-element normal.active, element selected.active {
+element selected.urgent {
+    text-color: @red;
+}
+
+element normal.active {
     text-color: @magenta;
 }
 
@@ -80,17 +99,14 @@ element-icon {
 }
 
 message {
-    padding: 5px;
-    border-radius: 3px;
-    background-color: @emphasis;
+    padding: 8px;
+    background-color: #1c2230;
     border: 1px;
     border-color: @cyan;
 }
 
 button selected.normal {
-    padding: 5px;
-    border-radius: 3px;
-    background-color: @emphasis;
+    padding: 8px;
+    background-color: @blue;
+    text-color: #11141a;
 }
-
-@import "colors.generated.rasi"
