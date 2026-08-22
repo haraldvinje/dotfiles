@@ -48,11 +48,12 @@
     "install": "npm install -g @openai/codex"
   },
   {
-    "id": "gemini",
-    "name": "Gemini",
-    "bin": "gemini",
+    "id": "antigravity",
+    "name": "Antigravity",
+    "bin": "agy",
+    "bins": "agy antigravity",
     "kind": "cli",
-    "install": "npm install -g @google/gemini-cli"
+    "install": "paru -S --needed antigravity-cli"
   },
   {
     "id": "copilot",
