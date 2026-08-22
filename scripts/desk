@@ -524,7 +524,8 @@ desk_weather() {
 }
 
 desk_weather_bar() {
-  curl -fsS --max-time 4 "https://wttr.in/${CITY}?format=%c+%t" 2>/dev/null | tr -d '\n' || true
+  # Temperature only — polybar's fonts drop the wttr.in emoji.
+  curl -fsS --max-time 4 "https://wttr.in/${CITY}?format=%t" 2>/dev/null | tr -d '\n' || true
   echo
 }
 
