@@ -1,0 +1,71 @@
+[
+  {
+    "id": "claude",
+    "name": "Claude Code",
+    "bin": "claude",
+    "kind": "cli"
+  },
+  {
+    "id": "grok",
+    "name": "Grok",
+    "bin": "grok",
+    "kind": "cli"
+  },
+  {
+    "id": "cursor",
+    "name": "Cursor",
+    "bin": "cursor",
+    "kind": "gui",
+    "args": "."
+  },
+  {
+    "id": "pi",
+    "name": "Pi",
+    "bin": "pi",
+    "kind": "cli",
+    "install": "npm install -g @earendil-works/pi-coding-agent"
+  },
+  {
+    "id": "opencode",
+    "name": "OpenCode",
+    "bin": "opencode",
+    "kind": "cli",
+    "install": "curl -fsSL https://opencode.ai/install | bash"
+  },
+  {
+    "id": "t3",
+    "name": "T3 Code",
+    "bin": "t3code",
+    "bins": "t3code t3-code t3",
+    "kind": "gui",
+    "install": "paru -S --needed t3code-bin"
+  },
+  {
+    "id": "codex",
+    "name": "Codex",
+    "bin": "codex",
+    "kind": "cli",
+    "install": "npm install -g @openai/codex"
+  },
+  {
+    "id": "gemini",
+    "name": "Gemini",
+    "bin": "gemini",
+    "kind": "cli",
+    "install": "npm install -g @google/gemini-cli"
+  },
+  {
+    "id": "copilot",
+    "name": "GitHub Copilot",
+    "bin": "copilot",
+    "kind": "cli",
+    "install": "npm install -g @github/copilot"
+  },
+  {
+    "id": "crush",
+    "name": "Crush",
+    "bin": "crush",
+    "kind": "cli",
+    "install": "paru -S --needed crush"
+  }
+]

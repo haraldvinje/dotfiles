@@ -1075,6 +1075,10 @@ bindsym $mod+Control+d exec --no-startup-id $HOME/.scripts/desk display
 # Theme / wallpaper picker (pywal + feh when available)
 bindsym $mod+Control+space exec --no-startup-id $HOME/.scripts/desk theme pick
 
-# Searchable i3 keybindings
+# Default / agent picker (Omarchy: Super+Shift+Ctrl+A)
+bindsym $mod+Shift+Control+a exec --no-startup-id $HOME/.scripts/desk agent default
+
+# Searchable i3 keybindings (Super+i). Super+Shift++ is ? on Norwegian.
+bindsym $mod+i exec --no-startup-id $HOME/.scripts/desk keys
 bindsym $mod+Mod1+k exec --no-startup-id $HOME/.scripts/desk keys
-bindsym $mod+Shift+slash exec --no-startup-id $HOME/.scripts/desk keys
+bindsym $mod+Shift+plus exec --no-startup-id $HOME/.scripts/desk keys

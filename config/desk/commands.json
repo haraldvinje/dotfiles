@@ -16,5 +16,9 @@
   {"id": "keys", "label": "Keybindings", "keywords": "hotkeys bindsym cheatsheet", "run": "keys"},
   {"id": "emoji", "label": "Emoji", "keywords": "rofimoji symbols", "run": "emoji"},
   {"id": "lock", "label": "Lock screen", "keywords": "i3lock", "run": "lock"},
-  {"id": "update", "label": "Update system", "keywords": "full-update garuda pacman asdf", "run": "update"}
+  {"id": "update", "label": "Update system", "keywords": "full-update garuda pacman asdf", "run": "update"},
+  {"id": "agent", "label": "AI: agents", "keywords": "claude grok cursor pi opencode t3 codex gemini copilot crush", "run": "agent pick"},
+  {"id": "agent-default", "label": "AI: default agent", "keywords": "coding agent launch", "run": "agent default"},
+  {"id": "pkg", "label": "Install: package", "keywords": "pacman paru aur fzf pkg add", "run": "pkg install"},
+  {"id": "pkg-remove", "label": "Remove: package", "keywords": "uninstall drop pacman", "run": "pkg remove"}
 ]

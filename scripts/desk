@@ -15,9 +15,22 @@ mkdir -p "$CACHE"
 
 have() { command -v "$1" >/dev/null 2>&1; }
 
+wait_rofi_gone() {
+  local n="${1:-20}" i
+  for i in $(seq 1 "$n"); do
+    pgrep -x rofi >/dev/null || return 0
+    sleep 0.05
+  done
+  return 1
+}
+
 rofi_dmenu() {
   local prompt="$1"
   shift
+  if ! wait_rofi_gone 24; then
+    notify -u low "desk" "Close the current menu first"
+    return 1
+  fi
   rofi -dmenu -i -p "$prompt" -theme "$ROFI_THEME" "$@"
 }
 
@@ -72,7 +85,10 @@ list_commands() {
     '{"label":"Bluetooth","run":"bluetooth"}' \
     '{"label":"Power","run":"power"}' \
     '{"label":"Theme: wallpaper","run":"theme pick"}' \
-    '{"label":"Keybindings","run":"keys"}'
+    '{"label":"Keybindings","run":"keys"}' \
+    '{"label":"AI: agents","run":"agent pick"}' \
+    '{"label":"Install: package","run":"pkg install"}' \
+    '{"label":"Remove: package","run":"pkg remove"}'
 }
 
 # --- menu / rofi script mode ------------------------------------------------
@@ -82,15 +98,26 @@ desk_apps() {
 }
 
 desk_menu() {
+  local pending="$CACHE/pending-run"
+  rm -f "$pending"
   rofi -show desk \
     -modi "desk:${HOME}/.scripts/desk-menu,drun,window" \
     -show-icons \
     -theme "$ROFI_THEME"
+  # Rofi forbids nesting. Commands that open another menu run after this one exits.
+  if [ -s "$pending" ]; then
+    local run
+    run="$(cat "$pending")"
+    rm -f "$pending"
+    wait_rofi_gone 24 || true
+    # shellcheck disable=SC2086
+    exec "$DESK" $run
+  fi
 }
 
 desk_rofi() {
   local selected="${1:-}"
-  local row label
+  local row label pending="$CACHE/pending-run"
   if [ -z "$selected" ]; then
     while IFS= read -r row; do
       [ -n "$row" ] || continue
@@ -101,8 +128,8 @@ desk_rofi() {
   while IFS= read -r row; do
     label="$(cmd_label "$row")"
     if [ "$label" = "$selected" ]; then
-      # shellcheck disable=SC2086
-      exec "$DESK" $(cmd_run "$row")
+      cmd_run "$row" >"$pending"
+      return 0
     fi
   done < <(list_commands)
 }
@@ -275,9 +302,9 @@ load_wal() {
   dunst_frame="$accent"
   dunst_critical_bg="$bg"
   dunst_critical_fg="$fg"
-  # Keep the bar translucent; only replace the RGB.
-  bg_alpha="#66${bg#\#}"
-  bg_alt="#88${bg#\#}"
+  # Bar stays tinted, not see-through.
+  bg_alpha="#e0${bg#\#}"
+  bg_alt="#cc${bg#\#}"
 }
 
 write_theme_files() {
@@ -530,16 +557,18 @@ desk_weather_bar() {
 }
 
 desk_keys() {
-  [ -r "$I3CONF" ] || return 1
+  [ -r "$I3CONF" ] || { notify "Keybindings" "No i3 config at $I3CONF"; return 1; }
   local line key cmd pick
   local rows=""
   while IFS= read -r line; do
-    [[ "$line" =~ ^[[:space:]]*bindsym ]] || continue
-    [[ "$line" =~ ^[[:space:]]*# ]] && continue
+    line="${line#"${line%%[![:space:]]*}"}"
+    [[ "$line" == \#* ]] && continue
+    [[ "$line" == bindsym* ]] || continue
     line="${line#bindsym }"
     line="${line#--release }"
     key="${line%% *}"
-    cmd="${line#* }"
+    cmd="${line#"$key"}"
+    cmd="${cmd#"${cmd%%[![:space:]]*}"}"
     key="${key//\$mod/Super}"
     key="${key//Mod1/Alt}"
     key="${key//mod1/Alt}"
@@ -547,6 +576,10 @@ desk_keys() {
     key="${key//control/Ctrl}"
     rows+="${key}  →  ${cmd}"$'\n'
   done <"$I3CONF"
+  if [ -z "$rows" ]; then
+    notify "Keybindings" "No bindsym lines found"
+    return 1
+  fi
   pick="$(printf '%s' "$rows" | rofi_dmenu "Keybindings")" || return 0
   [ -n "$pick" ] || return 0
   printf '%s' "${pick#*  →  }" | xclip -selection clipboard
@@ -583,6 +616,395 @@ desk_update() {
   fi
 }
 
+_desk_in_term() {
+  [ -t 0 ] && [ -t 1 ]
+}
+
+_desk_pkg_pick() {
+  local prompt="$1"
+  local preview="$2"
+  fzf --multi --reverse --info=inline \
+    --prompt="$prompt" \
+    --header="Tab multi-select · Esc closes" \
+    --preview "$preview" \
+    --preview-window=right:60%:wrap \
+    --bind "alt-p:toggle-preview,alt-j:preview-down,alt-k:preview-up"
+}
+
+# AUR name list (text). paru -Sl dumps packages.gz as binary; this decompresses it.
+_desk_aur_names() {
+  local cache="$CACHE/aur-packages.txt"
+  local tmp="$cache.tmp"
+  if [ ! -s "$cache" ] || [ -n "$(find "$cache" -mmin +1440 2>/dev/null)" ]; then
+    echo "Refreshing AUR package list…" >&2
+    if curl -fsS --max-time 20 https://aur.archlinux.org/packages.gz | gzip -dc >"$tmp"; then
+      mv "$tmp" "$cache"
+    else
+      rm -f "$tmp"
+      echo "Could not refresh AUR list (using cache if any)." >&2
+    fi
+  fi
+  [ -s "$cache" ] && cat "$cache"
+}
+
+desk_pkg_preview() {
+  local p="${1:-}"
+  if [[ "$p" == *"  (AUR)" ]]; then
+    paru --aur --color=never -Si "${p%"  (AUR)"}" 2>/dev/null
+  elif [ -n "$p" ]; then
+    pacman --color=never -Si "$p" 2>/dev/null
+  fi
+}
+
+desk_pkg() {
+  local sub="${1:-install}"
+  if _desk_in_term; then
+    desk_pkg_tui "$sub"
+    return
+  fi
+  if have terminator; then
+    terminator -x "$HOME/.scripts/desk" pkg-tui "$sub" &
+  else
+    notify "desk" "Open a terminal and run: desk pkg $sub"
+  fi
+}
+
+desk_pkg_tui() {
+  local sub="${1:-install}"
+  local picks line
+  local -a official=() aur=()
+  need fzf || return 1
+
+  case "$sub" in
+    install|pacman|aur)
+      need pacman || return 1
+      echo "Building package list…"
+      picks="$(
+        {
+          pacman -Slq
+          _desk_aur_names | sed 's/$/  (AUR)/'
+        } | _desk_pkg_pick "pkg > " "$HOME/.scripts/desk pkg-preview {}"
+      )" || true
+      [ -n "${picks:-}" ] || return 0
+      while IFS= read -r line; do
+        [ -n "$line" ] || continue
+        if [[ "$line" == *"  (AUR)" ]]; then
+          aur+=("${line%"  (AUR)"}")
+        else
+          official+=("$line")
+        fi
+      done <<<"$picks"
+      if [ "${#official[@]}" -gt 0 ]; then
+        sudo pacman -S --needed "${official[@]}"
+      fi
+      if [ "${#aur[@]}" -gt 0 ]; then
+        need paru || return 1
+        paru --aur -S --needed "${aur[@]}"
+      fi
+      ;;
+    remove|drop)
+      need pacman || return 1
+      picks="$(pacman -Qqe | _desk_pkg_pick "remove > " 'pacman --color=never -Qi {} 2>/dev/null')" || true
+      [ -n "${picks:-}" ] || return 0
+      # shellcheck disable=SC2086
+      sudo pacman -Rns $picks
+      ;;
+    *)
+      echo "usage: desk pkg install|remove" >&2
+      return 1
+      ;;
+  esac
+}
+
+# --- coding agents ----------------------------------------------------------
+
+AGENT_DIR="${DESK_AGENT_DIR:-$HOME/Documents/Programming}"
+AGENT_DEFAULT="$CONF/default-agent"
+AGENTS_JSON="$CONF/agents.json"
+
+_desk_agent_bin() {
+  local row="$1" cand
+  local bins
+  bins="$(printf '%s' "$row" | jq -r '.bins // .bin')"
+  for cand in $bins; do
+    if have "$cand"; then
+      printf '%s\n' "$cand"
+      return 0
+    fi
+  done
+  return 1
+}
+
+_desk_abbrev_home() {
+  local p="$1"
+  printf '%s\n' "${p/#$HOME/~}"
+}
+
+_desk_agent_remember_dir() {
+  local dir="$1" rec="$CACHE/agent-dirs.txt"
+  mkdir -p "$CACHE"
+  {
+    printf '%s\n' "$dir"
+    grep -Fxv "$dir" "$rec" 2>/dev/null || true
+  } | head -n 16 >"$rec.tmp"
+  mv "$rec.tmp" "$rec"
+}
+
+_desk_agent_claude_dirs() {
+  local jf="$HOME/.claude.json" enc d
+  {
+    if [ -r "$jf" ] && have jq; then
+      jq -r '.projects | keys[]?' "$jf" 2>/dev/null
+    fi
+    for enc in "$HOME/.claude/projects"/-*; do
+      [ -e "$enc" ] || continue
+      d="${enc##*/}"
+      d="${d//-/\/}"
+      printf '%s\n' "$d"
+    done
+  } | awk -v home="$HOME" 'NF && $0 != home'
+}
+
+_desk_agent_git_dirs() {
+  local root
+  for root in "$AGENT_DIR" "$HOME/Documents/Programming" "$HOME/DataGripProjects" "$HOME/Projects"; do
+    [ -d "$root" ] || continue
+    if have fd; then
+      fd -H -t d --max-depth 6 '^\.git$' "$root" -x dirname
+    else
+      find "$root" -maxdepth 5 -type d -name .git -printf '%h\n' 2>/dev/null
+    fi
+  done
+}
+
+_desk_agent_scan_dirs() {
+  local -a roots=()
+  local root
+  for root in "$AGENT_DIR" "$HOME/Documents" "$HOME/Projects" "$HOME/DataGripProjects"; do
+    [ -d "$root" ] || continue
+    roots+=("$root")
+  done
+  [ "${#roots[@]}" -gt 0 ] || return 0
+  if have fd; then
+    fd -t d --max-depth 5 \
+      --exclude node_modules --exclude .git --exclude .cache \
+      --exclude target --exclude dist --exclude .next \
+      --exclude venv --exclude __pycache__ \
+      . "${roots[@]}"
+  else
+    find "${roots[@]}" -maxdepth 4 -type d \
+      \( -name node_modules -o -name .git -o -name .cache \) -prune -o \
+      -type d -print 2>/dev/null
+  fi
+}
+
+_desk_agent_emit_dirs() {
+  local d
+  while IFS= read -r d; do
+    [ -d "$d" ] || continue
+    printf '%s\n' "$(_desk_abbrev_home "$d")"
+  done
+}
+
+_desk_agent_new_dir() {
+  local name parent="${AGENT_DIR}"
+  [ -d "$parent" ] || parent="$HOME"
+  name="$(printf '' | rofi_dmenu "New folder under $(_desk_abbrev_home "$parent")")" || return 1
+  [ -n "$name" ] || return 1
+  if [[ "$name" == /* || "$name" == ~* ]]; then
+    name="${name/#\~/$HOME}"
+  else
+    name="$parent/$name"
+  fi
+  mkdir -p "$name" || { notify "AI" "Could not create $name"; return 1; }
+  printf '%s\n' "$name"
+}
+
+_desk_agent_find_dir() {
+  local choice
+  choice="$(
+    _desk_agent_scan_dirs | _desk_agent_emit_dirs | awk 'NF && !seen[$0]++' \
+      | rofi_dmenu "Find folder"
+  )" || return 1
+  [ -n "$choice" ] || return 1
+  choice="${choice/#\~/$HOME}"
+  [ -d "$choice" ] || { notify "AI" "Not a folder: $choice"; return 1; }
+  printf '%s\n' "$choice"
+}
+
+_desk_agent_browse_dir() {
+  local start="${1:-$AGENT_DIR}"
+  [ -d "$start" ] || start="$HOME"
+  if have yad; then
+    yad --file --directory --title="Project folder" --filename="$start/" 2>/dev/null
+  else
+    printf '%s' "$start" | rofi_dmenu "Path"
+  fi
+}
+
+_desk_agent_pick_dir() {
+  local rec="$CACHE/agent-dirs.txt"
+  local start="${AGENT_DIR}"
+  [ -d "$start" ] || start="$HOME"
+  local lines="" d
+  lines+="New folder…"$'\n'
+  lines+="Find folder…"$'\n'
+  lines+="Browse…"$'\n'
+  if [ -s "$rec" ]; then
+    lines+="$(_desk_agent_emit_dirs <"$rec")"
+    lines+=$'\n'
+  fi
+  lines+="$(_desk_agent_claude_dirs | _desk_agent_emit_dirs)"$'\n'
+  if [ -d "$start" ]; then
+    lines+="$(_desk_abbrev_home "$start")"$'\n'
+    while IFS= read -r d; do
+      [ -d "$d" ] || continue
+      lines+="$(_desk_abbrev_home "$d")"$'\n'
+    done < <(find "$start" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort)
+  fi
+  lines+="$(_desk_agent_git_dirs | _desk_agent_emit_dirs)"$'\n'
+  local choice
+  choice="$(printf '%s' "$lines" | awk 'NF && !seen[$0]++' | rofi_dmenu "Project folder")" || return 1
+  [ -n "$choice" ] || return 1
+  case "$choice" in
+    "New folder…")
+      choice="$(_desk_agent_new_dir)" || return 1
+      ;;
+    "Find folder…")
+      choice="$(_desk_agent_find_dir)" || return 1
+      ;;
+    "Browse…")
+      choice="$(_desk_agent_browse_dir "$start")" || return 1
+      ;;
+    *)
+      choice="${choice/#\~/$HOME}"
+      ;;
+  esac
+  [ -d "$choice" ] || { notify "AI" "Not a folder: $choice"; return 1; }
+  _desk_agent_remember_dir "$choice"
+  printf '%s\n' "$choice"
+}
+
+_desk_agent_term() {
+  local root="$1" title="$2"
+  shift 2
+  # Agent must be Terminator's child. A `zsh -c` wrapper makes TUIs
+  # (grok, claude, …) see no tty and exit, so the window flashes shut.
+  terminator --working-directory="$root" -T "$title" -x "$@" &
+}
+
+_desk_agent_shell() {
+  local root="$1" title="$2"
+  shift 2
+  terminator --working-directory="$root" -T "$title" \
+    -x zsh -i -c "$* || true; echo; printf 'Enter to close... '; read -r" &
+}
+
+desk_agent_launch() {
+  local id="$1"
+  local root="${2:-}"
+  local row kind bin args npx install binname
+  [ -n "$root" ] || root="$(_desk_agent_pick_dir)" || return 0
+  row="$(jq -c --arg id "$id" '.[] | select(.id == $id)' "$AGENTS_JSON")"
+  [ -n "$row" ] || { notify "AI" "Unknown agent: $id"; return 1; }
+  kind="$(printf '%s' "$row" | jq -r '.kind')"
+  args="$(printf '%s' "$row" | jq -r '.args // empty')"
+  npx="$(printf '%s' "$row" | jq -r '.npx // empty')"
+  install="$(printf '%s' "$row" | jq -r '.install // empty')"
+  binname="$(printf '%s' "$row" | jq -r '.bin')"
+
+  if bin="$(_desk_agent_bin "$row")"; then
+    case "$kind" in
+      gui)
+        (cd "$root" && "$bin" "$root") &
+        ;;
+      *)
+        # shellcheck disable=SC2086
+        _desk_agent_term "$root" "agent: $id" "$bin" $args
+        ;;
+    esac
+    return 0
+  fi
+
+  if [ "$kind" = "npx" ] && [ -n "$npx" ]; then
+    # shellcheck disable=SC2086
+    _desk_agent_term "$root" "agent: $id" $npx
+    return 0
+  fi
+
+  if [ -n "$install" ]; then
+    notify -u low "AI" "Installing $(printf '%s' "$row" | jq -r '.name')…"
+    _desk_agent_shell "$root" "install: $id" "$install && exec $binname"
+    return 0
+  fi
+
+  notify "AI" "$(printf '%s' "$row" | jq -r '.name') is not installed"
+}
+
+desk_agent_pick() {
+  need jq || return 1
+  [ -r "$AGENTS_JSON" ] || return 1
+  local default="" line id label mark choice
+  [ -r "$AGENT_DEFAULT" ] && default="$(tr -d '[:space:]' <"$AGENT_DEFAULT")"
+  local rows=""
+  while IFS= read -r line; do
+    id="$(printf '%s' "$line" | jq -r '.id')"
+    label="$(printf '%s' "$line" | jq -r '.name')"
+    mark=""
+    [ "$id" = "$default" ] && mark=" *"
+    if _desk_agent_bin "$line" >/dev/null; then
+      rows+="${label}${mark}"$'\n'
+    elif [ "$(printf '%s' "$line" | jq -r '.kind')" = "npx" ]; then
+      rows+="${label}${mark}  (npx)"$'\n'
+    else
+      rows+="${label}${mark}  — install"$'\n'
+    fi
+  done < <(jq -c '.[]' "$AGENTS_JSON")
+  choice="$(printf '%s' "$rows" | rofi_dmenu "AI agents")" || return 0
+  [ -n "$choice" ] || return 0
+  choice="${choice%%  — *}"
+  choice="${choice%%  (npx)*}"
+  choice="${choice% \*}"
+  id="$(jq -r --arg n "$choice" '.[] | select(.name == $n) | .id' "$AGENTS_JSON")"
+  [ -n "$id" ] || return 1
+  desk_agent_launch "$id"
+}
+
+desk_agent_default() {
+  local id=""
+  if [ -r "$AGENT_DEFAULT" ]; then
+    id="$(tr -d '[:space:]' <"$AGENT_DEFAULT")"
+  elif have claude; then
+    id="claude"
+  fi
+  if [ -n "$id" ]; then
+    desk_agent_launch "$id"
+  else
+    desk_agent_pick
+  fi
+}
+
+desk_agent_set() {
+  local id="${1:-}"
+  if [ -z "$id" ]; then
+    id="$(jq -r '.[].id' "$AGENTS_JSON" | rofi_dmenu "Default agent")" || return 0
+  fi
+  [ -n "$id" ] || return 0
+  mkdir -p "$CONF"
+  printf '%s\n' "$id" >"$AGENT_DEFAULT"
+  notify -u low "AI" "Default agent: $id"
+}
+
+desk_agent() {
+  local sub="${1:-pick}"
+  case "$sub" in
+    pick|menu) desk_agent_pick ;;
+    default|launch) desk_agent_default ;;
+    set) desk_agent_set "${2:-}" ;;
+    *) desk_agent_launch "$sub" ;;
+  esac
+}
+
 desk_help() {
   cat <<'EOF'
 desk <verb> [args]
@@ -605,6 +1027,8 @@ desk <verb> [args]
   emoji             rofimoji
   lock              Lock screen
   update            full-update in a terminal
+  pkg               install | remove   (official + AUR, fzf)
+  agent             pick | default | set [id] | <id>
   help              This list
 EOF
 }
@@ -633,6 +1057,10 @@ main() {
     emoji) desk_emoji ;;
     lock) desk_lock ;;
     update) desk_update ;;
+    pkg) desk_pkg "${1:-install}" ;;
+    pkg-tui) desk_pkg_tui "${1:-install}" ;;
+    pkg-preview) desk_pkg_preview "${1:-}" ;;
+    agent) desk_agent "$@" ;;
     help|-h|--help) desk_help ;;
     *)
       echo "desk: unknown command '$cmd'" >&2
