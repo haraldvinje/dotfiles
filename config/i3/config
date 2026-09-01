@@ -1065,10 +1065,11 @@ bindsym $mod+Shift+n exec --no-startup-id $HOME/.scripts/desk notify replay
 bindsym $mod+Shift+Mod1+n exec --no-startup-id $HOME/.scripts/desk notify replay-many
 bindsym $mod+Control+n exec --no-startup-id $HOME/.scripts/desk notify dnd-toggle
 
-# Control panels
+# Control panels (wifi/bt/audio = TUIs; desk wifi|bluetooth|audio rofi for the lists)
 bindsym $mod+Control+a exec --no-startup-id $HOME/.scripts/desk audio
 bindsym $mod+Control+b exec --no-startup-id $HOME/.scripts/desk bluetooth
 bindsym $mod+Control+w exec --no-startup-id $HOME/.scripts/desk wifi
+bindsym $mod+Control+m exec --no-startup-id $HOME/.scripts/desk cava
 bindsym $mod+Control+p exec --no-startup-id $HOME/.scripts/desk power
 bindsym $mod+Control+d exec --no-startup-id $HOME/.scripts/desk display
 

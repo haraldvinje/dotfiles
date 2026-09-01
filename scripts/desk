@@ -415,6 +415,31 @@ desk_theme() {
 # --- control panels ---------------------------------------------------------
 
 desk_wifi() {
+  local sub="${1:-tui}"
+  case "$sub" in
+    menu|rofi|pick) desk_wifi_rofi ;;
+    tui|"")
+      if have wifitui; then
+        _desk_term "Wi-Fi" wifitui
+      else
+        desk_wifi_rofi
+      fi
+      ;;
+    gui)
+      if have nm-connection-editor; then
+        nm-connection-editor &
+      else
+        desk_wifi_rofi
+      fi
+      ;;
+    *)
+      echo "usage: desk wifi [tui|rofi|gui]" >&2
+      return 1
+      ;;
+  esac
+}
+
+desk_wifi_rofi() {
   need nmcli || return 1
   local lines choice ssid
   lines="$(
@@ -433,7 +458,7 @@ desk_wifi() {
   choice="$(printf '%s\n' "$lines" | rofi_dmenu "Wi-Fi")" || return 0
   [ -n "$choice" ] || return 0
   case "$choice" in
-    "Scan + refresh") nmcli device wifi rescan >/dev/null; desk_wifi ;;
+    "Scan + refresh") nmcli device wifi rescan >/dev/null; desk_wifi_rofi ;;
     "Connection editor") have nm-connection-editor && nm-connection-editor & ;;
     "Radio off") nmcli radio wifi off; notify -u low "Wi-Fi" "Off" ;;
     "Radio on") nmcli radio wifi on; notify -u low "Wi-Fi" "On" ;;
@@ -452,6 +477,32 @@ desk_wifi() {
 }
 
 desk_audio() {
+  local sub="${1:-tui}"
+  case "$sub" in
+    menu|rofi|pick) desk_audio_rofi ;;
+    tui|"")
+      if have wiremix; then
+        _desk_term "Audio" wiremix
+      else
+        notify "desk" "Install wiremix, then retry (or use Audio quick)"
+        desk_audio_rofi
+      fi
+      ;;
+    gui)
+      if have pavucontrol; then
+        pavucontrol &
+      else
+        desk_audio_rofi
+      fi
+      ;;
+    *)
+      echo "usage: desk audio [tui|rofi|gui]" >&2
+      return 1
+      ;;
+  esac
+}
+
+desk_audio_rofi() {
   need pactl || return 1
   local default lines choice sink
   default="$(pactl get-default-sink 2>/dev/null || true)"
@@ -468,7 +519,44 @@ desk_audio() {
   notify -u low "Audio" "Output: $sink"
 }
 
+desk_cava() {
+  if pgrep -x cava >/dev/null; then
+    pkill -x cava
+    return 0
+  fi
+  if have cava; then
+    _desk_term "cava" cava
+  else
+    notify "desk" "Install cava: pacman -S cava"
+  fi
+}
+
 desk_bluetooth() {
+  local sub="${1:-tui}"
+  case "$sub" in
+    menu|rofi|pick) desk_bluetooth_rofi ;;
+    tui|"")
+      if have bluetui; then
+        _desk_term "Bluetooth" bluetui
+      else
+        desk_bluetooth_rofi
+      fi
+      ;;
+    gui)
+      if have blueman-manager; then
+        blueman-manager &
+      else
+        desk_bluetooth_rofi
+      fi
+      ;;
+    *)
+      echo "usage: desk bluetooth [tui|rofi|gui]" >&2
+      return 1
+      ;;
+  esac
+}
+
+desk_bluetooth_rofi() {
   need bluetoothctl || return 1
   local lines choice mac name
   bluetoothctl power on >/dev/null 2>&1 || true
@@ -487,7 +575,7 @@ desk_bluetooth() {
     "Power off") bluetoothctl power off; notify -u low "Bluetooth" "Off" ;;
     "Scan 8s")
       bluetoothctl --timeout 8 scan on >/dev/null
-      desk_bluetooth
+      desk_bluetooth_rofi
       ;;
     *)
       mac="$(printf '%s' "$choice" | awk '{print $1}')"
@@ -618,6 +706,21 @@ desk_update() {
 
 _desk_in_term() {
   [ -t 0 ] && [ -t 1 ]
+}
+
+# TUI must be Terminator's child (same as grok): a shell wrapper drops the tty.
+_desk_term() {
+  local title="$1"
+  shift
+  if _desk_in_term; then
+    "$@"
+    return
+  fi
+  if have terminator; then
+    terminator -T "$title" -x "$@" &
+    return
+  fi
+  notify "desk" "Open a terminal and run: $*"
 }
 
 _desk_pkg_pick() {
@@ -1016,9 +1119,10 @@ desk <verb> [args]
   notify            replay | replay-many | dnd-toggle | status
   capture           ocr | qr | annotate | region | full | window
   theme             ensure | apply | pick
-  wifi              Network panel
-  audio             Output picker
-  bluetooth         Device picker
+  wifi              tui | rofi | gui   (wifitui, else the old list)
+  audio             tui | rofi | gui   (wiremix, else sink list)
+  cava              Toggle visualizer
+  bluetooth         tui | rofi | gui   (bluetui, else the old list)
   display           Autorandr / mapped layout
   power             Lock / logout / suspend / reboot / shutdown
   weather           Forecast toast
@@ -1046,9 +1150,10 @@ main() {
     notify) desk_notify "${1:-status}" ;;
     capture) desk_capture "${1:-}" ;;
     theme) desk_theme "${1:-ensure}" ;;
-    wifi|network) desk_wifi ;;
-    audio) desk_audio ;;
-    bluetooth|bt) desk_bluetooth ;;
+    wifi|network) desk_wifi "${1:-}" ;;
+    audio) desk_audio "${1:-}" ;;
+    cava|visualizer) desk_cava ;;
+    bluetooth|bt) desk_bluetooth "${1:-}" ;;
     display) desk_display ;;
     power) desk_power ;;
     weather) desk_weather ;;
