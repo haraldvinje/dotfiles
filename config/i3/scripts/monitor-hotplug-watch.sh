@@ -3,7 +3,16 @@ set -euo pipefail
 
 # Poll monitor state and re-apply layout/bar/workspaces when it changes.
 state_file="/tmp/i3-monitor-state-${USER}"
+pid_file="/tmp/i3-monitor-watch-${USER}.pid"
 log_file="/tmp/i3-monitor-watch.log"
+
+if [ -f "$pid_file" ]; then
+  old="$(cat "$pid_file" 2>/dev/null || true)"
+  if [ -n "$old" ] && [ "$old" != "$$" ] && kill -0 "$old" 2>/dev/null; then
+    kill "$old" 2>/dev/null || true
+  fi
+fi
+echo $$ > "$pid_file"
 
 get_state() {
   # Only track which outputs are connected (not geometry tokens that can flap).

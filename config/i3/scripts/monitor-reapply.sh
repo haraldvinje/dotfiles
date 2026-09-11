@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Manual monitor/layout recovery (Mod+Shift+o). Not started on hotplug.
+# Apply the layout for this place, then wallpaper + polybar.
 # Place = active NetworkManager wifi/ethernet name (SSID or wired profile).
-# Layout = autorandr profile from monitor-map, then feh + polybar.
-# Workspaces stay where they are.
+# Layout name in monitor-map is tried as ~/.screenlayout/<name>.sh first,
+# then as an autorandr profile. Workspaces stay where they are.
 
 MAP="${MONITOR_MAP:-$HOME/.config/i3/scripts/monitor-map}"
+LAYOUTDIR="${HOME}/.screenlayout"
 
 has_external=0
 if xrandr --query | awk '$2 == "connected" {print $1}' | grep -vqE '^(eDP|EDP|LVDS|DSI)'; then
@@ -50,8 +51,7 @@ match_profile() {
   return 1
 }
 
-# Outputs can stay "disconnected" with an old mode/position; autorandr --change
-# may still match a docked profile. Turn those CRTCs off.
+# Outputs can stay "disconnected" with an old mode/position. Turn those CRTCs off.
 disable_stale_outputs() {
   local out
   while IFS= read -r out; do
@@ -66,39 +66,33 @@ disable_stale_outputs() {
 
 apply_profile() {
   local profile="$1"
-  if [ "$profile" = "auto" ]; then
+  local script="${LAYOUTDIR}/${profile}.sh"
+
+  if [ -f "$script" ]; then
+    sh "$script" || true
+  elif [ "$profile" = "auto" ]; then
     autorandr --change || xrandr --auto || true
-  elif autorandr --list 2>/dev/null | grep -qx "$profile"; then
+  elif command -v autorandr >/dev/null 2>&1 && autorandr --list 2>/dev/null | grep -qx "$profile"; then
     autorandr --load "$profile" || xrandr --auto || true
   else
-    # Named profile missing (e.g. laptop with no EDID setup): do not --change,
-    # that re-applies docked when an output is only half-disconnected.
+    # Named layout missing: do not --change, that can re-apply a docked profile
+    # when an output is only half-disconnected.
     xrandr --auto || true
   fi
   disable_stale_outputs
 }
 
-has_profiles=0
-if ls "$HOME/.config/autorandr"/*/config >/dev/null 2>&1; then
-  has_profiles=1
-fi
-
-if [ "$has_profiles" -eq 1 ] && command -v autorandr >/dev/null 2>&1; then
-  chosen="$(match_profile "$external_word" || true)"
-  if [ -n "${chosen:-}" ]; then
-    apply_profile "$chosen"
-  elif [ "$has_external" -eq 1 ]; then
-    apply_profile auto
-  else
-    apply_profile laptop
-  fi
+chosen="$(match_profile "$external_word" || true)"
+if [ -n "${chosen:-}" ]; then
+  apply_profile "$chosen"
+elif [ "$has_external" -eq 1 ]; then
+  apply_profile auto
 else
-  xrandr --auto || true
-  disable_stale_outputs
+  apply_profile laptop
 fi
 
-# Give X/i3 a moment to settle output geometry.
-sleep 2
+# Give X/i3 a moment to settle output geometry before bars.
+sleep 0.5
 
 # Sticky workspaces: do not remap/move existing ones.
 feh --no-fehbg --bg-fill --randomize "$HOME/Pictures/Wallpapers/" || true

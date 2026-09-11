@@ -1,15 +1,16 @@
-# Place → autorandr profile (Mod+Shift+o).
-# Fields: place|external|profile
+# Place → layout (login, dock/undock, Mod+Shift+o).
+# Fields: place|external|layout
 #   place     NM connection name or Wi-Fi SSID; * matches anything
 #   external  yes = a non-laptop output is connected; no = laptop only
-#   profile   autorandr profile name, or "auto" for autorandr --change
+#   layout    ~/.screenlayout/<layout>.sh if that file exists, else autorandr
+#             profile of the same name, or "auto" for autorandr --change
 #
-# Add a new office by saving a profile (`autorandr --save docked-office`)
-# then adding its SSID / ethernet connection name here.
+# New dock (e.g. work): arandr → Layout → Save As ~/.screenlayout/work.sh
+# then add the SSID / ethernet name here as  SomeWifi|yes|work
 
-VinjeLarsenNett|yes|docked-home
+VinjeLarsenNett|yes|home
 VinjeLarsenNett|no|laptop
-Wired connection 1|yes|docked-home
+Wired connection 1|yes|home
 Wired connection 1|no|laptop
 *|yes|auto
 *|no|laptop

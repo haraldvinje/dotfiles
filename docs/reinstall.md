@@ -96,7 +96,7 @@ Alt+Shift+N opens the catalog (fetch / review / pick). Images stay out of git.
 | **SSH** | `~/.ssh` stays local; add public key to GitHub. |
 | **gh** | `gh auth login` |
 | **asdf** | Plugins + `asdf install` from `~/.tool-versions` (after `asdf-vm` from AUR) |
-| **autorandr** | Save layouts on this hardware: `autorandr --save laptop` / `--save docked-home`. Map SSID / ethernet names in `~/.config/i3/scripts/monitor-map`. Mod+Shift+o applies. |
+| **displays** | Host-specific, not in git. Login / dock / Super+Shift+o run `~/.screenlayout/<name>.sh` via `monitor-map`. New desk: arandr → Save As `~/.screenlayout/work.sh`, then add that name next to the office SSID in `config/i3/scripts/monitor-map`. Undocked rows can keep the autorandr `laptop` profile. |
 | **Docker** | If installed: enable service, add user to `docker` group |
 | **JetBrains Toolbox** | Optional; `.profile` only adds its PATH if present |
 
