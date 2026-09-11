@@ -8,6 +8,8 @@ Managed with [rcm](https://github.com/thoughtbot/rcm).
 
 See **[docs/reinstall.md](docs/reinstall.md)** for the full Garuda + i3 checklist (packages, fonts, rcup, manual steps).
 
+A client Mac is a parallel workstation, not a port: **[docs/mac.md](docs/mac.md)** (AeroSpace + Raycast + Ghostty, best effort).
+
 Short version:
 
 ```bash
@@ -30,6 +32,8 @@ desk theme review      # keep or skip one at a time (Alt+Shift+F)
 ```
 
 `desk` is the desktop command router (Super+Space). After `rcup`, run `desk help`. Super+Space → **Defaults: apps** sets browser, terminal, files, editor, PDF, and image viewer; Super+Return / Super+B / Super+F8 / Super+F2 open those defaults.
+
+Claude Code and Cursor **prefs** are tracked (`claude/settings.json`, `config/Cursor/User/settings.json`, `cursor/mcp.json`). OAuth, sessions, and `~/.claude.json` stay on the machine.
 
 ## Day-to-day
 

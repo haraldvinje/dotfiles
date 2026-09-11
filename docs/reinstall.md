@@ -113,6 +113,7 @@ Alt+Shift+N opens the catalog (fetch / review / pick). Images stay out of git.
 - SSH / GPG private material
 - Cloud credentials (`~/.aws`, etc.)
 - Browser / Slack / IDE account data
+- Claude / Cursor OAuth, sessions, `~/.claude.json` (prefs and MCP server *commands* are tracked)
 - Host-specific autorandr profiles (re-save per machine)
 
 ## Updating later

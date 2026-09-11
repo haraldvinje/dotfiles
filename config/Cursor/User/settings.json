@@ -1,0 +1,252 @@
+{
+  "vim.vimrc.enable": true,
+  "editor.mouseWheelZoom": true,
+  "keyboard.dispatch": "keyCode",
+  "explorer.compactFolders": false,
+  "workbench.tree.indent": 12,
+  "vim.handleKeys": {
+    "<C-w>": false,
+    "<C-k>": false,
+    "<C-shift+`>": false,
+    "<C-b>": false,
+    "<C-f>": false,
+    "<C-n>": false,
+    "<C-c>": false,
+    "<C-p>": false
+  },
+  "editor.lineNumbers": "relative",
+  "terminal.integrated.profiles.linux": {
+    "bash": {
+      "path": "/bin/bash",
+      "icon": "terminal-bash"
+    },
+    "zsh": {
+      "path": "/bin/zsh",
+      "icon": "terminal-bash"
+    },
+    "fish": {
+      "path": "/bin/fish"
+    },
+    "tmux": {
+      "path": "tmux",
+      "icon": "terminal-tmux"
+    },
+    "pwsh": {
+      "path": "pwsh",
+      "icon": "terminal-powershell"
+    }
+  },
+  "terminal.integrated.defaultProfile.linux": "zsh",
+  "terminal.external.linuxExec": "truecolor",
+  "terminal.integrated.fontFamily": "Hack Nerd Font",
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "biome.enabled": true,
+  "workbench.productIconTheme": "material-product-icons",
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome",
+    "editor.detectIndentation": false,
+    "editor.tabSize": 2
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome",
+    "editor.detectIndentation": false,
+    "editor.tabSize": 2
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome",
+    "editor.detectIndentation": false,
+    "editor.tabSize": 2
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome",
+    "editor.detectIndentation": false,
+    "editor.tabSize": 2
+  },
+  "[terraform]": {
+    "editor.defaultFormatter": "hashicorp.terraform"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "json.schemas": [],
+  "gitlens.hovers.currentLine.over": "line",
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "diffEditor.ignoreTrimWhitespace": false,
+  "editor.linkedEditing": true,
+  "liveServer.settings.donotShowInfoMsg": true,
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+  "material-icon-theme.activeIconPack": "react",
+  "workbench.colorTheme": "Gruvbox Dark Hard",
+  "yaml.customTags": [
+    "!And",
+    "!And sequence",
+    "!If",
+    "!If sequence",
+    "!Not",
+    "!Not sequence",
+    "!Equals",
+    "!Equals sequence",
+    "!Or",
+    "!Or sequence",
+    "!FindInMap",
+    "!FindInMap sequence",
+    "!Base64",
+    "!Join",
+    "!Join sequence",
+    "!Cidr",
+    "!Ref",
+    "!Sub",
+    "!Sub sequence",
+    "!GetAtt",
+    "!GetAZs",
+    "!ImportValue",
+    "!ImportValue sequence",
+    "!Select",
+    "!Select sequence",
+    "!Split",
+    "!Split sequence"
+  ],
+  "redhat.telemetry.enabled": false,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "editor.fontFamily": "'Hack Nerd Font'",
+  "editor.inlineSuggest.enabled": true,
+  "editor.suggest.showMethods": true,
+  "editor.suggest.preview": true,
+  "editor.acceptSuggestionOnEnter": "on",
+  "editor.snippetSuggestions": "bottom",
+  "material-icon-theme.folders.theme": "specific",
+  "editor.formatOnSave": false,
+  "editor.formatOnPaste": false,
+  "editor.formatOnType": false,
+  "remote.SSH.defaultExtensions": [
+    "gitpod.gitpod-remote-ssh"
+  ],
+  "search.exclude": {
+    "**/build": true
+  },
+  "aws.resources.enabledResources": [
+    "AWS::EC2::Host",
+    "AWS::EC2::KeyPair",
+    "AWS::EC2::Subnet",
+    "AWS::EC2::VPC"
+  ],
+  "vim.normalModeKeyBindingsNonRecursive": [
+    {
+      "before": ["u"],
+      "commands": ["undo"]
+    },
+    {
+      "before": ["c-r"],
+      "commands": ["redo"]
+    },
+    {
+      "before": ["<C-i>"],
+      "commands": ["interactiveEditor.start"]
+    }
+  ],
+  "vim.visualModeKeyBindingsNonRecursive": [
+    {
+      "before": ["<C-i>"],
+      "commands": ["interactiveEditor.start"]
+    }
+  ],
+  "githubPullRequests.pullBranch": "never",
+  "[python]": {
+    "editor.formatOnType": true
+  },
+  "editor.minimap.enabled": false,
+  "git.defaultBranchName": "master",
+  "workbench.editor.tabSizingFixedMaxWidth": 160,
+  "workbench.editor.tabSizing": "fixed",
+  "[dart]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.rulers": [80],
+    "editor.selectionHighlight": false,
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "editor.suggestSelection": "first",
+    "editor.tabCompletion": "onlySnippets",
+    "editor.wordBasedSuggestions": "off"
+  },
+  "editor.wordWrap": "on",
+  "gitlens.views.scm.grouped.views": {
+    "commits": true,
+    "branches": true,
+    "remotes": true,
+    "stashes": true,
+    "tags": true,
+    "worktrees": true,
+    "contributors": true,
+    "repositories": false,
+    "searchAndCompare": true,
+    "launchpad": false
+  },
+  "kotlin.languageServer.enabled": false,
+  "kotlin.debugAdapter.enabled": false,
+  "database-client.autoSync": true,
+  "http.experimental.systemCertificatesV2": true,
+  "window.menuBarVisibility": "classic",
+  "vim.neovimPath": "/usr/bin/nvim",
+  "github.copilot.editor.enableAutoCompletions": true,
+  "docker.extension.enableComposeLanguageServer": false,
+  "chat.instructionsFilesLocations": {
+    ".github/instructions": true,
+    ".claude/rules": true,
+    "~/.copilot/instructions": true,
+    "~/.claude/rules": true,
+    ".github/copilot-instructions.md": true
+  },
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "python.analysis.typeCheckingMode": "basic",
+  "chat.mcp.autostart": "newAndOutdated",
+  "files.trimTrailingWhitespace": true,
+  "[dockercompose]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.autoIndent": "advanced",
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": false,
+      "strings": true
+    },
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "files.autoSave": "afterDelay",
+  "aws.cloudformation.telemetry.enabled": true,
+  "claudeCode.preferredLocation": "sidebar",
+  "workbench.iconTheme": "material-icon-theme",
+  "editor.defaultFormatter": "biomejs.biome",
+  "json.schemaDownload.trustedDomains": {
+    "https://schemastore.azurewebsites.net/": true,
+    "https://raw.githubusercontent.com/": true,
+    "https://www.schemastore.org/": true,
+    "https://json.schemastore.org/": true,
+    "https://json-schema.org/": true,
+    "https://biomejs.dev": true
+  },
+  "chat.mcp.gallery.enabled": true,
+  "claudeCode.allowDangerouslySkipPermissions": true,
+  "claudeCode.initialPermissionMode": "bypassPermissions",
+  "java.gradle.buildServer.enabled": "off",
+  "yaml.disableSchemaDetection": [
+    "**/.github/workflows/*.yml",
+    "**/.github/workflows/*.yaml",
+    "**/.gitea/workflows/*.yml",
+    "**/.gitea/workflows/*.yaml",
+    "**/.forgejo/workflows/*.yml",
+    "**/.forgejo/workflows/*.yaml"
+  ]
+}
