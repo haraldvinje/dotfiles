@@ -33,3 +33,4 @@ zbar
 flameshot
 python-pywal
 python-requests
+variety

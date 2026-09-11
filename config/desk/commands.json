@@ -13,6 +13,7 @@
   {"id": "display", "label": "Display: layouts", "keywords": "autorandr monitor screen", "run": "display"},
   {"id": "power", "label": "Power", "keywords": "lock logout suspend reboot shutdown", "run": "power"},
   {"id": "theme", "label": "Theme: wallpaper", "keywords": "wal feh background colors", "run": "theme pick"},
+  {"id": "theme-catalog", "label": "Theme: catalog", "keywords": "wallpaper fetch wallhaven download skip keep", "run": "theme catalog"},
   {"id": "ocr", "label": "Capture: OCR to clipboard", "keywords": "tesseract text screenshot", "run": "capture ocr"},
   {"id": "qr", "label": "Capture: QR to clipboard", "keywords": "zbar otp qrcode", "run": "capture qr"},
   {"id": "annotate", "label": "Capture: annotate", "keywords": "flameshot screenshot edit", "run": "capture annotate"},
@@ -23,6 +24,7 @@
   {"id": "update", "label": "Update system", "keywords": "full-update garuda pacman asdf", "run": "update"},
   {"id": "agent", "label": "AI: agents", "keywords": "claude grok cursor pi opencode t3 codex antigravity agy copilot crush", "run": "agent pick"},
   {"id": "agent-default", "label": "AI: default agent", "keywords": "coding agent launch", "run": "agent default"},
+  {"id": "defaults", "label": "Defaults: apps", "keywords": "xdg mime browser terminal editor files pdf images", "run": "default"},
   {"id": "pkg", "label": "Install: package", "keywords": "pacman paru aur fzf pkg add", "run": "pkg install"},
   {"id": "pkg-remove", "label": "Remove: package", "keywords": "uninstall drop pacman", "run": "pkg remove"}
 ]

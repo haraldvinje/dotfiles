@@ -87,6 +87,7 @@ list_commands() {
     '{"label":"Theme: wallpaper","run":"theme pick"}' \
     '{"label":"Keybindings","run":"keys"}' \
     '{"label":"AI: agents","run":"agent pick"}' \
+    '{"label":"Defaults: apps","run":"default"}' \
     '{"label":"Install: package","run":"pkg install"}' \
     '{"label":"Remove: package","run":"pkg remove"}'
 }
@@ -405,11 +406,191 @@ desk_theme() {
       fi
       desk_theme apply
       ;;
+    catalog|variety)
+      desk_theme_catalog
+      ;;
+    fetch) desk_theme_fetch "${2:-8}" ;;
+    review) desk_theme_review ;;
+    next) desk_variety next ;;
+    prev|previous) desk_variety prev ;;
+    keep|favorite) desk_variety keep ;;
+    skip|trash) desk_variety skip ;;
+    prefs) desk_variety prefs ;;
+    recolor|sync)
+      if have variety && pgrep -x variety >/dev/null; then
+        _desk_variety_apply_current
+      else
+        desk_theme apply
+      fi
+      ;;
     *)
-      echo "usage: desk theme ensure|apply|pick" >&2
+      echo "usage: desk theme ensure|apply|pick|catalog|fetch|review|next|prev|keep|skip|prefs" >&2
       return 1
       ;;
   esac
+}
+
+_desk_variety_ensure() {
+  need variety || { notify "Theme" "Install variety: pacman -S variety"; return 1; }
+  mkdir -p "$WALLDIR"
+  if ! pgrep -x variety >/dev/null; then
+    variety >/dev/null 2>&1 &
+    local i
+    for i in $(seq 1 40); do
+      pgrep -x variety >/dev/null && break
+      sleep 0.15
+    done
+    sleep 0.8
+  fi
+  pgrep -x variety >/dev/null || { notify "Theme" "Variety did not start"; return 1; }
+}
+
+_desk_variety_current_image() {
+  local img
+  img="$(variety --get 2>/dev/null || true)"
+  if [ -z "$img" ] && [ -r "$HOME/.config/variety/wallpaper/wallpaper.jpg.txt" ]; then
+    img="$(tr -d '\n' <"$HOME/.config/variety/wallpaper/wallpaper.jpg.txt")"
+  fi
+  [ -n "$img" ] && [ -f "$img" ] && printf '%s\n' "$img"
+}
+
+_desk_variety_apply_current() {
+  local img
+  img="$(_desk_variety_current_image)" || return 0
+  [ -n "$img" ] || return 0
+  if have wal; then
+    wal -n -i "$img" >/dev/null
+  fi
+  desk_theme apply
+}
+
+desk_variety() {
+  local sub="${1:-next}"
+  _desk_variety_ensure || return 1
+  case "$sub" in
+    next)
+      variety -n >/dev/null
+      sleep 0.4
+      _desk_variety_apply_current
+      ;;
+    prev|previous)
+      variety -p >/dev/null
+      sleep 0.4
+      _desk_variety_apply_current
+      ;;
+    keep|favorite)
+      variety -f >/dev/null
+      notify -u low "Theme" "Kept in $WALLDIR"
+      ;;
+    skip|trash)
+      variety -t >/dev/null
+      sleep 0.4
+      _desk_variety_apply_current
+      notify -u low "Theme" "Skipped"
+      ;;
+    prefs|preferences)
+      variety --preferences >/dev/null 2>&1 &
+      ;;
+    *)
+      echo "usage: desk theme next|prev|keep|skip|prefs" >&2
+      return 1
+      ;;
+  esac
+}
+
+desk_theme_catalog() {
+  local choice
+  choice="$(printf '%s\n' \
+    "Fetch 8 into Wallpapers" \
+    "Review (keep / skip)" \
+    "Pick from library" \
+    | rofi_dmenu "Wallpapers")" || return 0
+  case "$choice" in
+    "Fetch 8 into Wallpapers") desk_theme_fetch 8 ;;
+    "Review (keep / skip)") desk_theme_review ;;
+    "Pick from library") desk_theme pick ;;
+  esac
+}
+
+_desk_wallhaven_hits() {
+  curl -fsS -A "desk-wallpapers" --max-time 20 \
+    "https://wallhaven.cc/api/v1/search?sorting=random&purity=100&categories=100&atleast=1920x1080&ratios=16x9,16x10,21x9"
+}
+
+_desk_wallhaven_save() {
+  local id="$1" url="$2" dest ext
+  ext="${url##*.}"
+  ext="${ext%%\?*}"
+  [ -n "$ext" ] || ext="jpg"
+  dest="$WALLDIR/wallhaven-${id}.${ext}"
+  [ ! -e "$dest" ] || return 1
+  if curl -fsS -A "desk-wallpapers" --max-time 60 -o "$dest.tmp" "$url" && [ -s "$dest.tmp" ]; then
+    mv "$dest.tmp" "$dest"
+    printf '%s\n' "$dest"
+    return 0
+  fi
+  rm -f "$dest.tmp"
+  return 1
+}
+
+_desk_wallhaven_next_new() {
+  local tries="${1:-4}" json id url dest t
+  for t in $(seq 1 "$tries"); do
+    json="$(_desk_wallhaven_hits)" || return 1
+    while IFS=$'\t' read -r id url; do
+      [ -n "$id" ] || continue
+      dest="$(_desk_wallhaven_save "$id" "$url")" || continue
+      printf '%s\n' "$dest"
+      return 0
+    done < <(printf '%s' "$json" | jq -r '.data[]? | [.id, .path] | @tsv')
+  done
+  return 1
+}
+
+desk_theme_fetch() {
+  local n="${1:-8}" got=0 dest json id url tries=0
+  need jq || return 1
+  need curl || return 1
+  mkdir -p "$WALLDIR"
+  notify -u low "Theme" "Fetching $n wallpapers…"
+  while [ "$got" -lt "$n" ] && [ "$tries" -lt 5 ]; do
+    tries=$((tries + 1))
+    json="$(_desk_wallhaven_hits)" || break
+    while IFS=$'\t' read -r id url; do
+      [ -n "$id" ] || continue
+      [ "$got" -ge "$n" ] && break
+      dest="$(_desk_wallhaven_save "$id" "$url")" || continue
+      got=$((got + 1))
+    done < <(printf '%s' "$json" | jq -r '.data[]? | [.id, .path] | @tsv')
+  done
+  if [ "$got" -eq 0 ]; then
+    notify "Theme" "No new wallpapers (Wallhaven empty or all already saved)"
+    return 1
+  fi
+  notify -u low "Theme" "Added $got to $WALLDIR"
+}
+
+desk_theme_review() {
+  local dest choice
+  need jq || return 1
+  need curl || return 1
+  mkdir -p "$WALLDIR"
+  while true; do
+    dest="$(_desk_wallhaven_next_new 6)" || { notify "Theme" "Could not download a wallpaper"; return 1; }
+    feh --no-fehbg --bg-fill "$dest" || true
+    choice="$(printf '%s\n' "Keep" "Skip" "Done" | rofi_dmenu "Wallpaper")" || choice="Done"
+    case "$choice" in
+      Keep)
+        notify -u low "Theme" "Kept $(basename "$dest")"
+        ;;
+      Skip)
+        rm -f "$dest"
+        ;;
+      *)
+        return 0
+        ;;
+    esac
+  done
 }
 
 # --- control panels ---------------------------------------------------------
@@ -502,21 +683,73 @@ desk_audio() {
   esac
 }
 
+_desk_audio_sinks() {
+  local json
+  if have jq && json="$(pactl -f json list sinks 2>/dev/null)" && [ -n "$json" ]; then
+    printf '%s\n' "$json" | jq -r '.[] | select(.name != null) | "\(.name)\t\(.description // .name)"'
+    return 0
+  fi
+  pactl list sinks 2>/dev/null | awk '
+    /^Sink / { if (n != "") print n "\t" (d == "" ? n : d); n = ""; d = "" }
+    $1 == "Name:" { n = $2 }
+    $1 == "Description:" { sub(/^[[:space:]]*Description:[[:space:]]*/, ""); d = $0 }
+    END { if (n != "") print n "\t" (d == "" ? n : d) }
+  '
+}
+
+_desk_audio_use_sink() {
+  local sink="$1" id
+  pactl set-default-sink "$sink"
+  while IFS= read -r id; do
+    [ -n "$id" ] || continue
+    pactl move-sink-input "$id" "$sink" 2>/dev/null || true
+  done < <(pactl list short sink-inputs 2>/dev/null | awk '{print $1}')
+}
+
 desk_audio_rofi() {
   need pactl || return 1
-  local default lines choice sink
+  local default muted vol prompt lines choice sink name desc mark
   default="$(pactl get-default-sink 2>/dev/null || true)"
-  lines="$(
-    pactl list short sinks | awk -v def="$default" '{
-      mark = ($2 == def) ? "● " : "  "
-      print mark $2
-    }'
-  )"
-  choice="$(printf '%s\n' "$lines" | rofi_dmenu "Audio output")" || return 0
+  muted="$(pactl get-sink-mute @DEFAULT_SINK@ 2>/dev/null || true)"
+  vol="$(pactl get-sink-volume @DEFAULT_SINK@ 2>/dev/null | grep -oE '[0-9]+%' | head -n1)"
+  if printf '%s' "$muted" | grep -q yes; then
+    prompt="Audio  muted"
+    lines="Unmute"$'\n'
+  else
+    prompt="Audio  ${vol:-?}"
+    lines="Mute"$'\n'
+  fi
+  while IFS=$'\t' read -r name desc; do
+    [ -n "$name" ] || continue
+    [ -n "$desc" ] || desc="$name"
+    if [ "$name" = "$default" ]; then
+      mark="● "
+    else
+      mark="  "
+    fi
+    lines+="${mark}${desc}"$'\n'
+  done < <(_desk_audio_sinks)
+  choice="$(printf '%s' "$lines" | awk 'NF' | rofi_dmenu "$prompt")" || return 0
   [ -n "$choice" ] || return 0
-  sink="$(printf '%s' "$choice" | sed -E 's/^[● ]+//')"
-  pactl set-default-sink "$sink"
-  notify -u low "Audio" "Output: $sink"
+  case "$choice" in
+    Mute|Unmute)
+      pactl set-sink-mute @DEFAULT_SINK@ toggle
+      return 0
+      ;;
+  esac
+  choice="${choice#"${choice%%[![:space:]]*}"}"
+  choice="${choice#● }"
+  choice="${choice#"${choice%%[![:space:]]*}"}"
+  while IFS=$'\t' read -r name desc; do
+    [ -n "$desc" ] || desc="$name"
+    if [ "$choice" = "$desc" ]; then
+      sink="$name"
+      break
+    fi
+  done < <(_desk_audio_sinks)
+  [ -n "${sink:-}" ] || return 0
+  _desk_audio_use_sink "$sink"
+  notify -u low "Audio" "Output: $choice"
 }
 
 desk_cava() {
@@ -1108,6 +1341,248 @@ desk_agent() {
   esac
 }
 
+# --- default apps -----------------------------------------------------------
+
+_desk_default_primary_mime() {
+  case "$1" in
+    browser) echo "x-scheme-handler/https" ;;
+    terminal) echo "x-scheme-handler/terminal" ;;
+    files) echo "inode/directory" ;;
+    editor) echo "text/plain" ;;
+    pdf) echo "application/pdf" ;;
+    images) echo "image/jpeg" ;;
+    *) return 1 ;;
+  esac
+}
+
+_desk_default_mimes() {
+  case "$1" in
+    browser) echo "text/html application/xhtml+xml x-scheme-handler/http x-scheme-handler/https x-scheme-handler/about x-scheme-handler/unknown" ;;
+    terminal) echo "x-scheme-handler/terminal application/x-terminal-emulator" ;;
+    files) echo "inode/directory" ;;
+    editor) echo "text/plain" ;;
+    pdf) echo "application/pdf" ;;
+    images) echo "image/jpeg image/png image/gif image/webp" ;;
+    *) return 1 ;;
+  esac
+}
+
+_desk_default_helper_key() {
+  case "$1" in
+    browser) echo "WebBrowser" ;;
+    terminal) echo "TerminalEmulator" ;;
+    files) echo "FileManager" ;;
+    *) echo "" ;;
+  esac
+}
+
+_desk_desktop_find() {
+  local id="${1%.desktop}.desktop" dir
+  for dir in \
+    "${XDG_DATA_HOME:-$HOME/.local/share}/applications" \
+    /usr/local/share/applications \
+    /usr/share/applications
+  do
+    if [ -f "$dir/$id" ]; then
+      printf '%s\n' "$dir/$id"
+      return 0
+    fi
+  done
+  return 1
+}
+
+_desk_desktop_name() {
+  local id="$1" f
+  f="$(_desk_desktop_find "$id")" || { printf '%s\n' "${id%.desktop}"; return 0; }
+  awk -F= '
+    $0 == "[Desktop Entry]" { ine = 1; next }
+    ine && /^\[/ { exit }
+    ine && $1 == "Name" { print substr($0, index($0, "=") + 1); exit }
+  ' "$f"
+}
+
+_desk_default_current() {
+  local role="$1" mime id
+  mime="$(_desk_default_primary_mime "$role")" || return 1
+  if [ "$role" = "browser" ] && have xdg-settings; then
+    id="$(xdg-settings get default-web-browser 2>/dev/null || true)"
+  fi
+  if [ -z "${id:-}" ]; then
+    id="$(xdg-mime query default "$mime" 2>/dev/null || true)"
+  fi
+  printf '%s\n' "$id"
+}
+
+_desk_default_list() {
+  local role="$1"
+  python3 - "$role" <<'PY'
+import os, sys
+from pathlib import Path
+
+role = sys.argv[1]
+mimes = {
+    "browser": ["x-scheme-handler/http", "x-scheme-handler/https"],
+    "terminal": ["x-scheme-handler/terminal", "application/x-terminal-emulator"],
+    "files": ["inode/directory"],
+    "editor": ["text/plain"],
+    "pdf": ["application/pdf"],
+    "images": ["image/jpeg", "image/png", "image/gif", "image/webp"],
+}[role]
+cats = {
+    "browser": ["WebBrowser"],
+    "terminal": ["TerminalEmulator"],
+    "files": ["FileManager"],
+    "editor": ["TextEditor"],
+    "pdf": [],
+    "images": [],
+}[role]
+
+def desktop_dirs():
+    out = []
+    home = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local/share"))
+    out.append(home / "applications")
+    for raw in os.environ.get("XDG_DATA_DIRS", "/usr/local/share:/usr/share").split(":"):
+        if raw:
+            out.append(Path(raw) / "applications")
+    return [d for d in out if d.is_dir()]
+
+def parse(path: Path):
+    fields = {}
+    in_entry = False
+    try:
+        text = path.read_text(errors="replace")
+    except OSError:
+        return fields
+    for line in text.splitlines():
+        if line.strip() == "[Desktop Entry]":
+            in_entry = True
+            continue
+        if in_entry and line.startswith("[") and line.endswith("]"):
+            break
+        if in_entry and "=" in line and not line.startswith("#"):
+            key, _, val = line.partition("=")
+            if key not in fields:
+                fields[key] = val
+    return fields
+
+seen = set()
+rows = []
+for d in desktop_dirs():
+    for path in sorted(d.glob("*.desktop")):
+        name = path.name
+        if name in seen:
+            continue
+        seen.add(name)
+        if name.endswith("-settings.desktop") or "bulk-rename" in name:
+            continue
+        f = parse(path)
+        if f.get("Type", "Application") != "Application":
+            continue
+        if f.get("NoDisplay", "").lower() == "true":
+            continue
+        if f.get("Hidden", "").lower() == "true":
+            continue
+        mime = [m for m in f.get("MimeType", "").split(";") if m]
+        cat = [c for c in f.get("Categories", "").split(";") if c]
+        if not (set(mime) & set(mimes) or set(cat) & set(cats)):
+            continue
+        label = f.get("Name") or name.removesuffix(".desktop")
+        rows.append((label.lower(), label, name))
+
+for _, label, name in sorted(rows):
+    print(f"{name}\t{label}")
+PY
+}
+
+_desk_default_set_helper() {
+  local key="$1" val="${2%.desktop}"
+  local f="${XDG_CONFIG_HOME:-$HOME/.config}/xfce4/helpers.rc"
+  [ -n "$key" ] || return 0
+  mkdir -p "$(dirname "$f")"
+  touch "$f"
+  if grep -q "^${key}=" "$f"; then
+    sed -i "s|^${key}=.*|${key}=${val}|" "$f"
+  else
+    printf '%s=%s\n' "$key" "$val" >>"$f"
+  fi
+}
+
+_desk_default_apply() {
+  local role="$1" id="${2%.desktop}.desktop" mime helper
+  _desk_desktop_find "$id" >/dev/null || { notify "Defaults" "No desktop file: $id"; return 1; }
+  for mime in $(_desk_default_mimes "$role"); do
+    xdg-mime default "$id" "$mime" || true
+  done
+  if [ "$role" = "browser" ] && have xdg-settings; then
+    xdg-settings set default-web-browser "$id" 2>/dev/null || true
+  fi
+  helper="$(_desk_default_helper_key "$role")"
+  if [ -n "$helper" ]; then
+    _desk_default_set_helper "$helper" "$id"
+  fi
+  notify -u low "Defaults" "${role^} → $(_desk_desktop_name "$id")"
+}
+
+desk_default() {
+  local role="${1:-}" id current name mark choice line
+  if [ -z "$role" ]; then
+    local rows=""
+    for role in browser terminal files editor pdf images; do
+      current="$(_desk_default_current "$role")"
+      name="$( [ -n "$current" ] && _desk_desktop_name "$current" )"
+      if [ -n "$name" ]; then
+        rows+="${role^}  ($name)"$'\n'
+      else
+        rows+="${role^}"$'\n'
+      fi
+    done
+    choice="$(printf '%s' "$rows" | rofi_dmenu "Defaults")" || return 0
+    [ -n "$choice" ] || return 0
+    role="$(printf '%s' "$choice" | awk '{print tolower($1)}')"
+  fi
+  _desk_default_primary_mime "$role" >/dev/null || {
+    echo "usage: desk default [browser|terminal|files|editor|pdf|images]" >&2
+    return 1
+  }
+  current="$(_desk_default_current "$role")"
+  local lines=""
+  while IFS=$'\t' read -r id name; do
+    [ -n "$id" ] || continue
+    [ -n "$name" ] || name="$id"
+    if [ "$id" = "$current" ]; then
+      mark="● "
+    else
+      mark="  "
+    fi
+    lines+="${mark}${name}"$'\t'"${id}"$'\n'
+  done < <(_desk_default_list "$role")
+  [ -n "$lines" ] || { notify "Defaults" "No apps found for $role"; return 1; }
+  choice="$(printf '%s' "$lines" | rofi_dmenu "Default $role")" || return 0
+  [ -n "$choice" ] || return 0
+  id="$(printf '%s' "$choice" | awk -F'\t' '{print $NF}')"
+  [ -n "$id" ] || return 1
+  _desk_default_apply "$role" "$id"
+}
+
+desk_open() {
+  local role="${1:-}" id f
+  _desk_default_primary_mime "$role" >/dev/null || {
+    echo "usage: desk open browser|terminal|files|editor|pdf|images" >&2
+    return 1
+  }
+  id="$(_desk_default_current "$role")"
+  [ -n "$id" ] || { notify "desk" "No default $role set"; return 1; }
+  f="$(_desk_desktop_find "$id")" || { notify "desk" "Missing $id"; return 1; }
+  if have gtk-launch; then
+    gtk-launch "${id%.desktop}" >/dev/null 2>&1 &
+  elif have gio; then
+    gio launch "$f" >/dev/null 2>&1 &
+  else
+    notify "desk" "Need gtk-launch to open $role"
+    return 1
+  fi
+}
+
 desk_help() {
   cat <<'EOF'
 desk <verb> [args]
@@ -1118,7 +1593,7 @@ desk <verb> [args]
   clipboard         Clipboard history
   notify            replay | replay-many | dnd-toggle | status
   capture           ocr | qr | annotate | region | full | window
-  theme             ensure | apply | pick
+  theme             ensure | apply | pick | catalog | fetch | review
   wifi              tui | rofi | gui   (wifitui, else the old list)
   audio             tui | rofi | gui   (wiremix, else sink list)
   cava              Toggle visualizer
@@ -1133,6 +1608,8 @@ desk <verb> [args]
   update            full-update in a terminal
   pkg               install | remove   (official + AUR, fzf)
   agent             pick | default | set [id] | <id>
+  default           [browser|terminal|files|editor|pdf|images]
+  open              browser|terminal|files|editor|pdf|images
   help              This list
 EOF
 }
@@ -1149,7 +1626,7 @@ main() {
     clipboard|clip) desk_clipboard ;;
     notify) desk_notify "${1:-status}" ;;
     capture) desk_capture "${1:-}" ;;
-    theme) desk_theme "${1:-ensure}" ;;
+    theme) desk_theme "${@:-ensure}" ;;
     wifi|network) desk_wifi "${1:-}" ;;
     audio) desk_audio "${1:-}" ;;
     cava|visualizer) desk_cava ;;
@@ -1166,6 +1643,8 @@ main() {
     pkg-tui) desk_pkg_tui "${1:-install}" ;;
     pkg-preview) desk_pkg_preview "${1:-}" ;;
     agent) desk_agent "$@" ;;
+    default|defaults) desk_default "${1:-}" ;;
+    open) desk_open "${1:-}" ;;
     help|-h|--help) desk_help ;;
     *)
       echo "desk: unknown command '$cmd'" >&2

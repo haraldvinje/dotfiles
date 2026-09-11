@@ -1,6 +1,6 @@
 # Garuda Linux + i3 — reinstall checklist
 
-Target: **Garuda** with the **i3** session. Bring your own wallpapers.
+Target: **Garuda** with the **i3** session. Wallpapers stay local (`~/Pictures/Wallpapers/`).
 
 Do **not** put secrets in this repo (SSH private keys, GPG private keys, AWS creds, `.env`, browser profiles, tokens).
 
@@ -73,18 +73,20 @@ Optional after Chrome/Terminator are installed:
 
 ```bash
 xdg-settings set default-web-browser google-chrome.desktop
+# or: Super+Space → Defaults: apps
 ```
 
-## 6. Wallpapers (bring your own)
+## 6. Wallpapers
 
-Put images in:
+Login uses `feh --randomize` on `~/Pictures/Wallpapers/`. Seed it however you like:
 
 ```bash
 mkdir -p ~/Pictures/Wallpapers
-# copy your wallpapers here
+desk theme fetch 8    # SFW Wallhaven landscapes
+# or copy your own files here
 ```
 
-i3/feh expect that directory.
+Alt+Shift+N opens the catalog (fetch / review / pick). Images stay out of git.
 
 ## 7. Manual / once-per-machine
 

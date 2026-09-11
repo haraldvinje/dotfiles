@@ -21,9 +21,15 @@ rcup -v -d ~/.dotfiles
 chsh -s /bin/zsh
 ```
 
-Bring your own wallpapers into `~/Pictures/Wallpapers/`.
+Wallpapers live in `~/Pictures/Wallpapers/` (not in git). Login randomizes with `feh`. Grow the folder from Wallhaven (SFW landscapes, 1920×1080+):
 
-`desk` is the desktop command router (Super+Space). After `rcup`, run `desk help`.
+```bash
+desk theme fetch 8     # download into the library
+desk theme catalog     # fetch / review / pick   (Alt+Shift+N)
+desk theme review      # keep or skip one at a time (Alt+Shift+F)
+```
+
+`desk` is the desktop command router (Super+Space). After `rcup`, run `desk help`. Super+Space → **Defaults: apps** sets browser, terminal, files, editor, PDF, and image viewer; Super+Return / Super+B / Super+F8 / Super+F2 open those defaults.
 
 ## Day-to-day
 
