@@ -1,11 +1,4 @@
 {
-  "enabledPlugins": {
-    "vercel@claude-plugins-official": true,
-    "mattpocock-skills@claude-plugins-official": true
-  },
-  "tui": "fullscreen",
-  "theme": "dark",
-  "editorMode": "vim",
   "permissions": {
     "deny": [
       "Read(**/.env)",
@@ -59,5 +52,13 @@
       "Read(**/.env.*)",
       "Grep(**/.env.*)"
     ]
-  }
+  },
+  "enabledPlugins": {
+    "vercel@claude-plugins-official": true,
+    "mattpocock-skills@claude-plugins-official": true,
+    "plugin-name@marketplace-name": true
+  },
+  "tui": "fullscreen",
+  "theme": "dark",
+  "editorMode": "vim"
 }
