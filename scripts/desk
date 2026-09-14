@@ -378,6 +378,56 @@ reload_theme_consumers() {
   fi
 }
 
+_desk_wallpaper_files() {
+  [ -d "$WALLDIR" ] || return 1
+  find "$WALLDIR" -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \)
+}
+
+_desk_theme_from_image() {
+  local img="$1"
+  [ -n "$img" ] && [ -f "$img" ] || return 1
+  if have wal; then
+    wal -n -i "$img" >/dev/null
+  fi
+  desk_theme apply
+}
+
+desk_theme_randomize() {
+  local files=() f n i primary theme_img
+  local outputs=() args=()
+
+  [ -d "$WALLDIR" ] || { notify "Theme" "No $WALLDIR"; return 1; }
+  while IFS= read -r f; do
+    [ -n "$f" ] || continue
+    files+=("$f")
+  done < <(_desk_wallpaper_files | shuf 2>/dev/null || _desk_wallpaper_files | sort -R)
+  [ "${#files[@]}" -gt 0 ] || { notify "Theme" "No images in $WALLDIR"; return 1; }
+
+  while IFS= read -r f; do
+    [ -n "$f" ] || continue
+    outputs+=("$f")
+  done < <(xrandr --query | awk '$2 == "connected" { print $1 }')
+  n="${#outputs[@]}"
+  [ "$n" -gt 0 ] || n=1
+
+  for i in $(seq 0 $((n - 1))); do
+    args+=("${files[$((i % ${#files[@]}))]}")
+  done
+  feh --no-fehbg --bg-fill "${args[@]}" || true
+
+  primary="$(xrandr --query | awk '$2 == "connected" && / primary / { print $1; exit }')"
+  theme_img="${args[0]}"
+  if [ -n "$primary" ]; then
+    for i in "${!outputs[@]}"; do
+      if [ "${outputs[$i]}" = "$primary" ]; then
+        theme_img="${args[$i]}"
+        break
+      fi
+    done
+  fi
+  _desk_theme_from_image "$theme_img"
+}
+
 desk_theme() {
   local sub="${1:-ensure}"
   case "$sub" in
@@ -398,13 +448,13 @@ desk_theme() {
       need rofi || return 1
       [ -d "$WALLDIR" ] || { notify "Theme" "No $WALLDIR"; return 1; }
       local pick
-      pick="$(find "$WALLDIR" -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) | sort | rofi_dmenu "Wallpaper")" || return 0
+      pick="$(_desk_wallpaper_files | sort | rofi_dmenu "Wallpaper")" || return 0
       [ -n "$pick" ] || return 0
       feh --no-fehbg --bg-fill "$pick" || true
-      if have wal; then
-        wal -n -i "$pick" >/dev/null
-      fi
-      desk_theme apply
+      _desk_theme_from_image "$pick"
+      ;;
+    randomize|random)
+      desk_theme_randomize
       ;;
     catalog|variety)
       desk_theme_catalog
@@ -424,7 +474,7 @@ desk_theme() {
       fi
       ;;
     *)
-      echo "usage: desk theme ensure|apply|pick|catalog|fetch|review|next|prev|keep|skip|prefs" >&2
+      echo "usage: desk theme ensure|apply|pick|randomize|catalog|fetch|review|next|prev|keep|skip|prefs" >&2
       return 1
       ;;
   esac
@@ -1593,7 +1643,7 @@ desk <verb> [args]
   clipboard         Clipboard history
   notify            replay | replay-many | dnd-toggle | status
   capture           ocr | qr | annotate | region | full | window
-  theme             ensure | apply | pick | catalog | fetch | review
+  theme             ensure | apply | pick | randomize | catalog | fetch | review
   wifi              tui | rofi | gui   (wifitui, else the old list)
   audio             tui | rofi | gui   (wiremix, else sink list)
   cava              Toggle visualizer

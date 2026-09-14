@@ -94,6 +94,10 @@ fi
 # Give X/i3 a moment to settle output geometry before bars.
 sleep 0.5
 
-# Sticky workspaces: do not remap/move existing ones.
-feh --no-fehbg --bg-fill --randomize "$HOME/Pictures/Wallpapers/" || true
-"$HOME/.config/polybar/launch.sh" || true
+# Random wallpapers, wal from the primary's image, then polybar/rofi colors.
+if [ -x "$HOME/.scripts/desk" ]; then
+  "$HOME/.scripts/desk" theme randomize || true
+else
+  feh --no-fehbg --bg-fill --randomize "$HOME/Pictures/Wallpapers/" || true
+  "$HOME/.config/polybar/launch.sh" || true
+fi
