@@ -53,10 +53,14 @@
       "Grep(**/.env.*)"
     ]
   },
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
   "enabledPlugins": {
     "vercel@claude-plugins-official": true,
-    "mattpocock-skills@claude-plugins-official": true,
-    "plugin-name@marketplace-name": true
+    "mattpocock-skills@claude-plugins-official": true
   },
   "tui": "fullscreen",
   "theme": "dark",
