@@ -3,7 +3,7 @@ terraform 1.17.1
 opentofu 1.13.2
 nodejs 26.13.0
 uv 0.13.6
-pnpm 12.16.1
+pnpm 12.17.0
 bun 1.4.4
 java openjdk-27.0.1.0.3
 yarn 1.22.22
