@@ -359,10 +359,17 @@ zstyle ':completion:*' special-dirs false
 zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'lsd -1 --color=always -- $realpath 2>/dev/null || ls -1 -- $realpath'
 
+# fzf-tab: fzf-tab-git (aur.txt) or plain fzf-tab; skip quietly if neither.
+_fzf_tab_path=
+for _f in /usr/share/zsh/plugins/fzf-tab{-git,}/fzf-tab.zsh; do
+  [[ -r $_f ]] && { _fzf_tab_path=$_f; break; }
+done
+unset _f
+
 zvm_after_init_commands+=('[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh;
-    source /usr/share/fzf/completion.zsh;
-    source /usr/share/fzf/key-bindings.zsh;
-    source /usr/share/zsh/plugins/fzf-tab-git/fzf-tab.zsh')
+    [ -r /usr/share/fzf/completion.zsh ] && source /usr/share/fzf/completion.zsh;
+    [ -r /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh;
+    [ -n "$_fzf_tab_path" ] && source "$_fzf_tab_path"')
 
 fzf_cd() {
   local dir
@@ -428,6 +435,6 @@ fi
 unset _zcompdump_path
 
 # fzf-tab needs compinit first; re-sourced in zvm_after_init for vi-mode Tab.
-if (( ! $+functions[_fzf_tab_complete] )); then
-  source /usr/share/zsh/plugins/fzf-tab-git/fzf-tab.zsh
+if [[ -n $_fzf_tab_path ]] && (( ! $+functions[_fzf_tab_complete] )); then
+  source "$_fzf_tab_path"
 fi
