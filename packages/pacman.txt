@@ -39,3 +39,4 @@ mupdf
 bluetui
 wiremix
 cava
+lxappearance

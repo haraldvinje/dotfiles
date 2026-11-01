@@ -10,3 +10,6 @@ qogir-icon-theme-git
 kvantum-theme-qogir-git
 rofi-greenclip
 wifitui-bin
+papirus-folders
+snapd
+unifetch
