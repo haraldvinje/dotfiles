@@ -255,3 +255,4 @@ xsel
 xz
 yad
 zip
+python-requests

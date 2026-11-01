@@ -31,7 +31,6 @@ tesseract-data-eng
 zbar
 flameshot
 python-pywal
-python-requests
 variety
 fd
 sxiv
