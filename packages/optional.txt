@@ -12,4 +12,33 @@ brave-bin
 discord
 slack-desktop
 jetbrains-toolbox
-aws-cli-v2
+aws-cli-bin
+aws-session-manager-plugin
+firefox
+chromium
+libreoffice-still
+nautilus
+spotify
+cmatrix
+postgresql
+
+# Kubernetes / cloud
+kubectl
+helm
+k9s
+kind
+google-cloud-cli
+firebase-tools-bin
+vercel
+
+# AI coding agents
+claude-code
+claude-desktop
+openai-codex
+opencode
+cursor-cli
+antigravity-cli
+grok-build
+pi
+nebula-bin
+t3code-bin

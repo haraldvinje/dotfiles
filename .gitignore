@@ -1,0 +1,4 @@
+# Written by `desk theme` into ~/.cache/desk and symlinked into ~/.config.
+# Defaults live in config/desk/theme/default.conf.
+config/polybar/colors.generated.ini
+config/rofi/colors.generated.rasi

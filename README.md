@@ -19,7 +19,7 @@ sudo pacman -S --needed - < ~/.dotfiles/packages/pacman.txt
 paru -S --needed - < ~/.dotfiles/packages/aur.txt
 sudo pacman -S --needed - < ~/.dotfiles/packages/fonts.txt
 # optional: paru -S --needed - < ~/.dotfiles/packages/optional.txt
-rcup -v -d ~/.dotfiles
+RCRC=~/.dotfiles/rcrc rcup -v   # first run; afterwards ~/.rcrc is linked
 chsh -s /bin/zsh
 ```
 
@@ -39,15 +39,33 @@ Claude Code and Cursor **prefs** are tracked (`claude/settings.json`, `config/Cu
 
 ```bash
 mkrc -v ~/.some/config     # start tracking a file
-rcup -v -d ~/.dotfiles     # re-apply links
+rcup -v                    # re-apply links (settings in rcrc)
 ```
 
 ## Package lists
 
 | File | Purpose |
 |------|---------|
-| `packages/pacman.txt` | Official repo delta |
-| `packages/aur.txt` | AUR / Chaotic (paru) |
+| `packages/pacman.txt` | Official repo packages the configs need (beyond stock Garuda i3) |
+| `packages/aur.txt` | AUR / Chaotic packages the configs need (paru) |
 | `packages/fonts.txt` | Nerd / UI fonts |
+| `packages/tools.txt` | CLI tools nothing in the configs calls |
 | `packages/optional.txt` | Chrome, editors, Docker, … |
+| `packages/ignore.txt` | Installed but not reinstalled (Garuda base, one-offs) |
+| `packages/primary` | Which machine may edit the lists |
+
+For the configs to work you need `pacman`, `aur` and `fonts`. The rest is up to you.
+
+Every explicitly installed package should be in exactly one list. `full-update` reports any drift at the end. To fix it:
+
+```bash
+pkgs status    # untracked / missing packages
+pkgs triage    # file each one: [p]acman [a]ur [f]onts [t]ools [o]ptional [i]gnore [s]kip
+```
+
+If you're unsure about a package, press `s` to skip it. Skipped packages come up again next time, so nothing gets filed by guessing.
+
+Only the **primary** machine edits the lists. `packages/primary` holds a hash of its `/etc/machine-id`, so a second laptop with the same hostname still counts as secondary. On a secondary, `pkgs status` shows what's missing there and `pkgs triage` refuses to run. After reinstalling the primary, run `pkgs set-primary` once and commit `packages/primary`.
+
+Bringing an existing machine with old configs up to date: see [docs/reinstall.md → Existing machine](docs/reinstall.md#existing-machine-old-configs).
 

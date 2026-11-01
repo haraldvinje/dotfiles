@@ -1,0 +1,252 @@
+#!/usr/bin/env bash
+# pkgs — keep ~/.dotfiles/packages/*.txt in sync with what is installed.
+#
+# Every explicitly installed package (pacman -Qqe) should appear in exactly one
+# of the lists below. Anything that doesn't is "untracked" and gets triaged.
+#
+#   pacman.txt    official repos, always installed
+#   aur.txt       AUR / Chaotic, always installed
+#   fonts.txt     fonts
+#   tools.txt     CLI tools nothing in the configs calls
+#   optional.txt  heavy / situational apps
+#   ignore.txt    installed on purpose but NOT for a rebuild
+#                 (Garuda base, one-off experiments)
+#
+# Usage:
+#   pkgs            same as `pkgs status`
+#   pkgs status     list untracked and missing packages
+#   pkgs triage     go through each one and file it (asks per package)
+#   pkgs check      one-line summary, exit 1 on drift (used by full-update)
+#   pkgs missing [list…]   listed packages not installed here, e.g.
+#                   pkgs missing pacman fonts | sudo pacman -S --needed -
+#   pkgs set-primary       make this machine the reference (see below)
+#
+# Only the primary machine may change the lists. packages/primary holds an
+# app-specific hash of /etc/machine-id (unique per OS install, so two laptops
+# with the same hostname still differ; the raw id never leaves the machine).
+# On any other machine, status/check/missing are read-only reports and
+# triage refuses unless you pass --force. After reinstalling the primary,
+# run `pkgs set-primary` once and commit packages/primary.
+#
+# Not sure about a package? Press [s]kip in triage. It stays untracked
+# and comes up again next time, so nothing gets filed by guessing.
+set -uo pipefail
+
+DIR="${PKGS_DIR:-$HOME/.dotfiles/packages}"
+LISTS=(pacman aur fonts tools optional ignore)
+WANTED=(pacman aur fonts tools optional)   # everything except ignore
+PRIMARY_FILE="$DIR/primary"
+APP_ID=facc8937-6751-4bf9-b1a0-f6aec673e096   # namespaces the machine-id hash
+
+if [[ -t 1 ]]; then
+  B=$'\e[1m'; D=$'\e[2m'; R=$'\e[0m'; Y=$'\e[33m'; G=$'\e[32m'; C=$'\e[36m'
+else
+  B=; D=; R=; Y=; G=; C=
+fi
+
+# Package names from a list file (no comments, no blank lines).
+names() { grep -hv '^[[:space:]]*#' "$@" 2>/dev/null | awk 'NF{print $1}' | sort -u; }
+
+all_lists() { local l; for l in "${LISTS[@]}"; do echo "$DIR/$l.txt"; done; }
+
+tracked_names() { mapfile -t f < <(all_lists); names "${f[@]}"; }
+
+untracked() { comm -13 <(tracked_names) <(pacman -Qqe | sort); }
+
+# Listed but not installed at all. Args: list names (default: all wanted).
+missing() {
+  local f=() l
+  (( $# )) || set -- "${WANTED[@]}"
+  for l in "$@"; do
+    [[ -r "$DIR/$l.txt" ]] || { echo "pkgs: no list $l.txt" >&2; return 2; }
+    f+=("$DIR/$l.txt")
+  done
+  comm -23 <(names "${f[@]}") <(pacman -Qq | sort)
+}
+
+this_id() {
+  if command -v systemd-id128 >/dev/null 2>&1; then
+    systemd-id128 machine-id --app-specific="$APP_ID"
+  else
+    printf '%s%s' "$APP_ID" "$(cat /etc/machine-id)" | sha256sum | cut -c1-32
+  fi
+}
+
+primary_id()   { awk '!/^[[:space:]]*#/ && NF {print $1; exit}' "$PRIMARY_FILE" 2>/dev/null; }
+primary_name() { awk '!/^[[:space:]]*#/ && NF {print $2; exit}' "$PRIMARY_FILE" 2>/dev/null; }
+is_primary()   { local p; p=$(primary_id); [[ -n "$p" && "$p" == "$(this_id)" ]]; }
+
+# In ignore.txt but no longer installed: safe to prune.
+stale_ignores() { comm -23 <(names "$DIR/ignore.txt") <(pacman -Qq | sort); }
+
+which_list() {
+  local p=$1 l
+  for l in "${LISTS[@]}"; do
+    names "$DIR/$l.txt" | grep -qx -- "$p" && { echo "$l"; return; }
+  done
+}
+
+remove_from() { sed -i "/^[[:space:]]*$(printf '%s' "$1" | sed 's/[.[\*^$/]/\\&/g')[[:space:]]*$/d" "$2"; }
+
+is_foreign() { pacman -Qqm "$1" >/dev/null 2>&1; }
+
+repo_of() { pacman -Sl 2>/dev/null | awk -v p="$1" '$2==p{print $1; exit}'; }
+
+cmd_status_secondary() {
+  local l m
+  echo "${Y}Secondary machine${R} ${D}(primary: $(primary_name)) — lists are read-only here${R}"
+  echo "Listed packages not installed on this machine:"
+  for l in "${WANTED[@]}"; do
+    m=$(missing "$l")
+    printf '  %-14s %s\n' "$l.txt" "$(grep -c . <<<"$m") ${D}$(tr '\n' ' ' <<<"$m" | cut -c1-90)${R}"
+  done
+  echo
+  echo "Install a list with: ${C}pkgs missing pacman | sudo pacman -S --needed -${R}"
+  echo "${D}(use paru instead of sudo pacman for aur/optional)${R}"
+}
+
+cmd_status() {
+  local u m s
+  if [[ ! -r "$PRIMARY_FILE" ]]; then
+    echo "${Y}!${R} no packages/primary yet — run ${C}pkgs set-primary${R} on the reference machine"
+  elif ! is_primary; then
+    cmd_status_secondary; return 0
+  fi
+  u=$(untracked); m=$(missing); s=$(stale_ignores)
+  if [[ -z "$u$m" ]]; then
+    echo "${G}✓${R} packages/ is in sync with the system"
+  fi
+  if [[ -n "$u" ]]; then
+    echo "${B}Untracked${R} ${D}(installed explicitly, in no list)${R}"
+    while read -r p; do
+      local src; src=$(repo_of "$p"); [[ -z "$src" ]] && src=aur
+      printf '  %-32s %s%s%s\n' "$p" "$D" "$src" "$R"
+    done <<<"$u"
+  fi
+  if [[ -n "$m" ]]; then
+    echo "${B}Missing${R} ${D}(listed, not installed — uninstalled or renamed?)${R}"
+    while read -r p; do printf '  %-32s %s%s.txt%s\n' "$p" "$D" "$(which_list "$p")" "$R"; done <<<"$m"
+  fi
+  [[ -n "$s" ]] && echo "${D}$(wc -l <<<"$s") stale entries in ignore.txt (pruned by triage)${R}"
+  [[ -n "$u$m" ]] && echo && echo "Run ${C}pkgs triage${R} to sort them out."
+  return 0
+}
+
+cmd_check() {
+  local nu nm
+  if [[ -r "$PRIMARY_FILE" ]] && ! is_primary; then
+    nm=$(missing pacman aur fonts | grep -c .)
+    echo "secondary machine: $nm packages the configs need are not installed (pkgs status)"
+    return 0
+  fi
+  nu=$(untracked | grep -c .); nm=$(missing | grep -c .)
+  if (( nu + nm == 0 )); then
+    echo "packages/ in sync"
+    return 0
+  fi
+  echo "packages/ drift: $nu untracked, $nm missing — run: pkgs triage"
+  return 1
+}
+
+ask() {  # ask "prompt" -> REPLY (single key)
+  local k
+  read -r -n1 -p "$1" k </dev/tty; echo
+  REPLY=$k
+}
+
+cmd_triage() {
+  local p changed=0
+  if [[ ! -r "$PRIMARY_FILE" ]]; then
+    echo "No packages/primary yet. Run ${C}pkgs set-primary${R} on the reference machine first." >&2
+    return 1
+  fi
+  if ! is_primary && [[ "${1:-}" != --force ]]; then
+    echo "This is not the primary machine ($(primary_name)), so triage would" >&2
+    echo "file this laptop's packages into the shared lists. Refusing." >&2
+    echo "Use ${C}pkgs status${R} / ${C}pkgs missing${R} here, or ${C}pkgs triage --force${R}." >&2
+    return 1
+  fi
+
+  # 1. prune stale ignores silently
+  while read -r p; do
+    [[ -n "$p" ]] || continue
+    remove_from "$p" "$DIR/ignore.txt"; changed=1
+    echo "${D}pruned $p from ignore.txt (not installed)${R}"
+  done < <(stale_ignores)
+
+  # 2. missing packages
+  while read -r p; do
+    [[ -n "$p" ]] || continue
+    local l; l=$(which_list "$p")
+    echo
+    echo "${B}$p${R} is in ${C}$l.txt${R} but not installed."
+    ask "  [r]emove from list  [k]eep  [q]uit > "
+    case $REPLY in
+      r) remove_from "$p" "$DIR/$l.txt"; changed=1; echo "  ${G}removed${R}" ;;
+      q) break ;;
+      *) echo "  ${D}kept${R}" ;;
+    esac
+  done < <(missing)
+
+  # 3. untracked packages
+  local -a todo; mapfile -t todo < <(untracked)
+  local i=0 n=${#todo[@]}
+  for p in "${todo[@]}"; do
+    i=$((i + 1))
+    local desc src hint
+    desc=$(LC_ALL=C pacman -Qi "$p" | awk -F': ' '/^Description/{print $2}')
+    src=$(repo_of "$p")
+    if is_foreign "$p" || [[ -z "$src" ]]; then src=aur; hint=a
+    elif [[ "$src" == chaotic-aur ]]; then hint=a
+    elif [[ "$p" == ttf-* || "$p" == otf-* || "$p" == *-fonts* ]]; then hint=f
+    else hint=p
+    fi
+    echo
+    echo "${D}[$i/$n]${R} ${B}$p${R} ${D}($src)${R}"
+    echo "  $desc"
+    ask "  [p]acman [a]ur [f]onts [t]ools [o]ptional [i]gnore [s]kip [q]uit (enter=$hint) > "
+    [[ -z "$REPLY" ]] && REPLY=$hint
+    local dest=
+    case $REPLY in
+      p) dest=pacman ;; a) dest=aur ;; f) dest=fonts ;; t) dest=tools ;;
+      o) dest=optional ;; i) dest=ignore ;;
+      q) break ;;
+      *) echo "  ${D}skipped — will ask again next time${R}"; continue ;;
+    esac
+    echo "$p" >> "$DIR/$dest.txt"; changed=1
+    echo "  ${G}→ $dest.txt${R}"
+  done
+
+  echo
+  if (( changed )); then
+    echo "Lists updated. Review and commit:"
+    echo "  ${C}git -C ~/.dotfiles diff -- packages/${R}"
+  fi
+  cmd_check || true
+}
+
+cmd_set_primary() {
+  local id; id=$(this_id)
+  if is_primary; then echo "This machine is already the primary."; return 0; fi
+  if [[ -n "$(primary_id)" ]]; then
+    echo "Current primary: $(primary_name). Make this machine ($(hostnamectl hostname 2>/dev/null || hostname)) the primary instead?"
+    ask "  [y/N] > "
+    [[ "$REPLY" == y ]] || return 1
+  fi
+  {
+    echo "# Machine allowed to edit these lists (see scripts/pkgs). Set with: pkgs set-primary"
+    echo "# app-specific hash of /etc/machine-id, then hostname as a label"
+    echo "$id $(hostnamectl hostname 2>/dev/null || hostname)"
+  } > "$PRIMARY_FILE"
+  echo "${G}✓${R} primary set. Commit ${C}packages/primary${R}."
+}
+
+case "${1:-status}" in
+  status) cmd_status ;;
+  check)  cmd_check ;;
+  triage) shift; cmd_triage "$@" ;;
+  missing) shift; missing "$@" ;;
+  set-primary) cmd_set_primary ;;
+  -h|--help|help) awk 'NR>1 && !/^#/{exit} NR>1{sub(/^# ?/,""); print}' "$0" ;;
+  *) echo "usage: pkgs [status|triage [--force]|check|missing [list…]|set-primary]" >&2; exit 2 ;;
+esac

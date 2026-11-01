@@ -1,4 +1,4 @@
-# AUR / Chaotic packages (install with paru, separately from pacman).
+# AUR / Chaotic packages the configs need (install with paru, separately from pacman).
 # Install:  paru -S --needed - < packages/aur.txt
 
 antigen
@@ -9,3 +9,4 @@ qogir-gtk-theme-git
 qogir-icon-theme-git
 kvantum-theme-qogir-git
 rofi-greenclip
+wifitui-bin

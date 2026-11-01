@@ -1,0 +1,9 @@
+# CLI tools I use day to day, but nothing in the configs calls them.
+# Skip on a machine where you only want the configs to work.
+# Install:  sudo pacman -S --needed - < packages/tools.txt
+
+github-cli
+tree
+nnn
+htop-vim
+python-pipx

@@ -25,6 +25,8 @@ SSH: generate a key, add it to GitHub, then use the SSH remote.
 
 ## 3. Packages (prompted — run each block when you want it)
 
+The configs need `pacman.txt`, `aur.txt` and `fonts.txt`. `tools.txt` and `optional.txt` are extras.
+
 ### Official (pacman)
 
 ```bash
@@ -44,6 +46,12 @@ sudo pacman -S --needed - < ~/.dotfiles/packages/fonts.txt
 fc-cache -fv
 ```
 
+### Tools (CLI extras the configs don't call)
+
+```bash
+sudo pacman -S --needed - < ~/.dotfiles/packages/tools.txt
+```
+
 ### Optional (Chrome, editors, Docker, …)
 
 Defaults in `.profile` / `mimeapps.list` expect **Google Chrome**. If you skip it, change `BROWSER` and the http(s) mime handlers after `rcup`.
@@ -56,7 +64,7 @@ paru -S --needed - < ~/.dotfiles/packages/optional.txt
 
 ```bash
 cd ~
-rcup -v -d ~/.dotfiles
+RCRC=~/.dotfiles/rcrc rcup -v
 ```
 
 This links shell, i3, polybar, themes, mime defaults, etc.
@@ -107,6 +115,67 @@ Alt+Shift+N opens the catalog (fetch / review / pick). Images stay out of git.
 3. Polybar icons look correct (fonts step).
 4. GTK apps dark + Papirus (Qogir).
 
+## Existing machine (old configs)
+
+For a laptop that already runs Garuda i3 but has old configs, maybe from an older clone of this repo. You can stop after any step.
+
+**1. Snapshot first.** Garuda takes btrfs snapshots, so make one by hand (`sudo snapper -c root create -d "before dotfiles"`, or use btrfs-assistant). Also back up your home configs, since snapper's root config usually doesn't include `/home`:
+
+```bash
+tar czf ~/dotfiles-before-$(date +%F).tgz -C ~ .config .zshrc .profile .gitconfig .scripts 2>/dev/null
+```
+
+**2. Get the repo.**
+
+```bash
+# no clone yet:
+git clone git@github.com:haraldvinje/dotfiles.git ~/.dotfiles
+# old clone: keep any local edits aside, then update
+cd ~/.dotfiles && git status && git stash && git pull
+```
+
+**3. Install only what the configs need.** `pkgs` isn't on PATH yet, so call it from the repo. It installs only what's missing on this machine:
+
+```bash
+P=~/.dotfiles/scripts/pkgs
+$P missing pacman fonts | sudo pacman -S --needed -
+$P missing aur | paru -S --needed -
+```
+
+Leave out `tools` and `optional` unless you want them. This laptop isn't the primary (see `packages/primary`), so `pkgs` won't let it edit the lists.
+
+**4. See what `rcup` would replace.**
+
+```bash
+RCRC=~/.dotfiles/rcrc lsrc | while IFS=: read -r dst src; do
+  if [ -L "$dst" ]; then [ "$(readlink "$dst")" = "$src" ] || echo "LINK $dst -> $(readlink "$dst")"
+  elif [ -e "$dst" ]; then echo "FILE $dst"; fi
+done
+```
+
+`FILE` is an old real file and `LINK` is a symlink pointing somewhere else. `rcup` asks about each of them. To skip the prompts, move them all into a backup folder (same paths, so they're easy to compare later):
+
+```bash
+B=~/dotfiles-backup-$(date +%F); RCRC=~/.dotfiles/rcrc lsrc | while IFS=: read -r dst src; do
+  if { [ -e "$dst" ] || [ -L "$dst" ]; } && [ "$(readlink "$dst")" != "$src" ]; then
+    mkdir -p "$B/$(dirname "${dst#$HOME/}")" && mv "$dst" "$B/${dst#$HOME/}"
+  fi
+done; echo "moved to $B"
+```
+
+The two `colors.generated.*` links under polybar/rofi aren't in the repo any more, so they don't show up here. `desk` recreates them.
+
+**5. Link.**
+
+```bash
+cd ~ && RCRC=~/.dotfiles/rcrc rcup -v
+find ~ -maxdepth 4 -xtype l -lname "$HOME/.dotfiles/*" -print   # dead links from files the repo no longer has
+```
+
+Delete the dead links the `find` lists, once you've checked them (add `-delete` to remove them all).
+
+**6. Session.** `chsh -s /bin/zsh` if needed, then log out and back in. i3 runs `desk theme ensure`, which writes the bar and rofi colors. If something looks wrong, compare with the backup folder, or restore the snapshot.
+
 ## What is intentionally not in the repo
 
 - Wallpapers
@@ -120,8 +189,8 @@ Alt+Shift+N opens the catalog (fetch / review / pick). Images stay out of git.
 
 ```bash
 cd ~/.dotfiles && git pull
-rcup -v -d ~/.dotfiles
-# then package lists if they changed
+rcup -v
+pkgs status    # what's missing on this machine (or drift, on the primary)
 ```
 
 Desktop extras (`desk`, clipboard history, OCR/QR) need the packages in `pacman.txt` / `aur.txt` (`jq`, `maim`, `tesseract`, `tesseract-data-eng`, `zbar`, `flameshot`, `rofi-greenclip`). Super+Space opens the command palette. English OCR needs `tesseract-data-eng`.

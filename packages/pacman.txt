@@ -1,4 +1,4 @@
-# Official packages — Garuda i3 delta (beyond a stock Garuda i3 install).
+# Official packages the configs need — the delta beyond a stock Garuda i3 install.
 # Install:  sudo pacman -S --needed - < packages/pacman.txt
 
 rcm
@@ -22,7 +22,6 @@ ibus
 autorandr
 starship
 numlockx
-github-cli
 xfce4-screenshooter
 xclip
 jq
@@ -34,3 +33,9 @@ flameshot
 python-pywal
 python-requests
 variety
+fd
+sxiv
+mupdf
+bluetui
+wiremix
+cava

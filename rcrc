@@ -1,0 +1,4 @@
+# rcm config, linked to ~/.rcrc.
+# First run on a new machine:  RCRC=~/.dotfiles/rcrc rcup -v -d ~/.dotfiles
+DOTFILES_DIRS="$HOME/.dotfiles"
+EXCLUDES="README.md docs packages .gitignore"

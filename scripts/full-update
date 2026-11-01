@@ -200,6 +200,25 @@ run_flatpak() {
   fi
 }
 
+# --- 5. package lists drift (report only) -----------------------------------
+run_pkgs() {
+  section 5 "Package lists (~/.dotfiles/packages)"
+  local pkgs="${HOME}/.scripts/pkgs"
+  [[ -x "$pkgs" ]] || pkgs="${HOME}/.dotfiles/scripts/pkgs"
+  if [[ ! -x "$pkgs" ]]; then
+    skip "pkgs script missing"
+    STEPS_SKIP=$((STEPS_SKIP + 1))
+    return 0
+  fi
+  local msg
+  if msg="$("$pkgs" check)"; then
+    ok "$msg"
+  else
+    warn "$msg"
+  fi
+  STEPS_OK=$((STEPS_OK + 1))
+}
+
 # --- summary ----------------------------------------------------------------
 summary() {
   local elapsed=$((SECONDS - SECONDS_START))
@@ -225,4 +244,5 @@ run_garuda || true
 run_asdf || true
 run_snap || true
 run_flatpak || true
+run_pkgs || true
 summary

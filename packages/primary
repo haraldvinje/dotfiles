@@ -1,0 +1,3 @@
+# Machine allowed to edit these lists (see scripts/pkgs). Set with: pkgs set-primary
+# app-specific hash of /etc/machine-id, then hostname as a label
+beaec21b1efa41ecac3bddd23c1317a7 harald-work
