@@ -1,7 +1,6 @@
 # Official packages the configs need — the delta beyond a stock Garuda i3 install.
 # Install:  sudo pacman -S --needed - < packages/pacman.txt
 
-rcm
 lsd
 ranger
 neovim
@@ -30,7 +29,6 @@ tesseract
 tesseract-data-eng
 zbar
 flameshot
-python-pywal
 variety
 fd
 sxiv

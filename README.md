@@ -13,7 +13,7 @@ A client Mac is a parallel workstation, not a port: **[docs/mac.md](docs/mac.md)
 Short version:
 
 ```bash
-sudo pacman -S --needed git rcm
+sudo pacman -S --needed git && paru -S --needed rcm   # rcm is AUR-only
 git clone git@github.com:haraldvinje/dotfiles.git ~/.dotfiles
 sudo pacman -S --needed - < ~/.dotfiles/packages/pacman.txt
 paru -S --needed - < ~/.dotfiles/packages/aur.txt

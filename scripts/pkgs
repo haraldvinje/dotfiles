@@ -90,6 +90,15 @@ remove_from() { sed -i "/^[[:space:]]*$(printf '%s' "$1" | sed 's/[.[\*^$/]/\\&/
 
 is_foreign() { pacman -Qqm "$1" >/dev/null 2>&1; }
 
+# Entries in the pacman-installed lists that no repo has any more
+# (dropped to the AUR, renamed). pacman aborts the whole batch on one of these.
+PACMAN_LISTS=(pacman fonts tools)
+not_in_repos() {
+  local f=() l
+  for l in "${PACMAN_LISTS[@]}"; do f+=("$DIR/$l.txt"); done
+  comm -23 <(names "${f[@]}") <(pacman -Slq 2>/dev/null | sort -u)
+}
+
 repo_of() { pacman -Sl 2>/dev/null | awk -v p="$1" '$2==p{print $1; exit}'; }
 
 cmd_status_secondary() {
@@ -105,8 +114,17 @@ cmd_status_secondary() {
   echo "${D}(use paru instead of sudo pacman for aur/optional)${R}"
 }
 
+report_not_in_repos() {
+  local x; x=$(not_in_repos)
+  [[ -n "$x" ]] || return 0
+  echo "${Y}Not in any repo${R} ${D}(pacman will fail on these — move to aur.txt)${R}"
+  while read -r p; do printf '  %-32s %s%s.txt%s\n' "$p" "$D" "$(which_list "$p")" "$R"; done <<<"$x"
+  echo
+}
+
 cmd_status() {
   local u m s
+  report_not_in_repos
   if [[ ! -r "$PRIMARY_FILE" ]]; then
     echo "${Y}!${R} no packages/primary yet — run ${C}pkgs set-primary${R} on the reference machine"
   elif ! is_primary; then
@@ -134,12 +152,18 @@ cmd_status() {
 
 cmd_check() {
   local nu nm
+  local nr; nr=$(not_in_repos | grep -c .)
   if [[ -r "$PRIMARY_FILE" ]] && ! is_primary; then
     nm=$(missing pacman aur fonts | grep -c .)
     echo "secondary machine: $nm packages the configs need are not installed (pkgs status)"
+    (( nr )) && echo "warning: $nr listed packages are in no repo — fix the lists on the primary"
     return 0
   fi
   nu=$(untracked | grep -c .); nm=$(missing | grep -c .)
+  if (( nr )); then
+    echo "packages/ drift: $nr listed packages are in no repo (move to aur.txt) — run: pkgs triage"
+    return 1
+  fi
   if (( nu + nm == 0 )); then
     echo "packages/ in sync"
     return 0
@@ -174,7 +198,21 @@ cmd_triage() {
     echo "${D}pruned $p from ignore.txt (not installed)${R}"
   done < <(stale_ignores)
 
-  # 2. missing packages
+  # 2. listed for pacman, but no repo has them
+  while read -r p; do
+    [[ -n "$p" ]] || continue
+    local l; l=$(which_list "$p")
+    echo
+    echo "${B}$p${R} is in ${C}$l.txt${R} but no repo has it (dropped to the AUR or renamed?)."
+    ask "  [m]ove to aur.txt  [k]eep  [q]uit > "
+    case $REPLY in
+      m) remove_from "$p" "$DIR/$l.txt"; echo "$p" >> "$DIR/aur.txt"; changed=1; echo "  ${G}→ aur.txt${R}" ;;
+      q) return 0 ;;
+      *) echo "  ${D}kept${R}" ;;
+    esac
+  done < <(not_in_repos)
+
+  # 3. missing packages
   while read -r p; do
     [[ -n "$p" ]] || continue
     local l; l=$(which_list "$p")
@@ -188,7 +226,7 @@ cmd_triage() {
     esac
   done < <(missing)
 
-  # 3. untracked packages
+  # 4. untracked packages
   local -a todo; mapfile -t todo < <(untracked)
   local i=0 n=${#todo[@]}
   for p in "${todo[@]}"; do

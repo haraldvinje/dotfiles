@@ -13,3 +13,5 @@ wifitui-bin
 papirus-folders
 snapd
 unifetch
+rcm
+python-pywal

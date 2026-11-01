@@ -15,7 +15,7 @@ Do **not** put secrets in this repo (SSH private keys, GPG private keys, AWS cre
 ## 2. Clone dotfiles + rcm
 
 ```bash
-sudo pacman -S --needed git rcm
+sudo pacman -S --needed git && paru -S --needed rcm   # rcm is AUR-only
 git clone git@github.com:haraldvinje/dotfiles.git ~/.dotfiles
 # or HTTPS if SSH is not ready yet:
 # git clone https://github.com/haraldvinje/dotfiles.git ~/.dotfiles
